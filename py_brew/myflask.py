@@ -14,25 +14,12 @@ import copy
 
 from datetime import datetime
 from flask import Flask, request, render_template, abort, send_file
-
+from recipes import Recipes
 
 app = Flask(__name__)
 app.jinja_env.add_extension('jinja2.ext.loopcontrols')
 
 
-'''
->>> datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-'2011-11-03 18:21:26'
-
-'''
-def_brew_recipe = {
-                   'name': 'Test_Recipe',
-                   'date': '2011-11-03 18:21:26',
-                   'list': [
-                            (40.0, 600),
-                            (50.0, 300)
-                           ]
-                  }
 
 status = {
           'thread': 'Running',
@@ -42,8 +29,9 @@ status = {
          }
 
 last_action = 'Empty'
-# Create a deep copy not just a reference
-brew_recipe = copy.deepcopy(def_brew_recipe)
+
+recipes = Recipes()
+brew_recipe = recipes.get_default()
 
 @app.errorhandler(IOError)
 def special_exception_handler(error):
@@ -77,9 +65,10 @@ def edit():
             last_action = 'Delete_Row'
         elif request.form['submit'] == 'Save':
             eval_edit_form(request.form, brew_recipe)
+            recipes.save(brew_recipe)
             last_action = 'Save'
         elif request.form['submit'] == 'Reset':
-            brew_recipe = copy.deepcopy(def_brew_recipe)
+            brew_recipe = recipes.get_default()
             last_action = 'Reset'
         else:
             pass
