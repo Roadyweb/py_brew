@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+
+{% block head %}
+    {{ super() }}
+    <meta http-equiv="refresh" content="60" >
+{% endblock %}
+
+{% block body %}
+{% if error %}
+    <p><strong>{{ error }}</strong></p>
+{% endif %}
+{% endblock %}

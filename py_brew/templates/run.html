@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+
+{% block head %}
+    {{ super() }}
+    <meta http-equiv="refresh" content="5" >
+{% endblock %}
+
+{% block body %}
+    {% if data %}
+    <p>Recipe Name: {{ data.name }}</p>
+        <p>Recipe Date: {{ data.date }}</p>
+        <p>Settings: </p>
+        <table>
+        {% for entry in data.list %}
+            <tr>
+            <td>Temperature [°C]: {{ entry[0]|safe }}</td>
+            <td>Duration [s]: {{ entry[1]|safe }}</td>
+            </tr>
+        {% else %}
+            <em>No entries</em>
+        {% endfor %}
+        </table>
+    {% endif %}
+
+    {% if state %}
+        <p>Thread: {{ state.thread }}</p>
+        <p>Temp1: {{ state.temp1 }}</p>
+        <p>Temp2: {{ state.temp2 }}</p>
+        <p>Temp3: {{ state.temp3 }}</p>
+    {% else %}
+        <p>No current data available</p>
+    {% endif %}
+    <form action="." method="POST">
+        <input type="submit" name="submit" value="Run">
+        <input type="submit" name="submit" value="Stop">
+    </form>
+{% endblock %}

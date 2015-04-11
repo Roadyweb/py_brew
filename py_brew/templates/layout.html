@@ -1,0 +1,34 @@
+<!doctype html>
+<head>
+    {% block head %}
+    <title>Py Brew</title>
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+    {% endblock %}
+</head>
+
+<div class=title>
+<h1 style="margin-bottom:0;">Py Brew</h1>
+</div>
+
+<div class=menu><br />
+<br />
+<b>Menu</b><br />
+<a href="{{ url_for('run')       }}">Run</a><br />
+<a href="{{ url_for('edit')      }}">Edit</a><br />
+<a href="{{ url_for('settings')  }}">Settings</a><br />
+<a href="http://roadyweb.zapto.org/munin/homelinux.org/roadyweb.homelinux.org/index.html#homeautomation_heater">Munin</a><br />
+<a href="http://roadyweb.zapto.org/munin/raspberry/index.html">RPi-Pellets</a><br />
+<br /><br />
+<br /><br />
+</div>
+
+<div class=page>
+{% if heading %}
+    <h1>{{ heading }}</h1>
+{% endif %}
+{% block body %}{% endblock %}
+</div>
+
+<div class=footer>
+Copyright © roadyweb.zapto.org 2015
+</div>

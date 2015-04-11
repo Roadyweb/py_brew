@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+
+{% block head %}
+    {{ super() }}
+    <meta http-equiv="refresh" content="5" >
+{% endblock %}
+
+{% block body %}
+    <form action="." method="POST">
+        <p>Recipe Name: </p><input type="text" name="name" value={{ data.name|safe }}>
+        <table>
+        {% for entry in data.list %}
+            <tr>
+            <td>Temperature [°C]: <input type="text" name="t{{ loop.index0 }}" value={{ entry[0] }}></td>
+            <td>Duration [s]:     <input type="text" name="d{{ loop.index0 }}" value={{ entry[1] }}></td>
+            </tr>
+        {% else %}
+            <em>No entries</em>
+        {% endfor %}
+        </table>
+        <input type="submit" name="submit" value="Add_Row">
+        <input type="submit" name="submit" value="Delete_Row">
+        <input type="submit" name="submit" value="Save">
+        <input type="submit" name="submit" value="Reset">
+    </form>
+    {% if last_action %}
+        <p>Last Action: {{ last_action }}</p>
+    {% endif %}
+{% endblock %}
