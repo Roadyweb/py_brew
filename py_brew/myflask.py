@@ -74,9 +74,12 @@ def edit():
             pass
     return render_template('edit.html', heading='Edit', data=brew_recipe, last_action=last_action)
 
-@app.route('/settings/')
-def settings():
-    return render_template('settings.html', heading='Settings')
+@app.route('/manage/', methods=['GET', 'POST'])
+def manage():
+    if request.method == 'POST':
+        eval_manage_form(request.form)
+        last_action = 'Reset'
+    return render_template('manage.html', heading='Manage', fnames=recipes.fnames)
 
 def eval_edit_form(form, brew_recipe):
     brew_recipe['name'] = form['name']
@@ -92,6 +95,21 @@ def eval_edit_form(form, brew_recipe):
             break
     brew_recipe['list'] = tmp_list
 
+def eval_manage_form(form):
+    i = 0
+    while True:
+        try:
+            if 's' + str(i) in form:
+                # Select entry
+                recipes.select(i)
+                break
+            if 'd' + str(i) in form:
+                # Delete entry
+                recipes.delete(i)
+                break
+            i += 1
+        except:
+            break
 
 
 if __name__ == '__main__':

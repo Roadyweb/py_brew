@@ -27,6 +27,7 @@ DEF_RECIPE = {
 class Recipes(object):
     def __init__(self):
         self.recipes = []
+        self.fnames = []
         for dir_entry in os.listdir(PATH):
             dir_entry_path = os.path.join(PATH, dir_entry)
             if os.path.isfile(dir_entry_path):
@@ -34,6 +35,7 @@ class Recipes(object):
                     try:
                         
                         self.recipes.append(pickle.load(my_file))
+                        self.fnames.append(dir_entry_path)
                         print 'Successfully loaded %s' % dir_entry_path
                     except EOFError, e:
                         print 'EOFError while loading %s. %s' % (dir_entry_path, e)
@@ -45,7 +47,25 @@ class Recipes(object):
     def get_default(self):
         return copy.deepcopy(DEF_RECIPE)
 
+    def get_fnames(self):
+        self.__init__()
+        return self.fnames
+
     def save(self, recipe):
         dir_entry_path = os.path.join(PATH, recipe['name'] + EXT)
         with open(dir_entry_path, 'wb') as my_file:
             pickle.dump(recipe, my_file)
+        self.__init__()
+
+    def delete(self, idx):
+        fname = self.fnames[idx]
+        try:
+            os.remove(fname)
+            print 'Successfully removed %s' % fname
+        except:
+            print 'Failed to remove %s' % fname
+        self.__init__()
+
+    def select(self, idx):
+        self.selected = idx
+        print 'Selected entry %d' % idx

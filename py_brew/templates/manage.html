@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+{% block body %}
+    <form action="." method="POST">
+        <table>
+        {% for fname in fnames %}
+            <tr>
+            <td> {{ fname }} 
+                 <input type="submit" name="s{{ loop.index0 }}" value="Select">
+                 <input type="submit" name="d{{ loop.index0 }}" value="Delete">
+            </td>
+            </tr>
+        {% else %}
+            <em>No entries</em>
+        {% endfor %}
+        </table>
+    </form>
+    {% if last_action %}
+        <p>Last Action: {{ last_action }}</p>
+    {% endif %}
+{% endblock %}
