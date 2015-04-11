@@ -76,10 +76,13 @@ def edit():
 
 @app.route('/manage/', methods=['GET', 'POST'])
 def manage():
+    global brew_recipe
     if request.method == 'POST':
         eval_manage_form(request.form)
-        last_action = 'Reset'
-    return render_template('manage.html', heading='Manage', fnames=recipes.fnames)
+        brew_recipe = recipes.get_selected_recipe()
+
+    selected = recipes.get_selected_fname()
+    return render_template('manage.html', heading='Manage', fnames=recipes.fnames, selected=selected)
 
 def eval_edit_form(form, brew_recipe):
     brew_recipe['name'] = form['name']

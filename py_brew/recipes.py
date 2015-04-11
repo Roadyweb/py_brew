@@ -43,6 +43,7 @@ class Recipes(object):
         # If no recipe is found, add at least one default recipe
         if len(self.recipes) == 0:
             self.recipes = copy.deepcopy(DEF_RECIPE)
+        self.selected = 0
 
     def get_default(self):
         return copy.deepcopy(DEF_RECIPE)
@@ -50,6 +51,12 @@ class Recipes(object):
     def get_fnames(self):
         self.__init__()
         return self.fnames
+
+    def get_selected_fname(self):
+        return self.fnames[self.selected]
+
+    def get_selected_recipe(self):
+        return self.recipes[self.selected]
 
     def save(self, recipe):
         dir_entry_path = os.path.join(PATH, recipe['name'] + EXT)
