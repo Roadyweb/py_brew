@@ -7,13 +7,14 @@ Main functions to create the webpages
 '''
 
 
-from flask import Flask, request, render_template, abort, send_file
+from flask import Flask, request, render_template, flash
 
 import cook
 from recipes import Recipes
 
 app = Flask(__name__)
 app.jinja_env.add_extension('jinja2.ext.loopcontrols')
+app.secret_key = 'some_secret'
 
 thread1 = cook.myThread(1, "Cook Thread")
 
@@ -31,13 +32,18 @@ class Error(): pass
 @app.route('/')
 @app.route('/run/', methods=['GET', 'POST'])
 def run():
+    global thread1
     if request.method == 'POST':
         if request.form['submit'] == 'Start':
             thread1 = cook.myThread(1, "Cook Thread")
             thread1.start()
         if request.form['submit'] == 'Cook':
+            if not thread1 or not thread1.is_alive():
+                flash('Cook Thread not running, please start it first') 
             cook.command = 2
         elif request.form['submit'] == 'Monitor':
+            if not thread1 or not thread1.is_alive():
+                flash('Cook Thread not running, please start it first') 
             cook.command = 3
         elif request.form['submit'] == 'Exit':
             cook.command = 4
