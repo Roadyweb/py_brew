@@ -4,9 +4,9 @@
         <table>
         {% for fname in fnames %}
             <tr>
-            <td> {{ fname }} 
-                 <input type="submit" name="s{{ loop.index0 }}" value="Select">
+            <td> <input type="submit" name="s{{ loop.index0 }}" value="Select">
                  <input type="submit" name="d{{ loop.index0 }}" value="Delete">
+                 {{ fname }} 
             </td>
             </tr>
         {% else %}

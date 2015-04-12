@@ -7,15 +7,16 @@
 
 {% block body %}
     {% if data %}
-    <p>Recipe Name: {{ data.name }}</p>
-        <p>Created: {{ data.created }}</p>
-        <p>Last Saved: {{ data.last_saved }}</p>
-        <p>Settings: </p>
+        <h2>Recipe Name: {{ data.name }}</h2>
+        <br />
+        Created: {{ data.created }}<br />
+        Last Saved: {{ data.last_saved }}<br /><br />
+        Settings:
         <table>
         {% for entry in data.list %}
             <tr>
-            <td>Temperature [°C]: {{ entry[0]|safe }}</td>
-            <td>Duration [s]: {{ entry[1]|safe }}</td>
+            <td>Temp: {{ entry[0]|safe }} °C</td>
+            <td>Dura: {{ entry[1]|safe }} s</td>
             </tr>
         {% else %}
             <em>No entries</em>
@@ -24,17 +25,22 @@
     {% endif %}
 
     {% if state %}
-        <p>Thread: {{ state.thread }}</p>
-        <p>Temp1: {{ state.temp1 }}</p>
-        <p>Temp2: {{ state.temp2 }}</p>
-        <p>Temp3: {{ state.temp3 }}</p>
+    	<p>State:</p>
+        Temp1: {{ state.temp1 }}<br />
+        Temp2: {{ state.temp2 }}<br />
+        Temp3: {{ state.temp3 }}<br />
+        Relais1: {{ state.relais1 }}<br />
+        Relais2: {{ state.relais2 }}<br />
+        Relais3: {{ state.relais3 }}<br />
+        Thread State: {{ state.thread }}<br />
     {% else %}
         <p>No current data available</p>
     {% endif %}
+    <br />
     <form action="." method="POST">
         <input type="submit" name="submit" value="Start">
-        <input type="submit" name="submit" value="Cook">
         <input type="submit" name="submit" value="Monitor">
+        <input type="submit" name="submit" value="Cook">
         <input type="submit" name="submit" value="Exit">
     </form>
     {% with messages = get_flashed_messages() %}
