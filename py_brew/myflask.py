@@ -6,27 +6,16 @@ Created on 10.07.2012
 Main functions to create the webpages
 '''
 
-import simplejson as json
-import jsonpickle
-import pickle
-import tempfile
-import copy
 
-from datetime import datetime
 from flask import Flask, request, render_template, abort, send_file
+
+import cook
 from recipes import Recipes
 
 app = Flask(__name__)
 app.jinja_env.add_extension('jinja2.ext.loopcontrols')
 
-
-
-status = {
-          'thread': 'Running',
-          'temp1': 10.0,
-          'temp2': 20.0,
-          'temp3': 30.0
-         }
+thread1 = cook.myThread(1, "Cook Thread")
 
 last_action = 'Empty'
 
@@ -43,13 +32,18 @@ class Error(): pass
 @app.route('/run/', methods=['GET', 'POST'])
 def run():
     if request.method == 'POST':
-        if request.form['submit'] == 'Run':
-            status['thread'] = 'Running'
-        elif request.form['submit'] == 'Stop':
-            status['thread'] = 'Stopped'
+        if request.form['submit'] == 'Start':
+            thread1 = cook.myThread(1, "Cook Thread")
+            thread1.start()
+        if request.form['submit'] == 'Cook':
+            cook.command = 2
+        elif request.form['submit'] == 'Monitor':
+            cook.command = 3
+        elif request.form['submit'] == 'Exit':
+            cook.command = 4
         else:
             pass # unknown
-    return render_template('run.html', heading='Run', state=status, data=brew_recipe)
+    return render_template('run.html', heading='Run', state=cook.status, data=brew_recipe)
 
 
 @app.route('/edit/', methods=['GET', 'POST'])
