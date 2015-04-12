@@ -10,8 +10,8 @@
         <h2>Recipe Name: {{ data.name }}</h2>
         <br />
         Created: {{ data.created }}<br />
-        Last Saved: {{ data.last_saved }}<br /><br />
-        Settings:
+        Last Saved: {{ data.last_saved }}<br />
+        <h3>Settings:</h3>
         <table>
         {% for entry in data.list %}
             <tr>
@@ -25,14 +25,17 @@
     {% endif %}
 
     {% if state %}
-    	<p>State:</p>
-        Temp1: {{ state.temp1 }}<br />
-        Temp2: {{ state.temp2 }}<br />
-        Temp3: {{ state.temp3 }}<br />
-        Relais1: {{ state.relais1 }}<br />
-        Relais2: {{ state.relais2 }}<br />
-        Relais3: {{ state.relais3 }}<br />
-        Thread State: {{ state.thread }}<br />
+        <h3>State:</h3>
+        <table>
+        <tr><td>Temp1: {{ state.temp1 }}</td></tr>
+        <tr><td>Temp2: {{ state.temp2 }}</td></tr>
+        <tr><td>Temp3: {{ state.temp3 }}</td></tr>
+        <tr><td>Relais1: {{ state.relais1 }}</td></tr>
+        <tr><td>Relais2: {{ state.relais2 }}</td></tr>
+        <tr><td>Relais3: {{ state.relais3 }}</td></tr>
+        <tr><td>Thread State: {{ state.thread }}</td></tr>
+        <tr><td>Cook State: {{ state.cook_state }}</td></tr>
+        </table>
     {% else %}
         <p>No current data available</p>
     {% endif %}

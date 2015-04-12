@@ -41,11 +41,11 @@ def run():
         if request.form['submit'] == 'Cook':
             if not thread1 or not thread1.is_alive():
                 flash('Cook Thread not running, please start it first') 
+            cook.cook_recipe = copy.deepcopy(brew_recipe)
             cook.command = 2
         elif request.form['submit'] == 'Monitor':
             if not thread1 or not thread1.is_alive():
                 flash('Cook Thread not running, please start it first') 
-            cook.cook_recipe = copy.deepcopy(brew_recipe)
             cook.command = 3
         elif request.form['submit'] == 'Exit':
             cook.command = 4
