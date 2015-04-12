@@ -8,7 +8,8 @@
 {% block body %}
     {% if data %}
     <p>Recipe Name: {{ data.name }}</p>
-        <p>Recipe Date: {{ data.date }}</p>
+        <p>Created: {{ data.created }}</p>
+        <p>Last Saved: {{ data.last_saved }}</p>
         <p>Settings: </p>
         <table>
         {% for entry in data.list %}

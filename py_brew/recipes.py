@@ -5,6 +5,7 @@ Created on Apr 11, 2015
 '''
 
 import copy
+import datetime
 import os
 import pickle
 
@@ -16,8 +17,9 @@ EXT = '.rcp'
 
 '''
 DEF_RECIPE = {
-               'name': 'Test_Recipe',
-               'date': '2011-11-03 18:21:26',
+               'name': 'Default_Recipe',
+               'created': '',
+               'last_saved': '',
                'list': [
                         (40.0, 600),
                         (50.0, 300)
@@ -59,6 +61,9 @@ class Recipes(object):
         return self.recipes[self.selected]
 
     def save(self, recipe):
+        if 'created' not in recipe or recipe['created'] == '':
+            recipe['created'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        recipe['last_saved'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         dir_entry_path = os.path.join(PATH, recipe['name'] + EXT)
         with open(dir_entry_path, 'wb') as my_file:
             pickle.dump(recipe, my_file)
