@@ -9,12 +9,15 @@ import random
 import threading
 import time
 
-import myio
+import brewio
+
+from helper import timedelta2sec
+
 
 THREAD_SLEEP_INT = 0.1   # seconds
 UPDATE_INT = 1.0         # seconds
 
-TEMP_HYST = 1            # Half the value, the region Temp +/- TEMP_HYST is valid
+TEMP_HYST = 1            # The range Temp +/- TEMP_HYST is valid
 
 # Variables for simulation
 SIMULATION = True
@@ -25,14 +28,15 @@ TEMP3=30.0
 # Global variables for inter thread communication
 
 status = {
-                  'thread': 'Not running',
                   'temp1': 10.0,
                   'temp2': 20.0,
                   'temp3': 30.0,
                   'relais1': 0,
                   'relais2': 0,
                   'relais3': 0,
-                  'cook_state': 'Off'
+                  'cook_state': 'Off',
+                  'thread': 'Not running',
+                  'simulation': SIMULATION
                 }
 
 
@@ -42,11 +46,6 @@ cook_recipe = {}
 
 tpc = None
 
-
-def timedelta2sec(td):
-    # total_seconds is not available in Python 2.6
-    #seconds = td.total_seconds()
-    return (td.microseconds + (td.seconds + td.days * 24 * 3600) * 10**6) / 10**6
 
 class myThread (threading.Thread):
     def __init__(self, threadID, name):
@@ -60,11 +59,11 @@ class myThread (threading.Thread):
 
 
 def monitor():
+    
     if SIMULATION:
-        i = random.random() - 0.5
-        status['temp1'] += i + status['relais1']
-        status['temp2'] += i
-        status['temp3'] += i
+        status['temp1'] += random.random() - 0.5 + status['relais1']
+        status['temp2'] += random.random() - 0.5
+        status['temp3'] += random.random() - 0.5
         return
     # TODO read actual values from sensors
     pass
@@ -99,24 +98,28 @@ class TempProcessControl(object):
             set_temp = self.set_temp
             if (set_temp - temp) > TEMP_HYST:
                 # Too cold
-                myio.relais1(1)
+                brewio.relais1(1)
                 status['relais1'] = 1
             elif (set_temp - temp) < (-1 * TEMP_HYST):
                 # Too hot
-                myio.relais1(0)
+                brewio.relais1(0)
                 status['relais1'] = 0
             else:
                 # Right temperature
-                myio.relais1(0)
+                brewio.relais1(0)
                 status['relais1'] = 0
                 self.state = 'Waiting'
                 self.wait_start = datetime.datetime.now()
 
         elif self.state == 'Waiting':
             td = datetime.datetime.now() - self.wait_start
-            status['cook_state'] = 'Waiting for %d' % timedelta2sec(td)
+            status['cook_state'] = 'Stage %d: Cooking for %d of a total of %d seconds' \
+                % (self.cur_idx + 1, timedelta2sec(td), self.set_dura)
             if timedelta2sec(td) < self.set_dura:
+                # We are not finished
                 return
+
+            # We are finished with the current stage
             self.cur_idx += 1
             if (len(self.temp_list) - 1) <= self.cur_idx:
                 # Nothing more to do
@@ -127,7 +130,7 @@ class TempProcessControl(object):
         elif self.state == 'Finished':
             status['cook_state'] = 'Finished'
             status['relais1'] = 0
-            myio.relais_off()
+            brewio.relais_off()
         else:
             raise RuntimeError('TempProcessControl: Unknown state')
         print 'TempProcessControl State After: %s' % self.state
@@ -140,16 +143,18 @@ class TempProcessControl(object):
 
 def cook():
     global command
+    global tpc
     command = 0
     status['thread'] = 'Idle'
     while 42:
+        if tpc == None:
+            tpc = TempProcessControl()
         sleepduration = UPDATE_INT
         print 'Thread State: %s Command: %d' % (status['thread'], command)
         
         # Change thread state
         if command == 2:
             status['thread'] = 'Cooking'
-            tpc = TempProcessControl()
             tpc.start(cook_recipe)
         elif command == 3:
             status['thread'] = 'Monitoring'
