@@ -21,12 +21,11 @@ TEMP_HYST = 1            # The range Temp +/- TEMP_HYST is valid
 
 # Variables for simulation
 SIMULATION = True
-TEMP1=10.0
-TEMP2=20.0
-TEMP3=30.0
+AMBIENT_TEMP = 10.0     # minimum temperature when no heating is applied
+COOLING_FACTOR = 0.01   # cooling in degrees = (curr temp - AMBIENT_TEMP) / COOLING_FACTOR
+
 
 # Global variables for inter thread communication
-
 status = {
                   'temp1': 10.0,
                   'temp2': 20.0,
@@ -57,90 +56,6 @@ class myThread (threading.Thread):
         cook()
         print "Exiting " + self.name
 
-
-def monitor():
-    
-    if SIMULATION:
-        status['temp1'] += random.random() - 0.5 + status['relais1']
-        status['temp2'] += random.random() - 0.5
-        status['temp3'] += random.random() - 0.5
-        return
-    # TODO read actual values from sensors
-    pass
-
-
-class TempProcessControl(object):
-    def __init__(self):
-        print 'TempProcessControl init'
-        self.temp_list = []
-        ''' Possible states:
-                Init: New setpoint
-                Wait: Setpoint reached, waiting for the required time
-                Finished: Required time is over, go to next setpoint
-        '''
-        self.state = 'Init'
-
-    def _get_temp_dura(self):
-        return self.temp_list[self.cur_idx]
-
-    def start(self, recipe):
-        print 'TempProcessControl started. Recipe: %s' % recipe
-        self.temp_list = recipe['list']
-        self.cur_idx = 0
-        self.set_temp, self.set_dura = self._get_temp_dura()
-
-    def control_temp(self):
-        print 'TempProcessControl State Before: %s' % self.state
-
-        if self.state == 'Init':
-            status['cook_state'] = 'Init'
-            temp = status['temp1']
-            set_temp = self.set_temp
-            if (set_temp - temp) > TEMP_HYST:
-                # Too cold
-                brewio.relais1(1)
-                status['relais1'] = 1
-            elif (set_temp - temp) < (-1 * TEMP_HYST):
-                # Too hot
-                brewio.relais1(0)
-                status['relais1'] = 0
-            else:
-                # Right temperature
-                brewio.relais1(0)
-                status['relais1'] = 0
-                self.state = 'Waiting'
-                self.wait_start = datetime.datetime.now()
-
-        elif self.state == 'Waiting':
-            td = datetime.datetime.now() - self.wait_start
-            status['cook_state'] = 'Stage %d: Cooking for %d of a total of %d seconds' \
-                % (self.cur_idx + 1, timedelta2sec(td), self.set_dura)
-            if timedelta2sec(td) < self.set_dura:
-                # We are not finished
-                return
-
-            # We are finished with the current stage
-            self.cur_idx += 1
-            if (len(self.temp_list) - 1) <= self.cur_idx:
-                # Nothing more to do
-                self.state = 'Finished'
-            self.set_temp, self.set_dura = self._get_temp_dura()
-            self.state = 'Init'
-
-        elif self.state == 'Finished':
-            status['cook_state'] = 'Finished'
-            status['relais1'] = 0
-            brewio.relais_off()
-        else:
-            raise RuntimeError('TempProcessControl: Unknown state')
-        print 'TempProcessControl State After: %s' % self.state
-
-    def stop(self):
-        status['cook_state'] = 'Stopped'
-        print 'TempProcessControl stopped'
-        myio.relais_off()
-
-
 def cook():
     global command
     global tpc
@@ -148,7 +63,7 @@ def cook():
     status['thread'] = 'Idle'
     while 42:
         if tpc == None:
-            tpc = TempProcessControl()
+            tpc = TempProcessControl(status)
         sleepduration = UPDATE_INT
         print 'Thread State: %s Command: %d' % (status['thread'], command)
         
@@ -166,12 +81,105 @@ def cook():
 
         # Start state specific tasks
         if status['thread'] == 'Monitoring':
-            monitor()
+            tpc.monitor()
         if status['thread'] == 'Cooking':
-            monitor()
+            tpc.monitor()
             tpc.control_temp()
 
         while sleepduration > 0:
             time.sleep(THREAD_SLEEP_INT)
             sleepduration -= THREAD_SLEEP_INT
 
+
+class TempProcessControl(object):
+    '''Controls the different temperature stage'''
+    def __init__(self, status):
+        print 'TempProcessControl init'
+        self.temp_list = []
+        ''' Possible states:
+                Init: New setpoint
+                Wait: Setpoint reached, waiting for the required time
+                Finished: Required time is over, go to next setpoint
+        '''
+        self.state = 'Init'     # current state of the state machine
+        self.status = status    # reference to global status dict
+        self.cur_idx = 0
+        self.wait_start = None
+        self.set_temp = None
+        self.set_dura = None
+
+    def _get_temp_dura(self):
+        return self.temp_list[self.cur_idx]
+
+    def start(self, recipe):
+        print 'TempProcessControl started. Recipe: %s' % recipe
+        self.temp_list = recipe['list']
+        self.cur_idx = 0
+        self.set_temp, self.set_dura = self._get_temp_dura()
+
+    def control_temp(self):
+        print 'TempProcessControl State Before: %s' % self.state
+
+        if self.state == 'Init':
+            self.status['cook_state'] = 'Init'
+            temp = status['temp1']
+            set_temp = self.set_temp
+            if (set_temp - temp) > TEMP_HYST:
+                # Too cold
+                brewio.relais1(1)
+                self.status['relais1'] = 1
+            elif (set_temp - temp) < (-1 * TEMP_HYST):
+                # Too hot
+                brewio.relais1(0)
+                self.status['relais1'] = 0
+            else:
+                # Right temperature
+                brewio.relais1(0)
+                self.status['relais1'] = 0
+                self.state = 'Waiting'
+                self.wait_start = datetime.datetime.now()
+
+        elif self.state == 'Waiting':
+            td = datetime.datetime.now() - self.wait_start
+            status['cook_state'] = 'Stage %d - Cooking for %d of a total of %d seconds' \
+                % (self.cur_idx + 1, timedelta2sec(td), self.set_dura)
+            if timedelta2sec(td) < self.set_dura:
+                # We are not finished
+                return
+
+            # We are finished with the current stage
+            self.cur_idx += 1
+            if (len(self.temp_list) - 1) <= self.cur_idx:
+                # Nothing more to do
+                self.state = 'Finished'
+            self.set_temp, self.set_dura = self._get_temp_dura()
+            self.state = 'Init'
+
+        elif self.state == 'Finished':
+            self.status['cook_state'] = 'Finished'
+            self.status['relais1'] = 0
+            brewio.relais_off()
+        else:
+            raise RuntimeError('TempProcessControl: Unknown state')
+        print 'TempProcessControl State After: %s' % self.state
+
+    def monitor(self):
+        if SIMULATION:
+            # parameters for simulation
+            self.status['temp1'] = sim_calc_new_temp(self.status['temp1'], self.status['relais1'])
+            self.status['temp2'] = sim_calc_new_temp(self.status['temp2'], self.status['relais2'])
+            self.status['temp3'] = sim_calc_new_temp(self.status['temp3'], self.status['relais3'])
+            return
+        # TODO read actual values from sensors
+
+    def stop(self):
+        self.status['cook_state'] = 'Stopped'
+        print 'TempProcessControl stopped'
+        brewio.relais_off()
+
+
+def sim_calc_new_temp(temp, heat):
+    cooling = (temp - AMBIENT_TEMP) * COOLING_FACTOR
+    noise = (random.random() - 0.5) / 2
+    temp += noise + heat - cooling
+    return temp
