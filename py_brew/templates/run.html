@@ -27,16 +27,16 @@
     {% if state %}
         <h3>State:</h3>
         <table>
-        <tr><td>Temp1: {{ state.temp1 }}</td></tr>
-        <tr><td>Temp2: {{ state.temp2 }}</td></tr>
-        <tr><td>Temp3: {{ state.temp3 }}</td></tr>
-        <tr><td>Relais1: {{ state.relais1 }}</td></tr>
-        <tr><td>Relais2: {{ state.relais2 }}</td></tr>
-        <tr><td>Relais3: {{ state.relais3 }}</td></tr>
+        <tr><td align="right">Temp1: </td><td>{{'%0.1f' % state.temp1 }} °C</td></tr>
+        <tr><td align="right">Temp2: </td><td>{{'%0.1f' % state.temp2 }} °C</td></tr>
+        <tr><td align="right">Temp3: </td><td>{{'%0.1f' % state.temp3 }} °C</td></tr>
+        <tr><td align="right">Relais1: </td><td>{{ state.relais1 }}</td></tr>
+        <tr><td align="right">Relais2: </td><td>{{ state.relais2 }}</td></tr>
+        <tr><td align="right">Relais3: </td><td>{{ state.relais3 }}</td></tr>
         <tr><td></td></tr>
-        <tr><td>Cook State: {{ state.cook_state }}</td></tr>
-        <tr><td>Thread State: {{ state.thread }}</td></tr>
-        <tr><td>Simulation: {{ state.simulation }}</td></tr>
+        <tr><td align="right">Cook State: </td><td>{{ state.cook_state }}</td></tr>
+        <tr><td align="right">Thread State: </td><td>{{ state.thread }}</td></tr>
+        <tr><td align="right">Simulation: </td><td>{{ state.simulation }}</td></tr>
         </table>
     {% else %}
         <p>No current data available</p>
