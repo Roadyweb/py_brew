@@ -84,6 +84,7 @@ def manage():
 
 def eval_edit_form(form, brew_recipe):
     brew_recipe['name'] = form['name']
+    brew_recipe['method'] = form['method']
     tmp_list = []
     i = 0
     while True:

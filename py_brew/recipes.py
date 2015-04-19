@@ -20,6 +20,7 @@ DEF_RECIPE = {
                'name': 'Default_Recipe',
                'created': '',
                'last_saved': '',
+               'method': 'K1',
                'list': [
                         (40.0, 600),
                         (50.0, 300)
