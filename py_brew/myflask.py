@@ -19,6 +19,8 @@ app.secret_key = 'some_secret'
 
 pct_thread = cook.ProcControlThread()
 pct_thread.start()
+tmt_thread = cook.TempMonThread()
+tmt_thread.start()
 
 last_action = 'Empty'
 

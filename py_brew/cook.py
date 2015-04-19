@@ -57,10 +57,11 @@ class ProcControlThread (threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self)
         status['pct_state'] = 'Not running'
+
     def run(self):
-        print "Starting " + self.name
+        print "Starting ProcControlThread"
         self.cook()
-        print "Exiting " + self.name
+        print "Exiting ProcControlThread"
 
     def cook(self):
         global pct_req
@@ -167,11 +168,6 @@ class TempProcessControl(object):
         print 'TempProcessControl State After: %s' % self.state
 
     def monitor(self):
-        if SIMULATION:
-            # parameters for simulation
-            self.status['temp1'] = sim_calc_new_temp(self.status['temp1'], self.status['relais1'])
-            self.status['temp2'] = sim_calc_new_temp(self.status['temp2'], self.status['relais2'])
-            self.status['temp3'] = sim_calc_new_temp(self.status['temp3'], self.status['relais3'])
             return
         # TODO read actual values from sensors
 
@@ -181,8 +177,33 @@ class TempProcessControl(object):
         brewio.relais_off()
 
 
+class TempMonThread (threading.Thread):
+    def __init__(self):
+        threading.Thread.__init__(self)
+        status['tmt_state'] = 'Not running'
+    def run(self):
+        status['tmt_state'] = 'Running'
+        print "Starting TempMonThread"
+        self.monitor()
+        print "Exiting TempMonThread"
+        status['tmt_state'] = 'Not running'
+
+    def monitor(self):
+        while 42:
+            sleepduration = UPDATE_INT
+
+            if SIMULATION:
+                status['temp1'] = sim_calc_new_temp(status['temp1'], status['relais1'])
+                status['temp2'] = sim_calc_new_temp(status['temp2'], status['relais2'])
+                status['temp3'] = sim_calc_new_temp(status['temp3'], status['relais3'])
+    
+            while sleepduration > 0:
+                time.sleep(THREAD_SLEEP_INT)
+                sleepduration -= THREAD_SLEEP_INT
+
 def sim_calc_new_temp(temp, heat):
     cooling = (temp - AMBIENT_TEMP) * COOLING_FACTOR
     noise = (random.random() - 0.5) / 2
     temp += noise + heat - cooling
     return temp
+
