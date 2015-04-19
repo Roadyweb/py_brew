@@ -35,7 +35,7 @@
         <tr><td align="right">Relais3: </td><td>{{ state.relais3 }}</td></tr>
         <tr><td></td></tr>
         <tr><td align="right">Cook State: </td><td>{{ state.cook_state }}</td></tr>
-        <tr><td align="right">Thread State: </td><td>{{ state.thread }}</td></tr>
+        <tr><td align="right">Thread State: </td><td>{{ state.pct_state }}</td></tr>
         <tr><td align="right">Simulation: </td><td>{{ state.simulation }}</td></tr>
         </table>
     {% else %}
@@ -44,9 +44,7 @@
     <br />
     <form action="." method="POST">
         <input type="submit" name="submit" value="Start">
-        <input type="submit" name="submit" value="Monitor">
-        <input type="submit" name="submit" value="Cook">
-        <input type="submit" name="submit" value="Exit">
+        <input type="submit" name="submit" value="Stop">
     </form>
     {% with messages = get_flashed_messages() %}
         {% if messages %}

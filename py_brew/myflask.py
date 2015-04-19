@@ -17,7 +17,8 @@ app = Flask(__name__)
 app.jinja_env.add_extension('jinja2.ext.loopcontrols')
 app.secret_key = 'some_secret'
 
-thread1 = cook.myThread(1, "Cook Thread")
+pct_thread = cook.ProcControlThread()
+pct_thread.start()
 
 last_action = 'Empty'
 
@@ -33,22 +34,15 @@ class Error(): pass
 @app.route('/')
 @app.route('/run/', methods=['GET', 'POST'])
 def run():
-    global thread1
+    global pct_thread
+    if not pct_thread or not pct_thread.is_alive():
+        raise RuntimeError('ProcControlThread is not running')
     if request.method == 'POST':
         if request.form['submit'] == 'Start':
-            thread1 = cook.myThread(1, "Cook Thread")
-            thread1.start()
-        if request.form['submit'] == 'Cook':
-            if not thread1 or not thread1.is_alive():
-                flash('Cook Thread not running, please start it first') 
             cook.cook_recipe = copy.deepcopy(brew_recipe)
-            cook.command = 2
-        elif request.form['submit'] == 'Monitor':
-            if not thread1 or not thread1.is_alive():
-                flash('Cook Thread not running, please start it first') 
-            cook.command = 3
-        elif request.form['submit'] == 'Exit':
-            cook.command = 4
+            cook.pct_req = 'START'
+        elif request.form['submit'] == 'Stop':
+            cook.pct_req = 'STOP'
         else:
             pass # unknown
     return render_template('run.html', heading='Run', state=cook.status, data=brew_recipe)
