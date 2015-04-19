@@ -72,7 +72,7 @@ class ProcControlThread (threading.Thread):
                 tpc = TempProcessControl(status)
             sleepduration = UPDATE_INT
             print 'PCT State: %s - Req: %s' % (status['pct_state'], pct_req)
-            
+
             # Change thread state
             if pct_req == 'START':
                 status['pct_state'] = 'Cooking'
@@ -85,11 +85,11 @@ class ProcControlThread (threading.Thread):
             else:
                 raise ValueError('Unsupported ProcControlThread request %s' % pct_req)
             pct_req = ''
-    
+
             # Start state specific tasks
             if status['pct_state'] == 'Cooking':
                 tpc.control_temp()
-    
+
             while sleepduration > 0:
                 time.sleep(THREAD_SLEEP_INT)
                 sleepduration -= THREAD_SLEEP_INT
@@ -105,7 +105,7 @@ class TempProcessControl(object):
                 Wait: Setpoint reached, waiting for the required time
                 Finished: Required time is over, go to next setpoint
         '''
-        self.state = 'Init'     # current state of the state machine
+        self.state = 'INIT'     # current state of the state machine
         self.status = status    # reference to global status dict
         self.cur_idx = 0
         self.wait_start = None
@@ -124,7 +124,7 @@ class TempProcessControl(object):
     def control_temp(self):
         print 'TempProcessControl State Before: %s' % self.state
 
-        if self.state == 'Init':
+        if self.state == 'INIT':
             self.status['cook_state'] = 'Init'
             temp = status['temp1']
             set_temp = self.set_temp
@@ -140,10 +140,10 @@ class TempProcessControl(object):
                 # Right temperature
                 brewio.relais1(0)
                 self.status['relais1'] = 0
-                self.state = 'Waiting'
+                self.state = 'WAITING'
                 self.wait_start = datetime.datetime.now()
 
-        elif self.state == 'Waiting':
+        elif self.state == 'WAITING':
             td = datetime.datetime.now() - self.wait_start
             status['cook_state'] = 'Stage %d - Cooking for %d of a total of %d seconds' \
                 % (self.cur_idx + 1, timedelta2sec(td), self.set_dura)
@@ -155,21 +155,17 @@ class TempProcessControl(object):
             self.cur_idx += 1
             if (len(self.temp_list) - 1) <= self.cur_idx:
                 # Nothing more to do
-                self.state = 'Finished'
+                self.state = 'FINISHED'
             self.set_temp, self.set_dura = self._get_temp_dura()
-            self.state = 'Init'
+            self.state = 'INIT'
 
-        elif self.state == 'Finished':
+        elif self.state == 'FINISHED':
             self.status['cook_state'] = 'Finished'
             self.status['relais1'] = 0
             brewio.relais_off()
         else:
             raise RuntimeError('TempProcessControl: Unknown state')
         print 'TempProcessControl State After: %s' % self.state
-
-    def monitor(self):
-            return
-        # TODO read actual values from sensors
 
     def stop(self):
         self.status['cook_state'] = 'Stopped'
@@ -196,7 +192,7 @@ class TempMonThread (threading.Thread):
                 status['temp1'] = sim_calc_new_temp(status['temp1'], status['relais1'])
                 status['temp2'] = sim_calc_new_temp(status['temp2'], status['relais2'])
                 status['temp3'] = sim_calc_new_temp(status['temp3'], status['relais3'])
-    
+
             while sleepduration > 0:
                 time.sleep(THREAD_SLEEP_INT)
                 sleepduration -= THREAD_SLEEP_INT
