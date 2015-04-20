@@ -12,7 +12,7 @@ import pickle
 PATH = '../recipes/'
 EXT = '.rcp'
 '''
->>> datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+>>> datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 '2011-11-03 18:21:26'
 
 '''
@@ -31,12 +31,13 @@ class Recipes(object):
     def __init__(self):
         self.recipes = []
         self.fnames = []
+        if not os.path.isdir(PATH):
+            os.makedirs(PATH)
         for dir_entry in os.listdir(PATH):
             dir_entry_path = os.path.join(PATH, dir_entry)
             if os.path.isfile(dir_entry_path):
                 with open(dir_entry_path, 'r') as my_file:
                     try:
-                        
                         self.recipes.append(pickle.load(my_file))
                         self.fnames.append(dir_entry_path)
                         print 'Successfully loaded %s' % dir_entry_path
@@ -63,8 +64,8 @@ class Recipes(object):
 
     def save(self, recipe):
         if 'created' not in recipe or recipe['created'] == '':
-            recipe['created'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        recipe['last_saved'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            recipe['created'] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        recipe['last_saved'] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         dir_entry_path = os.path.join(PATH, recipe['name'] + EXT)
         with open(dir_entry_path, 'wb') as my_file:
             pickle.dump(recipe, my_file)
