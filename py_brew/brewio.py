@@ -4,6 +4,7 @@ Created on Apr 12, 2015
 @author: stefan
 '''
 
+import cook
 
 def temp1():
     pass
@@ -15,13 +16,13 @@ def temp3():
     pass
 
 def relais1(state):
-    pass
+    cook.status['relais1'] = state
 
 def relais2(state):
-    pass
+    cook.status['relais2'] = state
 
 def relais3(state):
-    pass
+    cook.status['relais3'] = state
 
 def relais_off():
     relais1(0)

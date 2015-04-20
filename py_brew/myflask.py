@@ -11,16 +11,23 @@ from flask import Flask, request, render_template, flash
 
 import copy
 import cook
+import wq
+
 from recipes import Recipes
 
 app = Flask(__name__)
 app.jinja_env.add_extension('jinja2.ext.loopcontrols')
 app.secret_key = 'some_secret'
 
+global wqt_thread
+
 pct_thread = cook.ProcControlThread()
 pct_thread.start()
 tmt_thread = cook.TempMonThread()
 tmt_thread.start()
+wqt_thread = wq.WorkQueueThread()
+wqt_thread.start()
+wq.wqt_thread = wqt_thread
 
 last_action = 'Empty'
 
@@ -116,4 +123,4 @@ def eval_manage_form(form):
 
 if __name__ == '__main__':
     #app.debug = True
-    app.run(host='192.168.178.80')
+    app.run(host='127.0.0.1')
