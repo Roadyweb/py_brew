@@ -11,10 +11,18 @@
         <td>Recipe Name: <input type="text" name="name" value={{ data.name|safe }}></td>
         </tr>
         <table>
+        <tr>
+        <td>Temp K1: <input type="text" name="tk1" value={{ data.tempk1 }} °C></td>
+        <td>Dura K1: <input type="text" name="dk1" value={{ data.durak1 }} s></td>
+        </tr>
+        <tr></tr>
+        <tr></tr>
+        <tr></tr>
+        <tr></tr>
         {% for entry in data.list %}
             <tr>
-            <td>Temperature [°C]: <input type="text" name="t{{ loop.index0 }}" value={{ entry[0] }}></td>
-            <td>Duration [s]:     <input type="text" name="d{{ loop.index0 }}" value={{ entry[1] }}></td>
+            <td>Temp K2: <input type="text" name="t{{ loop.index0 }}" value={{ entry[0] }} °C></td>
+            <td>Dura K2: <input type="text" name="d{{ loop.index0 }}" value={{ entry[1] }} s></td>
             </tr>
         {% else %}
             <em>No entries</em>

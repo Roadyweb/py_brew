@@ -92,6 +92,8 @@ def manage():
 def eval_edit_form(form, brew_recipe):
     brew_recipe['name'] = form['name']
     brew_recipe['method'] = form['method']
+    brew_recipe['tempk1'] = form['tk1']
+    brew_recipe['durak1'] = form['dk1']
     tmp_list = []
     i = 0
     while True:
@@ -123,4 +125,4 @@ def eval_manage_form(form):
 
 if __name__ == '__main__':
     #app.debug = True
-    app.run(host='127.0.0.1')
+    app.run(host='192.168.178.80')

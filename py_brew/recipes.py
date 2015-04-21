@@ -21,6 +21,8 @@ DEF_RECIPE = {
                'created': '',
                'last_saved': '',
                'method': 'K1',
+               'tempk1': 40.0,
+               'durak1': 10,
                'list': [
                         (40.0, 600),
                         (50.0, 300)

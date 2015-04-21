@@ -23,20 +23,20 @@ TEMP_HYST = 1            # The range Temp +/- TEMP_HYST is valid
 # Variables for simulation
 SIMULATION = True
 AMBIENT_TEMP = 10.0     # minimum temperature when no heating is applied
-COOLING_FACTOR = 0.005   # cooling in degrees = (curr temp - AMBIENT_TEMP) / COOLING_FACTOR
+COOLING_FACTOR = 0.005  # cooling in degrees = (curr temp - AMBIENT_TEMP) / COOLING_FACTOR
 HEATING_FACTOR = 0.4    # Normal heating is 1 K per second
 
 # Global variables for inter thread communication
 status = {
-                  'temp1': 10.0,
-                  'temp2': 20.0,
-                  'temp3': 30.0,
-                  'relais1': 0,
-                  'relais2': 0,
-                  'relais3': 0,
+                  'tempk1': 10.0,
+                  'tempk2': 20.0,
+                  'pump1': 0,
+                  'pump2': 0,
+                  'heater': 0,
                   'cook_state': 'Off',
                   'pct_state': 'Not running',
                   'tmt_state': 'Not running',
+                  'wqt_state': 'Not running',
                   'simulation': SIMULATION
                 }
 
@@ -72,7 +72,7 @@ class ProcControlThread (threading.Thread):
             if tpc == None:
                 tpc = TempProcessControl(status)
             sleepduration = UPDATE_INT
-            print 'PCT State: %s - Req: %s' % (status['pct_state'], pct_req)
+            print 'PCT: State: %s - Req: %s' % (status['pct_state'], pct_req)
 
             # Change thread state
             if pct_req == 'START':
@@ -89,8 +89,8 @@ class ProcControlThread (threading.Thread):
 
             # Start state specific tasks
             if status['pct_state'] == 'Cooking':
-                tpc.control_temp_interval()
-
+                if tpc.control_temp_interval():
+                    status['pct_state'] = 'Idle'
             while sleepduration > 0:
                 time.sleep(THREAD_SLEEP_INT)
                 sleepduration -= THREAD_SLEEP_INT
@@ -123,8 +123,10 @@ class TempProcessControl(object):
         self.method = recipe['method']
         self.cur_idx = 0
         self.set_temp, self.set_dura = self._get_temp_dura()
+        self.state = 'INIT'
 
     def control_temp_interval(self):
+        ''' returns true when finished '''
         print 'TempProcessControl State Before: %s' % self.state
 
         if self.state == 'INIT':
@@ -142,7 +144,7 @@ class TempProcessControl(object):
                 return
 
             # We are finished with the current stage
-            if len(self.temp_list) <= self.cur_idx:
+            if len(self.temp_list) <= self.cur_idx + 1:
                 # Nothing more to do
                 self.state = 'FINISHED'
                 return
@@ -152,15 +154,14 @@ class TempProcessControl(object):
 
         elif self.state == 'FINISHED':
             self.status['cook_state'] = 'Finished'
-            wq.heater_off_K1()
-            wq.heater_off_K2()
+            return True
         else:
             raise RuntimeError('TempProcessControl: Unknown state')
         print 'TempProcessControl State After: %s' % self.state
 
     def control_temp(self):
-        ''' return whether we have reached the current setpoint'''
-        temp = status['temp1']
+        ''' returns True whenr we have reached the current setpoint'''
+        temp = status['tempk1']
         set_temp = self.set_temp
         if (set_temp - temp) > TEMP_HYST:
             # Too cold
@@ -178,7 +179,8 @@ class TempProcessControl(object):
     def stop(self):
         self.status['cook_state'] = 'Stopped'
         print 'TempProcessControl stopped'
-        brewio.relais_off()
+        wq.heater_off_K1()
+        wq.heater_off_K2()
 
 
 class TempMonThread (threading.Thread):
@@ -197,9 +199,8 @@ class TempMonThread (threading.Thread):
             sleepduration = UPDATE_INT
 
             if SIMULATION:
-                status['temp1'] = sim_calc_new_temp(status['temp1'], status['relais1'])
-                status['temp2'] = sim_calc_new_temp(status['temp2'], status['relais2'])
-                status['temp3'] = sim_calc_new_temp(status['temp3'], status['relais3'])
+                status['tempk1'] = sim_calc_new_temp(status['tempk1'], status['pump1'])
+                status['tempk2'] = sim_calc_new_temp(status['tempk2'], status['pump2'])
 
             while sleepduration > 0:
                 time.sleep(THREAD_SLEEP_INT)
