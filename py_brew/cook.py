@@ -30,6 +30,10 @@ HEATING_FACTOR = 0.4    # Normal heating is 1 K per second
 status = {
                   'tempk1': 10.0,
                   'tempk2': 20.0,
+                  'settempk1': 10.0,
+                  'settempk2': 20.0,
+                  'setdurak1': 10.0,
+                  'setdurak2': 20.0,
                   'pump1': 0,
                   'pump2': 0,
                   'heater': 0,
@@ -37,6 +41,7 @@ status = {
                   'pct_state': 'Not running',
                   'tmt_state': 'Not running',
                   'wqt_state': 'Not running',
+                  'dlt_state': 'Not running',
                   'simulation': SIMULATION
                 }
 
@@ -84,7 +89,7 @@ class ProcControlThread (threading.Thread):
             elif pct_req == '':
                 pass
             else:
-                raise ValueError('Unsupported ProcControlThread request %s' % pct_req)
+                raise RuntimeError('Unsupported ProcControlThread request %s' % pct_req)
             pct_req = ''
 
             # Start state specific tasks
@@ -113,13 +118,33 @@ class TempProcessControl(object):
         self.method = None
         self.set_temp = None
         self.set_dura = None
+        self.tempk1 = None
+        self.durak1 = None
 
     def _get_temp_dura(self):
-        return self.temp_list[self.cur_idx]
+        if self.method == 'K1':
+            status['settempk1'] = self.tempk1
+            status['setdurak1'] = self.durak1
+            # TODO: use dummy values for unset k2 parameters, to make flot
+            # happy. Reevalute if necessary
+            status['settempk2'] = 10
+            status['setdurak2'] = 10
+            return (self.tempk1, self.durak1)
+        elif self.method == 'K2':
+            cur_temp_dura = self.temp_list[self.cur_idx]
+            status['settempk1'] = self.tempk1
+            status['setdurak1'] = 100000    # dummy value
+            status['settempk2'] = cur_temp_dura[0]
+            status['setdurak2'] = cur_temp_dura[1]
+            return cur_temp_dura
+        else:
+            raise RuntimeError('Unsupported TempProcessControl method %s' % self.method)
 
     def start(self, recipe):
         print 'TempProcessControl started. Recipe: %s' % recipe
         self.temp_list = recipe['list']
+        self.tempk1 = recipe['tempk1']
+        self.durak1 = recipe['durak1']
         self.method = recipe['method']
         self.cur_idx = 0
         self.set_temp, self.set_dura = self._get_temp_dura()
@@ -144,7 +169,7 @@ class TempProcessControl(object):
                 return
 
             # We are finished with the current stage
-            if len(self.temp_list) <= self.cur_idx + 1:
+            if self.method == 'K1' or len(self.temp_list) <= self.cur_idx + 1:
                 # Nothing more to do
                 self.state = 'FINISHED'
                 return
@@ -154,20 +179,30 @@ class TempProcessControl(object):
 
         elif self.state == 'FINISHED':
             self.status['cook_state'] = 'Finished'
+            wq.all_off()
             return True
         else:
-            raise RuntimeError('TempProcessControl: Unknown state')
+            raise RuntimeError('TempProcessControl: Unknown state %s' % self.state)
         print 'TempProcessControl State After: %s' % self.state
 
     def control_temp(self):
-        ''' returns True whenr we have reached the current setpoint'''
-        temp = status['tempk1']
-        set_temp = self.set_temp
-        if (set_temp - temp) > TEMP_HYST:
+        ''' returns True when we have reached the current setpoint'''
+        if self.method == 'K1':
+            return self.control_tempk1(self.set_temp)
+        elif self.method == 'K2':
+            self.control_tempk1(self.tempk1)
+            return self.control_tempk2(self.set_temp)
+        else:
+            raise RuntimeError('Unsupported TempProcessControl method %s' % self.method)
+
+    def control_tempk1(self, set_temp):
+        ''' returns True when we have reached the current setpoint'''
+        tempk1 = status['tempk1']
+        if (set_temp - tempk1) > TEMP_HYST:
             # Too cold
             wq.heater_on_K1()
             return False
-        elif (set_temp - temp) < (-1 * TEMP_HYST):
+        elif (set_temp - tempk1) < (-1 * TEMP_HYST):
             # Too hot
             wq.heater_off_K1()
             return False
@@ -176,11 +211,26 @@ class TempProcessControl(object):
             wq.heater_off_K1()
             return True
 
+    def control_tempk2(self, set_temp):
+        ''' returns True when we have reached the current setpoint'''
+        tempk2 = status['tempk2']
+        if (set_temp - tempk2) > TEMP_HYST:
+            # Too cold
+            wq.heater_on_K2()
+            return False
+        elif (set_temp - tempk2) < (-1 * TEMP_HYST):
+            # Too hot
+            wq.heater_off_K2()
+            return False
+        else:
+            # Right temperature
+            wq.heater_off_K2()
+            return True
+
     def stop(self):
         self.status['cook_state'] = 'Stopped'
         print 'TempProcessControl stopped'
-        wq.heater_off_K1()
-        wq.heater_off_K2()
+        wq.all_off()
 
 
 class TempMonThread (threading.Thread):

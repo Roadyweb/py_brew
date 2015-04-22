@@ -1,0 +1,75 @@
+{% extends "layout_flot.html" %}
+
+{% block flot_head %}
+{{ super() }}
+<meta http-equiv="refresh" content="5" >
+<script type="text/javascript">
+$(function() {
+    // Style for bars
+    var data_points = {
+        show: true,
+        radius: 3,
+    };
+
+    var timelabel = "Time";
+    var time = [ {% for line in data.list %}{{ line.time }},{% endfor %} ];
+    var t1_label = "Temp K1"
+    var t1 = [ {% for line in data.list %}{{ line.tempk1 }},{% endfor %} ];
+    var t2_label = "Temp K2"
+    var t2 = [ {% for line in data.list %}{{ line.tempk2 }},{% endfor %} ];
+    var sp_t1_label = "Setpoint Temp K1"
+    var sp_t1 = [ {% for line in data.list %}{{ line.settempk1 }},{% endfor %} ];
+    var sp_t2_label = "Setpoint Temp K2"
+    var sp_t2 = [ {% for line in data.list %}{{ line.settempk2 }},{% endfor %} ];
+
+    // Get the week/year for the tooltip
+    var t1_set = [], t2_set = [],
+        sp_t1_set = [], sp_t2_set = [];
+
+    for (var i = 0; i < time.length; i += 1 ) {
+        t1_set.push([time[i], t1[i]]);
+        t2_set.push([time[i], t2[i]]);
+        sp_t1_set.push([time[i], sp_t1[i]]);
+        sp_t2_set.push([time[i], sp_t2[i]]);
+    }
+
+    var data = [
+        {color: "red",    points: data_points, data: t1_set,    label: t1_label},
+        {color: "blue",   points: data_points, data: t2_set,    label: t2_label},
+        {color: "green",  points: data_points, data: sp_t1_set, label: sp_t1_label},
+        {color: "yellow", points: data_points, data: sp_t2_set, label: sp_t2_label},
+    ];
+    var options = {
+        legend: { position: "sw", show: true },
+        series: {
+            lines: { show: true, lineWidth: 1 },
+            shadowSize: 0 
+        },
+        grid: { hoverable: true, clickable: true },
+        xaxis: { min: 0, zoomRange: [-30, 50], panRange: [-30, 50]},
+        yaxis: {
+            zoomRange: [20, 75],
+            panRange: [20, 75]
+        },
+        zoom: { interactive: true },
+        pan: { interactive: true }
+    };
+    var container = $("#placeholder");
+    var plot = $.plot(container, data , options);
+
+    addXAxis("Time [s]")
+    addYAxis("Temperature [°C]");
+    addZoomButton();
+    addArrows();
+});
+</script>
+{% endblock %}
+{% block body %}
+    <div id="content">
+    <div class="demo-container">
+        <div id="placeholder" class="demo-placeholder"></div>
+    </div>
+    <p class="message"></p>
+        <p>Zooming, panning and tooltips supported.</p>
+    </div>
+{% endblock %}

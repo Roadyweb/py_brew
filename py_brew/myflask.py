@@ -11,6 +11,7 @@ from flask import Flask, request, render_template, flash
 
 import copy
 import cook
+import datalogger
 import wq
 
 from recipes import Recipes
@@ -28,6 +29,8 @@ tmt_thread.start()
 wqt_thread = wq.WorkQueueThread()
 wqt_thread.start()
 wq.wqt_thread = wqt_thread
+dlt_thread = datalogger.DataLoggerThread()
+dlt_thread.start()
 
 last_action = 'Empty'
 
@@ -50,8 +53,10 @@ def run():
         if request.form['submit'] == 'Start':
             cook.cook_recipe = copy.deepcopy(brew_recipe)
             cook.pct_req = 'START'
+            dlt_thread.start_logging()
         elif request.form['submit'] == 'Stop':
             cook.pct_req = 'STOP'
+            dlt_thread.stop_logging()
         else:
             pass # unknown
     return render_template('run.html', heading='Run', state=cook.status, data=brew_recipe)
@@ -89,18 +94,22 @@ def manage():
     selected = recipes.get_selected_fname()
     return render_template('manage.html', heading='Manage', fnames=recipes.fnames, selected=selected)
 
+@app.route('/graph/')
+def graph():
+    return render_template('graph.html', heading='Graph', data=dlt_thread.get_data())
+
 def eval_edit_form(form, brew_recipe):
     brew_recipe['name'] = form['name']
     brew_recipe['method'] = form['method']
-    brew_recipe['tempk1'] = form['tk1']
-    brew_recipe['durak1'] = form['dk1']
+    brew_recipe['tempk1'] = float(form['tk1'])
+    brew_recipe['durak1'] = int(form['dk1'])
     tmp_list = []
     i = 0
     while True:
         try:
             temp = float(form['t' + str(i)])
             duration = int(form['d' + str(i)])
-            tmp_list.append((temp,duration))
+            tmp_list.append((temp, duration))
             i += 1
         except:
             break

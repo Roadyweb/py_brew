@@ -49,8 +49,8 @@ def heater_off_K2():
 
 def all_off():
     wqt_thread.add_wq_item(brewio.heater, 0, 0)
-    wqt_thread.add_wq_item(brewio.pump2, 1, 10)
-    wqt_thread.add_wq_item(brewio.pump1, 1, 10)
+    wqt_thread.add_wq_item(brewio.pump2, 0, 10)
+    wqt_thread.add_wq_item(brewio.pump1, 0, 20)
     pass
 
 
@@ -63,7 +63,6 @@ class WorkQueueThread(threading.Thread):
     def run(self):
         print 'Starting WorkQueueThread'
         cook.status['wqt_state'] = 'Running'
-        sleepduration = UPDATE_INT
         while 42:
             sleepduration = UPDATE_INT
             print 'WQT: queue length %d.' % (len(self.queue))
