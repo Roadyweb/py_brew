@@ -8,62 +8,95 @@ import datetime
 import threading
 import time
 
-import cook
+from py_brew.helper import timedelta2sec
 
-from helper import timedelta2sec
-
-THREAD_SLEEP_INT = 0.1   # seconds
-UPDATE_INT = 5.0         # seconds
+THREAD_SLEEP_INT = 0.05  # seconds
+LOG_INT = 5.0            # seconds
 
 class DataLoggerThread(threading.Thread):
-    def __init__(self):
+    """ Class to log data from the global status dictonary, add timestamps
+        and provide it as a list.
+
+    It runs as a thread.
+
+    Attributes:
+        status: reference to the global status dict, from where the data is
+                copied
+        state_cb: function to report back the current state of this thread
+                  function takes a string as argument
+        log_interval: log interval in seconds, defaults to 5
+    """
+
+    def __init__(self, status, state_cb, log_interval=LOG_INT):
+        """ Initializes all attributes """
         threading.Thread.__init__(self)
-        self.queue = []
-        cook.status['dlt_state'] = 'Initialized'
+        self.status = status
+        self.state_cb = state_cb
+        self.log_interval = log_interval
+        self.time_start = None
+        self.log_flag = False
+        self.exit_flag = False
+        self.data = {}
+        self._reset()
+        self.state_cb('Initialized')
+
+    def _reset(self):
+        """ Private function to reset the internal state of the thread """
+
+        # self.data is dictionary and it's only entry is a list, it can be
+        # expanded in the future, e.g. with the current recipes
         self.data = {}
         self.data['list'] = []
         self.time_start = None
-        self.log_flag = False
-
-    def reset(self):
-        self.time_start = datetime.datetime.now()
-        self.data = {}
-        self.data['list'] = []
 
     def run(self):
-        print 'Starting DataLoggerThread'
-        self.reset()
+        """ Run is is the main worker loop for the data looger thread. It has
+            to be started through threading.start()
+        """
+        self._reset()
         while 42:
-            sleepduration = UPDATE_INT
+            sleepduration = self.log_interval
             if self.log_flag:
-                cook.status['dlt_state'] = 'Logging'
-                td = timedelta2sec(datetime.datetime.now() - self.time_start)
+                # If we run the first time store start time as reference
+                if self.time_start == None:
+                    self.time_start = datetime.datetime.now()
+                self.state_cb('Logging')
+                delta = timedelta2sec(datetime.datetime.now() - self.time_start)
                 entry = {}
-                entry['time'] = td
-                entry['tempk1'] = cook.status['tempk1']
-                entry['tempk2'] = cook.status['tempk2']
-                entry['settempk1'] = cook.status['settempk1']
-                entry['settempk2'] = cook.status['settempk2']
-                entry['pump1'] = cook.status['pump1']
-                entry['pump2'] = cook.status['pump2']
-                entry['heater'] = cook.status['heater']
+                entry['time'] = delta
+                entry['tempk1'] = self.status['tempk1']
+                entry['tempk2'] = self.status['tempk2']
+                entry['settempk1'] = self.status['settempk1']
+                entry['settempk2'] = self.status['settempk2']
+                entry['pump1'] = self.status['pump1']
+                entry['pump2'] = self.status['pump2']
+                entry['heater'] = self.status['heater']
                 self.data['list'].append(entry)
                 print 'DLT: record length %d.' % (len(self.data['list']))
             else:
-                cook.status['dlt_state'] = 'Idle'
-                self.reset()
+                self.state_cb('Idle')
+                self._reset()
             while sleepduration > 0:
+                if self.exit_flag:
+                    self.state_cb('Not running')
+                    return
                 time.sleep(THREAD_SLEEP_INT)
                 sleepduration -= THREAD_SLEEP_INT
 
     def get_data(self):
+        """ Returns the current data as a list of dictonaries.
+            Is empty if the thread wasn't started or has been stopped
+        """
         return self.data
 
     def start_logging(self):
+        """ Starts the logging in the main loop """
         self.log_flag = True
 
     def stop_logging(self):
+        """ Stops the logging in the main loop """
         self.log_flag = False
 
-if __name__ == '__main__':
-    pass
+    def exit(self):
+        """ Exit the main loop """
+        self.exit_flag = True

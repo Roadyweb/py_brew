@@ -29,7 +29,7 @@ tmt_thread.start()
 wqt_thread = wq.WorkQueueThread()
 wqt_thread.start()
 wq.wqt_thread = wqt_thread
-dlt_thread = datalogger.DataLoggerThread()
+dlt_thread = datalogger.DataLoggerThread(cook.status, cook.dlt_state_cb)
 dlt_thread.start()
 
 last_action = 'Empty'

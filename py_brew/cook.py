@@ -45,6 +45,9 @@ status = {
                   'simulation': SIMULATION
                 }
 
+def dlt_state_cb(state):
+    status['dlt_state'] = state
+
 
 cook_recipe = {}
 
