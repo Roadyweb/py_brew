@@ -22,7 +22,7 @@ app.secret_key = 'some_secret'
 
 global wqt_thread
 
-pct_thread = cook.ProcControlThread()
+pct_thread = cook.ProcControlThread(cook.pct_state_cb)
 pct_thread.start()
 tmt_thread = cook.TempMonThread()
 tmt_thread.start()

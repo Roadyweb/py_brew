@@ -48,6 +48,8 @@ status = {
 def dlt_state_cb(state):
     status['dlt_state'] = state
 
+def pct_state_cb(state):
+    status['pct_state'] = state
 
 cook_recipe = {}
 
@@ -63,9 +65,11 @@ pct_req = ''
 
 
 class ProcControlThread (threading.Thread):
-    def __init__(self):
+    def __init__(self, state_cb):
         threading.Thread.__init__(self)
-        status['pct_state'] = 'Not running'
+        self.state_cb = state_cb
+        self.tpc = TempProcessControl(status)
+        self.state_cb('Initialized')
 
     def run(self):
         print 'Starting ProcControlThread'
@@ -75,20 +79,18 @@ class ProcControlThread (threading.Thread):
     def cook(self):
         global pct_req
         global tpc
-        status['pct_state'] = 'Idle'
+        self.state_cb('Idle')
         while 42:
-            if tpc == None:
-                tpc = TempProcessControl(status)
             sleepduration = UPDATE_INT
             print 'PCT: State: %s - Req: %s' % (status['pct_state'], pct_req)
 
             # Change thread state
             if pct_req == 'START':
-                status['pct_state'] = 'Cooking'
-                tpc.start(cook_recipe)
+                self.state_cb('Cooking')
+                self.tpc.start(cook_recipe)
             elif pct_req == 'STOP':
-                status['pct_state'] = 'Idle'
-                tpc.stop()
+                self.state_cb('Idle')
+                self.tpc.stop()
             elif pct_req == '':
                 pass
             else:
@@ -97,8 +99,8 @@ class ProcControlThread (threading.Thread):
 
             # Start state specific tasks
             if status['pct_state'] == 'Cooking':
-                if tpc.control_temp_interval():
-                    status['pct_state'] = 'Idle'
+                if self.tpc.control_temp_interval():
+                    self.state_cb('Idle')
             while sleepduration > 0:
                 time.sleep(THREAD_SLEEP_INT)
                 sleepduration -= THREAD_SLEEP_INT
