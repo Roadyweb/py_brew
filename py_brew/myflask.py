@@ -26,10 +26,10 @@ pct_thread = cook.ProcControlThread(cook.pct_state_cb)
 pct_thread.start()
 tmt_thread = cook.TempMonThread()
 tmt_thread.start()
-wqt_thread = wq.WorkQueueThread()
+wqt_thread = wq.WorkQueueThread(cook.wqt_state_cb)
 wqt_thread.start()
 wq.wqt_thread = wqt_thread
-dlt_thread = datalogger.DataLoggerThread(cook.status, cook.dlt_state_cb)
+dlt_thread = datalogger.DataLoggerThread(cook.status, cook.dlt_state_cb, 0.5)
 dlt_thread.start()
 
 last_action = 'Empty'
@@ -51,11 +51,10 @@ def run():
         raise RuntimeError('ProcControlThread is not running')
     if request.method == 'POST':
         if request.form['submit'] == 'Start':
-            cook.cook_recipe = copy.deepcopy(brew_recipe)
-            cook.pct_req = 'START'
+            pct_thread.start_cooking(brew_recipe)
             dlt_thread.start_logging()
         elif request.form['submit'] == 'Stop':
-            cook.pct_req = 'STOP'
+            pct_thread.stop_cooking()
             dlt_thread.stop_logging()
         else:
             pass # unknown

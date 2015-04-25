@@ -22,7 +22,7 @@ class DataLoggerThread(threading.Thread):
     Attributes:
         status: reference to the global status dict, from where the data is
                 copied
-        state_cb: function to report back the current state of this thread
+        set_state: function to report back the current state of this thread
                   function takes a string as argument
         log_interval: log interval in seconds, defaults to 5
     """
@@ -31,14 +31,14 @@ class DataLoggerThread(threading.Thread):
         """ Initializes all attributes """
         threading.Thread.__init__(self)
         self.status = status
-        self.state_cb = state_cb
+        self.set_state = state_cb
         self.log_interval = log_interval
         self.time_start = None
         self.log_flag = False
         self.exit_flag = False
         self.data = {}
         self._reset()
-        self.state_cb('Initialized')
+        self.set_state('Initialized')
 
     def _reset(self):
         """ Private function to reset the internal state of the thread """
@@ -60,7 +60,7 @@ class DataLoggerThread(threading.Thread):
                 # If we run the first time store start time as reference
                 if self.time_start == None:
                     self.time_start = datetime.datetime.now()
-                self.state_cb('Logging')
+                self.set_state('Logging')
                 delta = timedelta2sec(datetime.datetime.now() - self.time_start)
                 entry = {}
                 entry['time'] = delta
@@ -74,11 +74,11 @@ class DataLoggerThread(threading.Thread):
                 self.data['list'].append(entry)
                 print 'DLT: record length %d.' % (len(self.data['list']))
             else:
-                self.state_cb('Idle')
+                self.set_state('Idle')
                 self._reset()
             while sleepduration > 0:
                 if self.exit_flag:
-                    self.state_cb('Not running')
+                    self.set_state('Not running')
                     return
                 time.sleep(THREAD_SLEEP_INT)
                 sleepduration -= THREAD_SLEEP_INT

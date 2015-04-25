@@ -4,21 +4,21 @@ Created on Apr 12, 2015
 @author: stefan
 '''
 
+import copy
 import datetime
 import random
 import threading
 import time
 
-import brewio
 import wq
 
 from helper import timedelta2sec
 
 
-THREAD_SLEEP_INT = 0.1   # seconds
-UPDATE_INT = 1.0         # seconds
+THREAD_SLEEP_INT = 0.05   # seconds
+UPDATE_INT = 1            # seconds
 
-TEMP_HYST = 1            # The range Temp +/- TEMP_HYST is valid
+TEMP_HYST = 1             # The range Temp +/- TEMP_HYST is valid
 
 # Variables for simulation
 SIMULATION = True
@@ -51,25 +51,18 @@ def dlt_state_cb(state):
 def pct_state_cb(state):
     status['pct_state'] = state
 
-cook_recipe = {}
-
-tpc = None
-
-
-# Global variable to control ProcControlThread
-# Possible values: ''      - no change 
-#                  'START' - starts cooking
-#                  'STOP'  - stops cooking
-
-pct_req = ''
-
+def wqt_state_cb(state):
+    status['wqt_state'] = state
 
 class ProcControlThread (threading.Thread):
     def __init__(self, state_cb):
         threading.Thread.__init__(self)
-        self.state_cb = state_cb
+        self.set_state = state_cb
+        self.pct_req = ''
+        self.recipe = None
+        self.exit_flag = False
         self.tpc = TempProcessControl(status)
-        self.state_cb('Initialized')
+        self.set_state('Initialized')
 
     def run(self):
         print 'Starting ProcControlThread'
@@ -77,34 +70,43 @@ class ProcControlThread (threading.Thread):
         print 'Exiting ProcControlThread'
 
     def cook(self):
-        global pct_req
-        global tpc
-        self.state_cb('Idle')
+        self.set_state('Idle')
         while 42:
             sleepduration = UPDATE_INT
-            print 'PCT: State: %s - Req: %s' % (status['pct_state'], pct_req)
+            print 'PCT: State: %s - Req: %s' % (status['pct_state'], self.pct_req)
 
             # Change thread state
-            if pct_req == 'START':
-                self.state_cb('Cooking')
-                self.tpc.start(cook_recipe)
-            elif pct_req == 'STOP':
-                self.state_cb('Idle')
+            if self.pct_req == 'START':
+                self.set_state('Running')
+                self.tpc.start(self.recipe)
+            elif self.pct_req == 'STOP':
+                self.set_state('Idle')
                 self.tpc.stop()
-            elif pct_req == '':
-                pass
-            else:
-                raise RuntimeError('Unsupported ProcControlThread request %s' % pct_req)
-            pct_req = ''
+            self.pct_req = ''
 
             # Start state specific tasks
-            if status['pct_state'] == 'Cooking':
+            if status['pct_state'] == 'Running':
                 if self.tpc.control_temp_interval():
-                    self.state_cb('Idle')
+                    self.set_state('Idle')
             while sleepduration > 0:
+                if self.exit_flag:
+                    self.set_state('Not running')
+                    return
                 time.sleep(THREAD_SLEEP_INT)
                 sleepduration -= THREAD_SLEEP_INT
 
+    def start_cooking(self, recipe):
+        """ Starts cookin in the main loop """
+        self.recipe = copy.deepcopy(recipe)
+        self.pct_req = 'START'
+
+    def stop_cooking(self):
+        """ Starts cooking in the main loop """
+        self.pct_req = 'STOP'
+
+    def exit(self):
+        """ Exit the main loop """
+        self.exit_flag = True
 
 class TempProcessControl(object):
     '''Controls the different temperature stages'''

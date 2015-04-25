@@ -55,14 +55,16 @@ def all_off():
 
 
 class WorkQueueThread(threading.Thread):
-    def __init__(self):
+    def __init__(self, state_cb):
         threading.Thread.__init__(self)
         self.queue = []
-        cook.status['wqt_state'] = 'Not running'
+        self.set_state = state_cb
+        self.exit_flag = False
+        self.set_state('Initialized')
 
     def run(self):
         print 'Starting WorkQueueThread'
-        cook.status['wqt_state'] = 'Running'
+        self.set_state('Running')
         while 42:
             sleepduration = UPDATE_INT
             print 'WQT: queue length %d.' % (len(self.queue))
@@ -76,10 +78,15 @@ class WorkQueueThread(threading.Thread):
                     self.queue.pop(0)
 
             while sleepduration > 0:
+                if self.exit_flag:
+                    self.set_state('Not running')
+                    return
                 time.sleep(THREAD_SLEEP_INT)
                 sleepduration -= THREAD_SLEEP_INT
-        cook.status['wqt_state'] = 'Not running'
-        print 'Exiting WorkQueueThread'
+
+    def exit(self):
+        """ Exit the main loop """
+        self.exit_flag = True
 
     def add_wq_item(self, func, args, offset_s):
         timestamp = datetime.datetime.now() + datetime.timedelta(seconds=offset_s)
