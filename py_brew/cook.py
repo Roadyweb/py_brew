@@ -54,9 +54,12 @@ def pct_state_cb(state):
 def wqt_state_cb(state):
     status['wqt_state'] = state
 
+def tmt_state_cb(state):
+    status['tmt_state'] = state
+
 class ProcControlThread (threading.Thread):
     def __init__(self, state_cb):
-        threading.Thread.__init__(self)
+        threading.Thread.__init__(self, name='PCT')
         self.set_state = state_cb
         self.pct_req = ''
         self.recipe = None
@@ -109,7 +112,9 @@ class ProcControlThread (threading.Thread):
         self.exit_flag = True
 
 class TempProcessControl(object):
-    '''Controls the different temperature stages'''
+    """Class to controls the different temperature stages of the brewing
+       process.
+    """
     def __init__(self, status):
         print 'TempProcessControl init'
         self.temp_list = []
@@ -241,29 +246,47 @@ class TempProcessControl(object):
 
 
 class TempMonThread (threading.Thread):
-    def __init__(self):
-        threading.Thread.__init__(self)
-        status['tmt_state'] = 'Not running'
-    def run(self):
-        status['tmt_state'] = 'Running'
-        print 'Starting TempMonThread'
-        self.monitor()
-        print 'Exiting TempMonThread'
-        status['tmt_state'] = 'Not running'
+    """ Class to monitor temperature sensors in regular intervals.
 
-    def monitor(self):
+    It runs as a thread.
+
+    Attributes:
+        state_cb: function to report back the current state of this thread.
+                  The function takes a string as argument
+    """
+    def __init__(self, state_cb):
+        """ Initializes all attributes """
+        threading.Thread.__init__(self, name='TMT')
+        self.set_state = state_cb
+        self.set_state('Initialized')
+        self.exit_flag = False
+
+    def run(self):
+        """ Main loop """
+        self.set_state('Running')
         while 42:
             sleepduration = UPDATE_INT
 
             if SIMULATION:
-                status['tempk1'] = sim_calc_new_temp(status['tempk1'], status['pump1'])
-                status['tempk2'] = sim_calc_new_temp(status['tempk2'], status['pump2'])
+                status['tempk1'] = \
+                    sim_new_temp(status['tempk1'], status['pump1'])
+                status['tempk2'] = \
+                    sim_new_temp(status['tempk2'], status['pump2'])
 
             while sleepduration > 0:
+                if self.exit_flag:
+                    self.set_state('Not running')
+                    return
                 time.sleep(THREAD_SLEEP_INT)
                 sleepduration -= THREAD_SLEEP_INT
 
-def sim_calc_new_temp(temp, heat):
+    def exit(self):
+        """ Exit the main loop """
+        self.exit_flag = True
+
+
+def sim_new_temp(temp, heat):
+    """ Simulates the next temperature """
     cooling = (temp - AMBIENT_TEMP) * COOLING_FACTOR
     heating = heat * HEATING_FACTOR
     noise = (random.random() - 0.5) / 2

@@ -56,7 +56,7 @@ def all_off():
 
 class WorkQueueThread(threading.Thread):
     def __init__(self, state_cb):
-        threading.Thread.__init__(self)
+        threading.Thread.__init__(self, name='WQT')
         self.queue = []
         self.set_state = state_cb
         self.exit_flag = False

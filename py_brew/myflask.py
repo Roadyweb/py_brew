@@ -24,12 +24,12 @@ global wqt_thread
 
 pct_thread = cook.ProcControlThread(cook.pct_state_cb)
 pct_thread.start()
-tmt_thread = cook.TempMonThread()
+tmt_thread = cook.TempMonThread(cook.tmt_state_cb)
 tmt_thread.start()
 wqt_thread = wq.WorkQueueThread(cook.wqt_state_cb)
 wqt_thread.start()
 wq.wqt_thread = wqt_thread
-dlt_thread = datalogger.DataLoggerThread(cook.status, cook.dlt_state_cb, 0.5)
+dlt_thread = datalogger.DataLoggerThread(cook.status, cook.dlt_state_cb)
 dlt_thread.start()
 
 last_action = 'Empty'

@@ -22,14 +22,14 @@ class DataLoggerThread(threading.Thread):
     Attributes:
         status: reference to the global status dict, from where the data is
                 copied
-        set_state: function to report back the current state of this thread
+        state_cb: function to report back the current state of this thread
                   function takes a string as argument
         log_interval: log interval in seconds, defaults to 5
     """
 
     def __init__(self, status, state_cb, log_interval=LOG_INT):
         """ Initializes all attributes """
-        threading.Thread.__init__(self)
+        threading.Thread.__init__(self, name='DLT')
         self.status = status
         self.set_state = state_cb
         self.log_interval = log_interval
