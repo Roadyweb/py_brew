@@ -48,9 +48,9 @@ class Test(unittest.TestCase):
             rcp.select(i - 1)
             sel_recipe = rcp.get_selected_recipe()
             self.assertEqual(sel_recipe['name'], recipe['name'], 'Select')
-            # Check timestamps
-            self.assertEqual(sel_recipe['created'], str_timestamp_now())
-            self.assertEqual(sel_recipe['last_saved'], str_timestamp_now())
+            # Check timestamps, remove last 2 chars, since seconds might change
+            self.assertEqual(sel_recipe['created'][:-2], str_timestamp_now()[:-2])
+            self.assertEqual(sel_recipe['last_saved'][:-2], str_timestamp_now()[:-2])
         for i in range(9, 1, -1):
             rcp.delete(i - 1)
             self.assertEqual(len(rcp.get_fnames()), i - 1, 'Delete')

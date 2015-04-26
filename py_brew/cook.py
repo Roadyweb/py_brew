@@ -51,6 +51,9 @@ def dlt_state_cb(state):
 def pct_state_cb(state):
     status['pct_state'] = state
 
+def pct_get_state_cb():
+    return status['pct_state']
+
 def wqt_state_cb(state):
     status['wqt_state'] = state
 
@@ -58,25 +61,33 @@ def tmt_state_cb(state):
     status['tmt_state'] = state
 
 class ProcControlThread (threading.Thread):
-    def __init__(self, state_cb):
+    """ Class to control the brewing process.
+
+    It calls in regular intervals the TemperatureProcessControl. It runs as a
+    thread.
+
+    Attributes:
+        state_cb: function to report back the current state of this thread
+                  function takes a string as argument
+        get_state_cb: function to get back the state from the global status
+                      dict
+    """
+    def __init__(self, state_cb, get_state_cb, tpc):
+        """ Initializes all attributes """
         threading.Thread.__init__(self, name='PCT')
         self.set_state = state_cb
-        self.pct_req = ''
+        self.get_state = get_state_cb
+        self.pct_req = ''   # Could be START, STOP or EXIT
         self.recipe = None
-        self.exit_flag = False
-        self.tpc = TempProcessControl(status)
+        self.tpc = tpc
         self.set_state('Initialized')
 
     def run(self):
-        print 'Starting ProcControlThread'
-        self.cook()
-        print 'Exiting ProcControlThread'
-
-    def cook(self):
+        """ Main Loop """
         self.set_state('Idle')
         while 42:
             sleepduration = UPDATE_INT
-            print 'PCT: State: %s - Req: %s' % (status['pct_state'], self.pct_req)
+            print 'PCT: %s - Req: %s' % (self.get_state(), self.pct_req)
 
             # Change thread state
             if self.pct_req == 'START':
@@ -85,16 +96,16 @@ class ProcControlThread (threading.Thread):
             elif self.pct_req == 'STOP':
                 self.set_state('Idle')
                 self.tpc.stop()
+            elif self.pct_req == 'EXIT':
+                self.set_state('Not running')
+                return
             self.pct_req = ''
 
             # Start state specific tasks
-            if status['pct_state'] == 'Running':
+            if self.get_state() == 'Running':
                 if self.tpc.control_temp_interval():
                     self.set_state('Idle')
             while sleepduration > 0:
-                if self.exit_flag:
-                    self.set_state('Not running')
-                    return
                 time.sleep(THREAD_SLEEP_INT)
                 sleepduration -= THREAD_SLEEP_INT
 
@@ -109,7 +120,8 @@ class ProcControlThread (threading.Thread):
 
     def exit(self):
         """ Exit the main loop """
-        self.exit_flag = True
+        self.pct_req = 'EXIT'
+
 
 class TempProcessControl(object):
     """Class to controls the different temperature stages of the brewing

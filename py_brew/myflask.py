@@ -9,7 +9,6 @@ Main functions to create the webpages
 
 from flask import Flask, request, render_template, flash
 
-import copy
 import cook
 import datalogger
 import wq
@@ -22,7 +21,8 @@ app.secret_key = 'some_secret'
 
 global wqt_thread
 
-pct_thread = cook.ProcControlThread(cook.pct_state_cb)
+tpc = cook.TempProcessControl(cook.status)
+pct_thread = cook.ProcControlThread(cook.pct_state_cb, cook.pct_get_state_cb, tpc)
 pct_thread.start()
 tmt_thread = cook.TempMonThread(cook.tmt_state_cb)
 tmt_thread.start()
