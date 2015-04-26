@@ -95,11 +95,8 @@ class Recipes(object):
     def delete(self, idx):
         """ Deletes the file provided as index of the internal arrays """
         fname = self.fnames[idx]
-        try:
-            os.remove(fname)
-            print 'Successfully removed %s' % fname
-        except:
-            print 'Failed to remove %s' % fname
+        os.remove(fname)
+        print 'Successfully removed %s' % fname
         self.__init__()
 
     def select(self, idx):

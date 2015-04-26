@@ -55,6 +55,12 @@ class Test(unittest.TestCase):
             rcp.delete(i - 1)
             self.assertEqual(len(rcp.get_fnames()), i - 1, 'Delete')
 
+    def testRecipesFolderCreation(self):
+        recipes.PATH = TST_DIR
+        shutil.rmtree(TST_DIR)
+        recipes.Recipes()
+        self.assertEqual(os.path.isdir(TST_DIR), True, 'Directory creation')
+
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
