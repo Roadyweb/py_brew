@@ -21,7 +21,7 @@ app.secret_key = 'some_secret'
 
 global wqt_thread
 
-tpc = cook.TempProcessControl(cook.status)
+tpc = cook.TempProcessControl(cook.cook_state_cb, cook.cook_temp_state_cb)
 pct_thread = cook.ProcControlThread(cook.pct_state_cb, cook.pct_get_state_cb, tpc)
 pct_thread.start()
 tmt_thread = cook.TempMonThread(cook.tmt_state_cb)

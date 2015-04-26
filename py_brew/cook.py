@@ -37,11 +37,11 @@ status = {
                   'pump1': 0,
                   'pump2': 0,
                   'heater': 0,
-                  'cook_state': 'Off',
-                  'pct_state': 'Not running',
-                  'tmt_state': 'Not running',
-                  'wqt_state': 'Not running',
                   'dlt_state': 'Not running',
+                  'pct_state': 'Not running',
+                  'wqt_state': 'Not running',
+                  'tmt_state': 'Not running',
+                  'cook_state': 'Off',
                   'simulation': SIMULATION
                 }
 
@@ -59,6 +59,16 @@ def wqt_state_cb(state):
 
 def tmt_state_cb(state):
     status['tmt_state'] = state
+
+def cook_state_cb(state):
+    status['cook_state'] = state
+
+def cook_temp_state_cb(settempk1, setdurak1, settempk2, setdurak2):
+    status['settempk1'] = settempk1
+    status['setdurak1'] = setdurak1
+    status['settempk2'] = settempk2
+    status['setdurak1'] = setdurak1
+
 
 class ProcControlThread (threading.Thread):
     """ Class to control the brewing process.
@@ -126,9 +136,17 @@ class ProcControlThread (threading.Thread):
 class TempProcessControl(object):
     """Class to controls the different temperature stages of the brewing
        process.
+
+    Attributes:
+        state_cb: function to report back the current state of this thread
+                  function takes a string as argument
+        temp_state_cb: function to report back the current setpoint for tempk1,
+                       durak1, tempk2 and durak2
     """
-    def __init__(self, status):
-        print 'TempProcessControl init'
+    def __init__(self, state_cb, temp_state_cb):
+        """ Initializes all attributes """
+        self.set_state = state_cb
+        self.set_temp_state = temp_state_cb
         self.temp_list = []
         ''' Possible states:
                 INIT:     New setpoint
@@ -136,7 +154,6 @@ class TempProcessControl(object):
                 FINISHED: Required time is over, go to next setpoint
         '''
         self.state = 'INIT'     # current state of the state machine
-        self.status = status    # reference to global status dict
         self.cur_idx = 0
         self.wait_start = None
         self.method = None
@@ -146,20 +163,15 @@ class TempProcessControl(object):
         self.durak1 = None
 
     def _get_temp_dura(self):
+        """ Returns a tuple of the current temp and duration stage """
         if self.method == 'K1':
-            status['settempk1'] = self.tempk1
-            status['setdurak1'] = self.durak1
-            # TODO: use dummy values for unset k2 parameters, to make flot
+            # TODO: use dummy values 10 for unset k2 parameters, to make flot
             # happy. Reevalute if necessary
-            status['settempk2'] = 10
-            status['setdurak2'] = 10
+            self.set_temp_state(self.tempk1, self.durak1, 10, 10)
             return (self.tempk1, self.durak1)
         elif self.method == 'K2':
             cur_temp_dura = self.temp_list[self.cur_idx]
-            status['settempk1'] = self.tempk1
-            status['setdurak1'] = 100000    # dummy value
-            status['settempk2'] = cur_temp_dura[0]
-            status['setdurak2'] = cur_temp_dura[1]
+            self.set_temp_state(self.tempk1, 10000, cur_temp_dura[0], cur_temp_dura[1])
             return cur_temp_dura
         else:
             raise RuntimeError('Unsupported TempProcessControl method %s' % self.method)
@@ -176,38 +188,41 @@ class TempProcessControl(object):
 
     def control_temp_interval(self):
         ''' returns true when finished '''
-        print 'TempProcessControl State Before: %s' % self.state
-
         if self.state == 'INIT':
-            self.status['cook_state'] = 'Init'
+            self.set_state('Stage %d - Init' % (self.cur_idx + 1))
             if self.control_temp() == True:
                 self.state = 'WAITING'
                 self.wait_start = datetime.datetime.now()
         elif self.state == 'WAITING':
-            td = datetime.datetime.now() - self.wait_start
-            status['cook_state'] = 'Stage %d - Cooking for %d of a total of %d seconds' \
-                % (self.cur_idx + 1, timedelta2sec(td), self.set_dura)
+            td_sec = timedelta2sec(datetime.datetime.now() - self.wait_start)
+            self.set_state('Stage %d - Cooking for %d of of %d seconds' \
+                % (self.cur_idx + 1, td_sec, self.set_dura)
+                )
             self.control_temp()
-            if timedelta2sec(td) < self.set_dura:
+            if td_sec < self.set_dura:
                 # We are not finished
                 return
 
-            # We are finished with the current stage
+            # We are finished with the current stage, is there more to do?
             if self.method == 'K1' or len(self.temp_list) <= self.cur_idx + 1:
                 # Nothing more to do
                 self.state = 'FINISHED'
                 return
+            # Yes we have another stage
             self.cur_idx += 1
             self.set_temp, self.set_dura = self._get_temp_dura()
             self.state = 'INIT'
 
         elif self.state == 'FINISHED':
-            self.status['cook_state'] = 'Finished'
+            self.set_state('Finished')
             wq.all_off()
             return True
         else:
-            raise RuntimeError('TempProcessControl: Unknown state %s' % self.state)
-        print 'TempProcessControl State After: %s' % self.state
+            raise RuntimeError('TPC: Unknown state %s' % self.state)
+
+    def stop(self):
+        self.set_state('Stopped')
+        wq.all_off()
 
     def control_temp(self):
         ''' returns True when we have reached the current setpoint'''
@@ -217,7 +232,7 @@ class TempProcessControl(object):
             self.control_tempk1(self.tempk1)
             return self.control_tempk2(self.set_temp)
         else:
-            raise RuntimeError('Unsupported TempProcessControl method %s' % self.method)
+            raise RuntimeError('Unsupported TPC method %s' % self.method)
 
     def control_tempk1(self, set_temp):
         ''' returns True when we have reached the current setpoint'''
@@ -250,11 +265,6 @@ class TempProcessControl(object):
             # Right temperature
             wq.heater_off_K2()
             return True
-
-    def stop(self):
-        self.status['cook_state'] = 'Stopped'
-        print 'TempProcessControl stopped'
-        wq.all_off()
 
 
 class TempMonThread (threading.Thread):

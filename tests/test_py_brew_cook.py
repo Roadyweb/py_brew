@@ -16,7 +16,10 @@ class Test(unittest.TestCase):
     def setUp(self):
         # For the test increase update speed
         cook.UPDATE_INT = 0.1
-        tpc = cook.TempProcessControl(cook.status)
+        tpc = cook.TempProcessControl(
+                        cook.cook_state_cb,
+                        cook.cook_temp_state_cb
+                        )
         self.pct = cook.ProcControlThread(
                         cook.pct_state_cb,
                         cook.pct_get_state_cb,
