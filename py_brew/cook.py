@@ -18,8 +18,6 @@ from helper import timedelta2sec
 THREAD_SLEEP_INT = 0.05   # seconds
 UPDATE_INT = 1            # seconds
 
-TEMP_HYST = 1             # The range Temp +/- TEMP_HYST is valid
-
 # Variables for simulation
 SIMULATION = True
 AMBIENT_TEMP = 10.0     # minimum temperature when no heating is applied
@@ -227,44 +225,12 @@ class TempProcessControl(object):
     def control_temp(self):
         ''' returns True when we have reached the current setpoint'''
         if self.method == 'K1':
-            return self.control_tempk1(self.set_temp)
+            return wq.control_tempk1(self.set_temp)
         elif self.method == 'K2':
-            self.control_tempk1(self.tempk1)
-            return self.control_tempk2(self.set_temp)
+            wq.control_tempk1(self.tempk1)
+            return wq.control_tempk2(self.set_temp)
         else:
             raise RuntimeError('Unsupported TPC method %s' % self.method)
-
-    def control_tempk1(self, set_temp):
-        ''' returns True when we have reached the current setpoint'''
-        tempk1 = status['tempk1']
-        if (set_temp - tempk1) > TEMP_HYST:
-            # Too cold
-            wq.heater_on_K1()
-            return False
-        elif (set_temp - tempk1) < (-1 * TEMP_HYST):
-            # Too hot
-            wq.heater_off_K1()
-            return False
-        else:
-            # Right temperature
-            wq.heater_off_K1()
-            return True
-
-    def control_tempk2(self, set_temp):
-        ''' returns True when we have reached the current setpoint'''
-        tempk2 = status['tempk2']
-        if (set_temp - tempk2) > TEMP_HYST:
-            # Too cold
-            wq.heater_on_K2()
-            return False
-        elif (set_temp - tempk2) < (-1 * TEMP_HYST):
-            # Too hot
-            wq.heater_off_K2()
-            return False
-        else:
-            # Right temperature
-            wq.heater_off_K2()
-            return True
 
 
 class TempMonThread (threading.Thread):
