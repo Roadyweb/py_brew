@@ -55,7 +55,7 @@ class Recipes(object):
                     try:
                         self.recipes.append(pickle.load(opened_file))
                         self.fnames.append(file_path)
-                        print 'Successfully loaded %s' % file_path
+                        # print 'Successfully loaded %s' % file_path
                     except EOFError, e:
                         print 'EOFError while loading %s. %s' % (file_path, e)
     
@@ -96,11 +96,11 @@ class Recipes(object):
         """ Deletes the file provided as index of the internal arrays """
         fname = self.fnames[idx]
         os.remove(fname)
-        print 'Successfully removed %s' % fname
+        # print 'Successfully removed %s' % fname
         self.__init__()
 
     def select(self, idx):
         """ Selects an recipe from the internal list as index """
         #TODO: some error checking is required here
         self.selected = idx
-        print 'Selected entry %d' % idx
+        # print 'Selected entry %d' % idx

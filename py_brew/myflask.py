@@ -43,12 +43,12 @@ def special_exception_handler(error):
 
 class Error(): pass
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 @app.route('/run/', methods=['GET', 'POST'])
 def run():
     global pct_thread
-    if not pct_thread or not pct_thread.is_alive():
-        raise RuntimeError('ProcControlThread is not running')
+    # if not pct_thread or not pct_thread.is_alive():
+    #    raise RuntimeError('ProcControlThread is not running')
     if request.method == 'POST':
         if request.form['submit'] == 'Start':
             pct_thread.start_cooking(brew_recipe)

@@ -45,7 +45,7 @@ class Test(unittest.TestCase):
         self.assertEqual(cook.status['pct_state'], 'Running')
 
         self.pct.stop_cooking()
-        time.sleep(0.1)
+        time.sleep(0.5)
         self.assertEqual(cook.status['pct_state'], 'Idle')
 
         self.pct.exit()

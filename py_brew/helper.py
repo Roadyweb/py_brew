@@ -5,6 +5,7 @@ Created on Apr 18, 2015
 '''
 
 import datetime
+import re
 
 def timedelta2sec(td):
     # total_seconds is not available in Python 2.6
@@ -13,3 +14,9 @@ def timedelta2sec(td):
 
 def str_timestamp_now():
     return datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+def grepline(text, search4str):
+    for line in text.splitlines():
+        if re.search(search4str, line):
+            return line
+    return None
