@@ -10,6 +10,7 @@ import random
 import threading
 import time
 
+import brewio
 import wq
 
 from helper import timedelta2sec
@@ -260,7 +261,10 @@ class TempMonThread (threading.Thread):
                     sim_new_temp(status['tempk1'], status['pump1'])
                 status['tempk2'] = \
                     sim_new_temp(status['tempk2'], status['pump2'])
-
+            else:
+                status['tempk1'] = brewio.tempk1()
+                status['tempk2'] = brewio.tempk2()
+            
             while sleepduration > 0:
                 if self.exit_flag:
                     self.set_state('Not running')

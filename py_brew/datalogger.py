@@ -8,7 +8,7 @@ import datetime
 import threading
 import time
 
-from py_brew.helper import timedelta2sec
+from helper import timedelta2sec
 
 THREAD_SLEEP_INT = 0.05  # seconds
 LOG_INT = 5.0            # seconds
