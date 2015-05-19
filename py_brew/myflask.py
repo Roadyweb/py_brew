@@ -134,7 +134,7 @@ def eval_manage_form(form):
 if __name__ == '__main__':
     try:
         #app.debug = True
-        app.run(host='192.168.178.39')
+        app.run(host='192.168.178.29')
     except (KeyboardInterrupt, SystemExit):
         print 'Ctrl-C pressed'
         pct_thread.exit()

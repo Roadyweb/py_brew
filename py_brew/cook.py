@@ -20,7 +20,7 @@ THREAD_SLEEP_INT = 0.05   # seconds
 UPDATE_INT = 1            # seconds
 
 # Variables for simulation
-SIMULATION = True
+SIMULATION = False
 AMBIENT_TEMP = 10.0     # minimum temperature when no heating is applied
 COOLING_FACTOR = 0.005  # cooling in degrees = (curr temp - AMBIENT_TEMP) / COOLING_FACTOR
 HEATING_FACTOR = 0.4    # Normal heating is 1 K per second

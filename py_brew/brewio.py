@@ -32,19 +32,37 @@ def read_sensor(path):
     return value
 
 def pump1(state):
-    #os.system('gpio -g mode 22 out')
+    os.system('gpio -g mode 17 out')
     if state == '0':
-        #os.system('gpio -g write 22 0')
+        print "Pump1 ON"
+	os.system('gpio -g write 17 0')
         pass
     else:
-        #os.system('gpio -g write 22 1')
+	print "Pump1 OFF"
+        os.system('gpio -g write 17 1')
         pass
     cook.status['pump1'] = state
 
 def pump2(state):
     cook.status['pump2'] = state
+    os.system('gpio -g mode 22 out')
+    if state == '0':
+        os.system('gpio -g write 22 0')
+        pass
+    else:
+        os.system('gpio -g write 22 1')
+        pass
+    cook.status['pump2'] = state
 
 def heater(state):
+    cook.status['heater'] = state
+    os.system('gpio -g mode 23 out')
+    if state == '0':
+        os.system('gpio -g write 23 0')
+        pass
+    else:
+        os.system('gpio -g write 23 1')
+        pass
     cook.status['heater'] = state
 
 if __name__ == '__main__':
