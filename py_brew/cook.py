@@ -96,7 +96,7 @@ class ProcControlThread (threading.Thread):
         self.set_state('Idle')
         while 42:
             sleepduration = UPDATE_INT
-            print 'PCT: %s - Req: %s' % (self.get_state(), self.pct_req)
+            #print 'PCT: %s - Req: %s' % (self.get_state(), self.pct_req)
 
             # Change thread state
             if self.pct_req == 'START':

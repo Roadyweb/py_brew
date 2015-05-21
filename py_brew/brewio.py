@@ -25,44 +25,43 @@ def read_sensor(path):
             m = re.match(r"([0-9a-f]{2} ){9}t=([+-]?[0-9]+)", line)
         if m:
             value = float(m.group(2)) / 1000.0
-            print value
+            #print value
         f.close()
     except (IOError), e:
         print time.strftime("%x %X"), "Error reading", path, ": ", e
     return value
 
 def pump1(state):
+    cook.status['pump1'] = state
     os.system('gpio -g mode 17 out')
-    if state == '0':
-        print "Pump1 ON"
+    if state == 0:
+        print "pump1 OFF"
 	os.system('gpio -g write 17 0')
-        pass
     else:
-	print "Pump1 OFF"
+	print "pump1 ON"
         os.system('gpio -g write 17 1')
-        pass
     cook.status['pump1'] = state
 
 def pump2(state):
     cook.status['pump2'] = state
     os.system('gpio -g mode 22 out')
-    if state == '0':
+    if state == 0:
         os.system('gpio -g write 22 0')
-        pass
+        print "pump2 OFF"
     else:
         os.system('gpio -g write 22 1')
-        pass
+        print "pump2 ON"
     cook.status['pump2'] = state
 
 def heater(state):
     cook.status['heater'] = state
     os.system('gpio -g mode 23 out')
-    if state == '0':
+    if state == 0:
         os.system('gpio -g write 23 0')
-        pass
+        print "heater OFF"
     else:
         os.system('gpio -g write 23 1')
-        pass
+        print "heater ON"
     cook.status['heater'] = state
 
 if __name__ == '__main__':

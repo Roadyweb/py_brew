@@ -101,7 +101,7 @@ class WorkQueueThread(threading.Thread):
         self.set_state('Running')
         while 42:
             sleepduration = UPDATE_INT
-            print 'WQT: queue length %d.' % (len(self.queue))
+            # print 'WQT: queue length %d.' % (len(self.queue))
             if len(self.queue) > 0:
                 el = self.queue[0]
                 if el[2] < datetime.datetime.now():
