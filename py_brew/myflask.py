@@ -8,6 +8,7 @@ Main functions to create the webpages
 
 
 from flask import Flask, request, render_template, flash
+import time
 
 import cook
 import datalogger
@@ -134,3 +135,12 @@ def eval_manage_form(form):
 if __name__ == '__main__':
     #app.debug = True
     app.run(host='192.168.178.80')
+    threads = [pct_thread, tmt_thread, wqt_thread, dlt_thread]
+
+    # Stop all threads
+    for thread in threads:
+        print thread.name + str(thread.is_alive())
+        thread.exit()
+        while thread.is_alive():
+            time.sleep(0.1)
+        print thread.name + str(thread.is_alive())
