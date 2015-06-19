@@ -134,7 +134,10 @@ def eval_manage_form(form):
 
 if __name__ == '__main__':
     #app.debug = True
-    app.run(host='192.168.178.80')
+    
+    # Richards IP: 192.168.178.29
+    # Stefans  IP: 192.168.178.80
+    app.run(host='192.168.178.29')
     threads = [pct_thread, tmt_thread, wqt_thread, dlt_thread]
 
     # Stop all threads

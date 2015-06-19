@@ -10,6 +10,7 @@ import random
 import threading
 import time
 
+import brewio
 import wq
 
 from helper import timedelta2sec
@@ -19,7 +20,7 @@ THREAD_SLEEP_INT = 0.05   # seconds
 UPDATE_INT = 1            # seconds
 
 # Variables for simulation
-SIMULATION = True
+SIMULATION = False
 AMBIENT_TEMP = 10.0     # minimum temperature when no heating is applied
 COOLING_FACTOR = 0.005  # cooling in degrees = (curr temp - AMBIENT_TEMP) / COOLING_FACTOR
 HEATING_FACTOR = 0.4    # Normal heating is 1 K per second
@@ -95,7 +96,7 @@ class ProcControlThread (threading.Thread):
         self.set_state('Idle')
         while 42:
             sleepduration = UPDATE_INT
-            print 'PCT: %s - Req: %s' % (self.get_state(), self.pct_req)
+            #print 'PCT: %s - Req: %s' % (self.get_state(), self.pct_req)
 
             # Change thread state
             if self.pct_req == 'START':
@@ -260,7 +261,10 @@ class TempMonThread (threading.Thread):
                     sim_new_temp(status['tempk1'], status['pump1'])
                 status['tempk2'] = \
                     sim_new_temp(status['tempk2'], status['pump2'])
-
+            else:
+                status['tempk1'] = brewio.tempk1()
+                status['tempk2'] = brewio.tempk2()
+            
             while sleepduration > 0:
                 if self.exit_flag:
                     self.set_state('Not running')

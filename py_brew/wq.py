@@ -67,7 +67,7 @@ def heater_off_K1():
     global heater_state_K1
     if heater_state_K1 == 1:
         wqt_thread.add_wq_item(brewio.heater, 0, 0)
-        wqt_thread.add_wq_item(brewio.pump1, 0, 0)
+        wqt_thread.add_wq_item(brewio.pump1, 0, 10)
         heater_state_K1 = 0
 
 def heater_on_K2():
@@ -101,7 +101,7 @@ class WorkQueueThread(threading.Thread):
         self.set_state('Running')
         while 42:
             sleepduration = UPDATE_INT
-            print 'WQT: queue length %d.' % (len(self.queue))
+            # print 'WQT: queue length %d.' % (len(self.queue))
             if len(self.queue) > 0:
                 el = self.queue[0]
                 if el[2] < datetime.datetime.now():
