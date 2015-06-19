@@ -13,7 +13,7 @@ import cook
 
 
 # Variables for simulation
-SIMULATION = True
+SIMULATION = False
 AMBIENT_TEMP = 10.0     # minimum temperature when no heating is applied
 COOLING_FACTOR = 0.005  # cooling in degrees = (curr temp - AMBIENT_TEMP) / COOLING_FACTOR
 HEATING_FACTOR = 0.4    # Normal heating is 1 K per second
@@ -32,19 +32,21 @@ def tempk2():
     return read_sensor('/sys/bus/w1/devices/28-031501c640ff/w1_slave')
 
 def read_sensor(path):
-    value = "U"
+    ''' reads the value from device in the given path
+        return a float, the sensor value when successful, float('NaN' otherwise
+    '''
     try:
-        f = open(path, "r")
-        line = f.readline()
-        if re.match(r"([0-9a-f]{2} ){9}: crc=[0-9a-f]{2} YES", line):
-            line = f.readline()
-            m = re.match(r"([0-9a-f]{2} ){9}t=([+-]?[0-9]+)", line)
+        fd = open(path, "r")
+        line = fd.readline()
+        if re.match(r"([0-9a-fd]{2} ){9}: crc=[0-9a-fd]{2} YES", line):
+            line = fd.readline()
+            m = re.match(r"([0-9a-fd]{2} ){9}t=([+-]?[0-9]+)", line)
         if m:
             value = float(m.group(2)) / 1000.0
-            #print value
-        f.close()
+        fd.close()
     except (IOError), e:
         print time.strftime("%x %X"), "Error reading", path, ": ", e
+        value = float('NaN')
     return value
 
 def pump1(state):
