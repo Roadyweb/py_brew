@@ -6,7 +6,6 @@ Created on Apr 12, 2015
 
 import copy
 import datetime
-import random
 import threading
 import time
 
@@ -18,12 +17,6 @@ from helper import timedelta2sec
 
 THREAD_SLEEP_INT = 0.05   # seconds
 UPDATE_INT = 1            # seconds
-
-# Variables for simulation
-SIMULATION = False
-AMBIENT_TEMP = 10.0     # minimum temperature when no heating is applied
-COOLING_FACTOR = 0.005  # cooling in degrees = (curr temp - AMBIENT_TEMP) / COOLING_FACTOR
-HEATING_FACTOR = 0.4    # Normal heating is 1 K per second
 
 # Global variables for inter thread communication
 status = {
@@ -41,7 +34,7 @@ status = {
                   'wqt_state': 'Not running',
                   'tmt_state': 'Not running',
                   'cook_state': 'Off',
-                  'simulation': SIMULATION
+                  'simulation': brewio.SIMULATION
                 }
 
 def dlt_state_cb(state):
@@ -256,15 +249,9 @@ class TempMonThread (threading.Thread):
         while 42:
             sleepduration = UPDATE_INT
 
-            if SIMULATION:
-                status['tempk1'] = \
-                    sim_new_temp(status['tempk1'], status['pump1'])
-                status['tempk2'] = \
-                    sim_new_temp(status['tempk2'], status['pump2'])
-            else:
-                status['tempk1'] = brewio.tempk1()
-                status['tempk2'] = brewio.tempk2()
-            
+            status['tempk1'] = brewio.tempk1()
+            status['tempk2'] = brewio.tempk2()
+
             while sleepduration > 0:
                 if self.exit_flag:
                     self.set_state('Not running')
@@ -275,13 +262,4 @@ class TempMonThread (threading.Thread):
     def exit(self):
         """ Exit the main loop """
         self.exit_flag = True
-
-
-def sim_new_temp(temp, heat):
-    """ Simulates the next temperature """
-    cooling = (temp - AMBIENT_TEMP) * COOLING_FACTOR
-    heating = heat * HEATING_FACTOR
-    noise = (random.random() - 0.5) / 2
-    temp += noise + heating - cooling
-    return temp
 
