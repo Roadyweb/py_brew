@@ -57,6 +57,8 @@ def run():
         elif request.form['submit'] == 'Stop':
             pct_thread.stop_cooking()
             dlt_thread.stop_logging()
+        elif request.form['submit'] == 'Reset Graph':
+            dlt_thread.stop_logging()
         else:
             pass # unknown
     return render_template('run.html', heading='Run', state=cook.status, data=brew_recipe)

@@ -22,7 +22,7 @@ HEATING_FACTOR = 0.4    # Normal heating is 1 K per second
 def tempk1():
     status = cook.status
     if SIMULATION:
-        return sim_new_temp(status['tempk1'], status['pump1'])
+        return sim_new_temp(status['tempk1'], status['heater'])
     return read_sensor('/sys/bus/w1/devices/28-041501b1e6ff/w1_slave')
 
 def tempk2():
