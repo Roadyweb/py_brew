@@ -84,10 +84,13 @@ def heater_off_K2():
         heater_state_K2 = 0
 
 def all_off():
+    global heater_state_K1
+    global heater_state_K2
     wqt_thread.add_wq_item(brewio.heater, 0, 0)
     wqt_thread.add_wq_item(brewio.pump2, 0, 10)
     wqt_thread.add_wq_item(brewio.pump1, 0, 20)
-
+    heater_state_K1 = 0
+    heater_state_K2 = 0
 
 class WorkQueueThread(threading.Thread):
     def __init__(self, state_cb):
