@@ -81,9 +81,9 @@ class TestFlask(unittest.TestCase):
 
     def testWPRunInteger(self):
         ''' As above just for integer types '''
-        entries2test = [['pump1', '<td align="right">Pump 1:'],
-                        ['pump2', '<td align="right">Pump 2:'],
-                        ['heater', '<td align="right">Heater:'],
+        entries2test = [['pump1', '<td align="right">Pumpe 1:'],
+                        ['pump2', '<td align="right">Pumpe 2:'],
+                        ['heater', '<td align="right">Heizung:'],
                        ]
         for dict_key, line2grep in entries2test:
             for value in range(0, 2):   # test 0 and 1
