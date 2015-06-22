@@ -7,15 +7,17 @@
 
 {% block body %}
     {% if data %}
-        <h2>Recipe Name: {{ data.name }}</h2>
+        <h2>Rezept: {{ data.name }}</h2>
         <br />
-        Created: {{ data.created }}<br />
-        Last Saved: {{ data.last_saved }}<br />
-        <h3>Settings:</h3>
+        Erstellt: {{ data.created }}<br />
+        Letzte Änderung: {{ data.last_saved }}<br />
+
+   <section class="linke-spalte">
+        <h3>Einstellungen:</h3>
         <table>
         <tr>
-        <td>Temp K1: {{ data.tempk1 }} °C</td>
-        <td>Dura K1: {{ data.durak1 }} s</td>
+        <td>Kochtemp. K1: {{ data.tempk1 }} °C</td>
+        <td>Kochdauer K1: {{ data.durak1 }} s</td>
         </tr>
         <tr></tr>
         <tr></tr>
@@ -28,8 +30,8 @@
             <tr></tr>
             {% for entry in data.list %}
                 <tr>
-                <td>Temp K2: {{ entry[0]|safe }} °C</td>
-                <td>Dura K2: {{ entry[1]|safe }} s</td>
+                <td>Rasttemp. K2: {{ entry[0]|safe }} °C</td>
+                <td>Rastdauer K2: {{ entry[1]|safe }} s</td>
                 </tr>
             {% else %}
                 <em>No entries</em>
@@ -37,33 +39,30 @@
         {% endif %}
         </table>
         <br />
-        Method: {{ data.method }}
-    {% endif %}
 
+        Methode: {{ data.method }}
+    {% endif %}
+    </section>
+
+
+<section class="rechte-spalte">
     {% if state %}
-        <h3>State:</h3>
+        <h3>Status:</h3>
         <table>
         <tr><td align="right">Temp K1: </td><td>{{'%0.1f' % state.tempk1 }} °C</td></tr>
         <tr><td align="right">Temp K2: </td><td>{{'%0.1f' % state.tempk2 }} °C</td></tr>
-        <tr><td align="right">Set Temp K1: </td><td>{{'%0.1f' % state.settempk1 }} °C</td></tr>
-        <tr><td align="right">Set Temp K2: </td><td>{{'%0.1f' % state.settempk2 }} °C</td></tr>
-        <tr><td align="right">Set Dura K1: </td><td>{{'%0.1f' % state.setdurak1 }} s</td></tr>
-        <tr><td align="right">Set Dura K2: </td><td>{{'%0.1f' % state.setdurak2 }} s</td></tr>
-        <tr><td align="right">Pump 1: </td><td>{{ state.pump1 }}</td></tr>
-        <tr><td align="right">Pump 2: </td><td>{{ state.pump2 }}</td></tr>
-        <tr><td align="right">Heater: </td><td>{{ state.heater }}</td></tr>
+        
+        <tr><td align="right">Pumpe 1: </td><td>{{ state.pump1 }}</td></tr>
+        <tr><td align="right">Pumpe 2: </td><td>{{ state.pump2 }}</td></tr>
+        <tr><td align="right">Heizung: </td><td>{{ state.heater }}</td></tr>
         <tr><td></td></tr>
-        <tr><td align="right">Cook State: </td><td>{{ state.cook_state }}</td></tr>
-        <tr><td align="right">ProcControl State: </td><td>{{ state.pct_state }}</td></tr>
-        <tr><td align="right">TempMon State: </td><td>{{ state.tmt_state }}</td></tr>
-        <tr><td align="right">WorkQueue State: </td><td>{{ state.wqt_state }}</td></tr>
-        <tr><td align="right">DataLogger State: </td><td>{{ state.dlt_state }}</td></tr>
-        <tr><td align="right">Simulation: </td><td>{{ state.simulation }}</td></tr>
+        
         </table>
     {% else %}
         <p>No current data available</p>
     {% endif %}
     <br />
+</section>
     <form action="." method="POST">
         <input type="submit" name="submit" value="Start">
         <input type="submit" name="submit" value="Stop">

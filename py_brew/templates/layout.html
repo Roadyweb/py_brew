@@ -7,21 +7,33 @@
 </head>
 
 <div class=title>
-<h1 style="margin-bottom:0;">Py Brew</h1>
+
+<img src ="../static/kopfklein.jpg">
 </div>
 
-<div class=menu><br />
-<br />
-<b>Menu</b><br />
-<a href="{{ url_for('run')       }}">Start</a><br />
-<a href="{{ url_for('edit')      }}">Edit</a><br />
-<a href="{{ url_for('manage')    }}">Manage</a><br />
-<a href="{{ url_for('graph')     }}">Graph</a><br />
-<!--<a href="http://roadyweb.zapto.org/munin/homelinux.org/roadyweb.homelinux.org/index.html#homeautomation_heater">Munin</a><br />-->
-<!--<a href="http://roadyweb.zapto.org/munin/raspberry/index.html">RPi-Pellets</a><br />-->
+
+
+<div id="menu">
+
+
+
+<ul>
+<li><a class="active" href="{{ url_for('manage')    }}">Rezepte</a><br />
+<li><a href="{{ url_for('edit')      }}">Eingabe</a><br />
+<li><a href="{{ url_for('run')       }}">Start</a><br />
+<li><a href="{{ url_for('graph')     }}">Graph</a><br />
+</ul>
+
 <br /><br />
 <br /><br />
 </div>
+
+
+
+
+
+
+
 
 <div class=page>
 {% if heading %}
@@ -31,5 +43,5 @@
 </div>
 
 <div class=footer>
-Copyright © roadyweb.zapto.org 2015
+	 <h4>© Schnipplberger</h4>
 </div>

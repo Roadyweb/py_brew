@@ -10,7 +10,7 @@ import os
 import time
 
 def tempk1():
-    return read_sensor('/sys/bus/w1/devices/28-03146cb103ff/w1_slave')
+    return read_sensor('/sys/bus/w1/devices/28-041501b1e6ff/w1_slave')
 
 def tempk2():
     return read_sensor('/sys/bus/w1/devices/28-031501c640ff/w1_slave')
