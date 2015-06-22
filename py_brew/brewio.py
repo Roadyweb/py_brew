@@ -23,7 +23,7 @@ def tempk1():
     status = cook.status
     if SIMULATION:
         return sim_new_temp(status['tempk1'], status['pump1'])
-    return read_sensor('/sys/bus/w1/devices/28-03146cb103ff/w1_slave')
+    return read_sensor('/sys/bus/w1/devices/28-041501b1e6ff/w1_slave')
 
 def tempk2():
     status = cook.status

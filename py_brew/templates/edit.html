@@ -7,28 +7,36 @@
 {% block body %}
     <form action="." method="POST">
         <table>
-        <tr>
-        <td>Recipe Name: <input type="text" name="name" value={{ data.name|safe }}></td>
+        <tr> 
+        <td>Rezept: <input type="text" name="name" value={{ data.name|safe }}></td>
         </tr>
+        <tr></tr>
+        <tr></tr>
+        <tr></tr>
+        <tr></tr>
         <table>
         <tr>
-        <td>Temp K1: <input type="text" name="tk1" value={{ data.tempk1 }} °C></td>
-        <td>Dura K1: <input type="text" name="dk1" value={{ data.durak1 }} s></td>
+        <td>Kochtemperatur K1: <input type="text" name="tk1" value={{ data.tempk1 }} °C></td>
+        <td>Kochdauer T1: <input type="text" name="dk1" value={{ data.durak1 }} s></td>
         </tr>
         <tr></tr>
         <tr></tr>
         <tr></tr>
         <tr></tr>
         {% for entry in data.list %}
-            <tr>
-            <td>Temp K2: <input type="text" name="t{{ loop.index0 }}" value={{ entry[0] }} °C></td>
-            <td>Dura K2: <input type="text" name="d{{ loop.index0 }}" value={{ entry[1] }} s></td>
-            </tr>
+        <tr>
+        <td>Rasttemperatur K2: <input type="text" name="t{{ loop.index0 }}" value={{ entry[0] }} °C></td>
+        <td>Rastdauer T2: <input type="text" name="d{{ loop.index0 }}" value={{ entry[1] }} s></td>
+        </tr>
+        <tr></tr>
+        <tr></tr>
+        <tr></tr>
+        <tr></tr>
         {% else %}
             <em>No entries</em>
         {% endfor %}
         </table>
-        Control method: 
+        Modus: 
         <input type="radio" name="method" value="K1"{% if data.method == 'K1' %}checked{% endif%}> K1 
         <input type="radio" name="method" value="K2"{% if data.method == 'K2' %}checked{% endif%}> K2 <br /><br />
         <input type="submit" name="submit" value="Add_Row">
@@ -37,6 +45,6 @@
         <input type="submit" name="submit" value="Reset">
     </form>
     {% if last_action %}
-        <p>Last Action: {{ last_action }}</p>
+        <p>Letzte Aktion: {{ last_action }}</p>
     {% endif %}
 {% endblock %}

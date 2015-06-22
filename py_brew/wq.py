@@ -15,7 +15,7 @@ import cook
 THREAD_SLEEP_INT = 0.1   # seconds
 UPDATE_INT = 1.0         # seconds
 
-TEMP_HYST = 1             # The range Temp +/- TEMP_HYST is valid
+TEMP_HYST = 0.2           # The range Temp +/- TEMP_HYST is valid
 
 # Variable to store instance for work queue thread
 wqt_thread = None
