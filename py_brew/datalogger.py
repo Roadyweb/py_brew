@@ -11,7 +11,7 @@ import time
 from helper import timedelta2sec
 
 THREAD_SLEEP_INT = 0.05  # seconds
-LOG_INT = 5.0            # seconds
+LOG_INT = 20.0           # seconds
 
 class DataLoggerThread(threading.Thread):
     """ Class to log data from the global status dictonary, add timestamps
@@ -72,7 +72,7 @@ class DataLoggerThread(threading.Thread):
                 entry['pump2'] = self.status['pump2']
                 entry['heater'] = self.status['heater']
                 self.data['list'].append(entry)
-                print 'DLT: record length %d.' % (len(self.data['list']))
+                # print 'DLT: record length %d.' % (len(self.data['list']))
             else:
                 self.set_state('Idle')
                 self._reset()

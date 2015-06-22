@@ -67,7 +67,8 @@ def heater_off_K1():
     global heater_state_K1
     if heater_state_K1 == 1:
         wqt_thread.add_wq_item(brewio.heater, 0, 0)
-        wqt_thread.add_wq_item(brewio.pump1, 0, 10)
+        # Keep pump1 running all the time
+        # wqt_thread.add_wq_item(brewio.pump1, 0, 10)
         heater_state_K1 = 0
 
 def heater_on_K2():
