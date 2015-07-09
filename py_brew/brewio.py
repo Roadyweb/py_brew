@@ -17,6 +17,7 @@ SIMULATION = False
 AMBIENT_TEMP = 10.0     # minimum temperature when no heating is applied
 COOLING_FACTOR = 0.005  # cooling in degrees = (curr temp - AMBIENT_TEMP) / COOLING_FACTOR
 HEATING_FACTOR = 0.4    # Normal heating is 1 K per second
+RANDOM_FACTOR = 0.01    # Random Faktor. 1 cause a randomness of +/- 0.5 K
 
 
 def tempk1():
@@ -79,7 +80,7 @@ def sim_new_temp(temp, heat):
     """ Simulates the next temperature """
     cooling = (temp - AMBIENT_TEMP) * COOLING_FACTOR
     heating = heat * HEATING_FACTOR
-    noise = (random.random() - 0.5) / 2
+    noise = (random.random() - 0.5) * RANDOM_FACTOR
     temp += noise + heating - cooling
     return temp
 
