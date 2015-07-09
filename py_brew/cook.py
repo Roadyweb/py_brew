@@ -63,7 +63,7 @@ def cook_temp_state_cb(settempk1, setdurak1, settempk2, setdurak2):
     status['settempk1'] = settempk1
     status['setdurak1'] = setdurak1
     status['settempk2'] = settempk2
-    status['setdurak1'] = setdurak1
+    status['setdurak2'] = setdurak2
 
 
 class ProcControlThread (threading.Thread):
