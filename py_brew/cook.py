@@ -22,6 +22,7 @@ UPDATE_INT = 1            # seconds
 status = {
                   'tempk1': 10.0,
                   'tempk2': 10.0,
+                  'temp_offset': 0.0,
                   'settempk1': 0.0,
                   'settempk2': 0.0,
                   'setdurak1': 0.0,
@@ -59,11 +60,12 @@ def bm_state_cb(state):
 def cook_state_cb(state):
     status['cook_state'] = state
 
-def cook_temp_state_cb(settempk1, setdurak1, settempk2, setdurak2):
+def cook_temp_state_cb(settempk1, setdurak1, settempk2, setdurak2, temp_offset):
     status['settempk1'] = settempk1
     status['setdurak1'] = setdurak1
     status['settempk2'] = settempk2
     status['setdurak2'] = setdurak2
+    status['temp_offset'] = temp_offset
 
 
 class ProcControlThread (threading.Thread):
@@ -157,18 +159,21 @@ class TempProcessControl(object):
         self.set_dura = None
         self.tempk1 = None
         self.durak1 = None
+        self.temp_offset = 0.0
 
     def _get_temp_dura(self):
         """ Returns a tuple of the current temp and duration stage """
         if self.method == 'K1':
-            # TODO: use dummy values 10 for unset k2 parameters, to make flot
+            # TODO: use dummy values 0 for unset k2 parameters, to make flot
             # happy. Reevalute if necessary
-            self.set_temp_state(self.tempk1, self.durak1, 10, 10)
-            return (self.tempk1, self.durak1)
+            temp = self.tempk1 + self.temp_offset
+            self.set_temp_state(temp, self.durak1, 0, 0, self.temp_offset)
+            return (temp, self.durak1)
         elif self.method == 'K2':
-            cur_temp_dura = self.temp_list[self.cur_idx]
-            self.set_temp_state(self.tempk1, 10000, cur_temp_dura[0], cur_temp_dura[1])
-            return cur_temp_dura
+            temp, dura = self.temp_list[self.cur_idx]
+            temp += self.temp_offset
+            self.set_temp_state(self.tempk1, 10000, temp, dura, self.temp_offset)
+            return (temp, dura)
         else:
             raise RuntimeError('Unsupported TempProcessControl method %s' % self.method)
 
@@ -181,11 +186,13 @@ class TempProcessControl(object):
         self.cur_idx = 0
         self.set_temp, self.set_dura = self._get_temp_dura()
         self.state = 'INIT'
+        self.temp_offset = 0.0
 
     def control_temp_interval(self):
         ''' returns true when finished '''
         if self.state == 'INIT':
             self.set_state('Stage %d - Init' % (self.cur_idx + 1))
+            self.set_temp, self.set_dura = self._get_temp_dura()
             if self.control_temp() == True:
                 self.state = 'WAITING'
                 self.wait_start = datetime.datetime.now()
@@ -194,6 +201,7 @@ class TempProcessControl(object):
             self.set_state('Stage %d - Cooking for %d of of %d seconds' \
                 % (self.cur_idx + 1, td_sec, self.set_dura)
                 )
+            self.set_temp, self.set_dura = self._get_temp_dura()
             self.control_temp()
             if td_sec < self.set_dura:
                 # We are not finished
@@ -206,6 +214,7 @@ class TempProcessControl(object):
                 return
             # Yes we have another stage
             self.cur_idx += 1
+            self.temp_offset = 0.0
             self.set_temp, self.set_dura = self._get_temp_dura()
             self.state = 'INIT'
 
@@ -219,6 +228,12 @@ class TempProcessControl(object):
     def stop(self):
         self.set_state('Stopped')
         wq.all_off()
+
+    def inc_offset(self, offset):
+        self.temp_offset += offset
+
+    def dec_offset(self, offset):
+        self.temp_offset -= offset
 
     def control_temp(self):
         ''' returns True when we have reached the current setpoint'''

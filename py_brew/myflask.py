@@ -61,6 +61,10 @@ def run():
             dlt_thread.stop_logging()
         elif request.form['submit'] == 'Reset Graph':
             dlt_thread.stop_logging()
+        elif request.form['submit'] == '+ 0.2 deg':
+            tpc.inc_offset(0.2)
+        elif request.form['submit'] == '- 0.2 deg':
+            tpc.inc_offset(-0.2)
         else:
             pass # unknown
     return render_template('run.html', heading='Run', state=cook.status, data=brew_recipe)
