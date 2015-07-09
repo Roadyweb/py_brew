@@ -32,6 +32,8 @@ wqt_thread.start()
 wq.wqt_thread = wqt_thread
 dlt_thread = datalogger.DataLoggerThread(cook.status, cook.dlt_state_cb)
 dlt_thread.start()
+bm = wq.BlubberManager(cook.bm_state_cb)
+wq.bm = bm
 
 last_action = 'Empty'
 

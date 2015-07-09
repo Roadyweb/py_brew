@@ -33,6 +33,7 @@ status = {
                   'pct_state': 'Not running',
                   'wqt_state': 'Not running',
                   'tmt_state': 'Not running',
+                  'bm_state': 'Unknown',
                   'cook_state': 'Off',
                   'simulation': brewio.SIMULATION
                 }
