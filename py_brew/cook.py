@@ -21,11 +21,11 @@ UPDATE_INT = 1            # seconds
 # Global variables for inter thread communication
 status = {
                   'tempk1': 10.0,
-                  'tempk2': 20.0,
-                  'settempk1': 10.0,
-                  'settempk2': 20.0,
-                  'setdurak1': 10.0,
-                  'setdurak2': 20.0,
+                  'tempk2': 10.0,
+                  'settempk1': 0.0,
+                  'settempk2': 0.0,
+                  'setdurak1': 0.0,
+                  'setdurak2': 0.0,
                   'pump1': 0,
                   'pump2': 0,
                   'heater': 0,
@@ -52,6 +52,9 @@ def wqt_state_cb(state):
 
 def tmt_state_cb(state):
     status['tmt_state'] = state
+
+def bm_state_cb(state):
+    status['bm_state'] = state
 
 def cook_state_cb(state):
     status['cook_state'] = state
@@ -90,7 +93,7 @@ class ProcControlThread (threading.Thread):
         self.set_state('Idle')
         while 42:
             sleepduration = UPDATE_INT
-            #print 'PCT: %s - Req: %s' % (self.get_state(), self.pct_req)
+            # print 'PCT: %s - Req: %s' % (self.get_state(), self.pct_req)
 
             # Change thread state
             if self.pct_req == 'START':
