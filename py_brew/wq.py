@@ -19,8 +19,8 @@ TEMP_HYST = 0.2           # The range Temp +/- TEMP_HYST is valid
 
 # From time to time we have to switch on the pump for k2 to mix the stuff in
 # pot 2.
-BLUBBER_INT = 30        # interval in seconds
-BLUBBER_DURA = 10        # duration in seconds
+BLUBBER_INT = 300        # interval in seconds
+BLUBBER_DURA = 30        # duration in seconds
 
 # Variable to store instance for work queue thread and BlubberManager
 wqt_thread = None
