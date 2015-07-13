@@ -163,16 +163,19 @@ class TempProcessControl(object):
 
     def _get_temp_dura(self):
         """ Returns a tuple of the current temp and duration stage """
+        tempk1_offset = self.tempk1 + self.temp_offset
         if self.method == 'K1':
             # TODO: use dummy values 0 for unset k2 parameters, to make flot
             # happy. Reevalute if necessary
-            temp = self.tempk1 + self.temp_offset
-            self.set_temp_state(temp, self.durak1, 0, 0, self.temp_offset)
-            return (temp, self.durak1)
+            self.set_temp_state(
+                    tempk1_offset, self.durak1, 0, 0, self.temp_offset
+            )
+            return (tempk1_offset, self.durak1)
         elif self.method == 'K2':
             temp, dura = self.temp_list[self.cur_idx]
-            temp += self.temp_offset
-            self.set_temp_state(self.tempk1, 10000, temp, dura, self.temp_offset)
+            self.set_temp_state(
+                    tempk1_offset, 10000, temp, dura, self.temp_offset
+            )
             return (temp, dura)
         else:
             raise RuntimeError('Unsupported TempProcessControl method %s' % self.method)
@@ -240,7 +243,7 @@ class TempProcessControl(object):
         if self.method == 'K1':
             return wq.control_tempk1(self.set_temp)
         elif self.method == 'K2':
-            wq.control_tempk1(self.tempk1)
+            wq.control_tempk1(self.tempk1 + self.temp_offset)
             return wq.control_tempk2(self.set_temp)
         else:
             raise RuntimeError('Unsupported TPC method %s' % self.method)
