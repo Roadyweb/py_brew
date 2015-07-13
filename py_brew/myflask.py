@@ -69,6 +69,27 @@ def run():
             pass # unknown
     return render_template('run.html', heading='Run', state=cook.status, data=brew_recipe)
 
+@app.route('/debug/', methods=['GET', 'POST'])
+def debug():
+    global pct_thread
+    # if not pct_thread or not pct_thread.is_alive():
+    #    raise RuntimeError('ProcControlThread is not running')
+    if request.method == 'POST':
+        if request.form['submit'] == 'Start':
+            pct_thread.start_cooking(brew_recipe)
+            dlt_thread.start_logging()
+        elif request.form['submit'] == 'Stop':
+            pct_thread.stop_cooking()
+            dlt_thread.stop_logging()
+        elif request.form['submit'] == 'Reset Graph':
+            dlt_thread.stop_logging()
+        elif request.form['submit'] == '+ 0.2 deg':
+            tpc.inc_offset(0.2)
+        elif request.form['submit'] == '- 0.2 deg':
+            tpc.inc_offset(-0.2)
+        else:
+            pass # unknown
+    return render_template('debug.html', heading='Debug', state=cook.status, data=brew_recipe)
 
 @app.route('/edit/', methods=['GET', 'POST'])
 def edit():
