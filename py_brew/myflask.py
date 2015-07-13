@@ -60,7 +60,7 @@ def run():
             pct_thread.stop_cooking()
             dlt_thread.stop_logging()
         elif request.form['submit'] == 'Reset Graph':
-            dlt_thread.stop_logging()
+            dlt_thread.reset_data()
         elif request.form['submit'] == '+ 0.2 deg':
             tpc.inc_offset(0.2)
         elif request.form['submit'] == '- 0.2 deg':
@@ -82,7 +82,7 @@ def debug():
             pct_thread.stop_cooking()
             dlt_thread.stop_logging()
         elif request.form['submit'] == 'Reset Graph':
-            dlt_thread.stop_logging()
+            dlt_thread.reset_data()
         elif request.form['submit'] == '+ 0.2 deg':
             tpc.inc_offset(0.2)
         elif request.form['submit'] == '- 0.2 deg':

@@ -53,15 +53,15 @@ class DataLoggerThread(threading.Thread):
         """ Run is is the main worker loop for the data looger thread. It has
             to be started through threading.start()
         """
-        self._reset()
         while 42:
             sleepduration = self.log_interval
             if self.log_flag:
                 # If we run the first time store start time as reference
-                if self.time_start == None:
-                    self.time_start = datetime.datetime.now()
+                now = datetime.datetime.now()
+                if self.time_start is None:
+                    self.time_start = now
                 self.set_state('Logging')
-                delta = timedelta2sec(datetime.datetime.now() - self.time_start)
+                delta = timedelta2sec(now - self.time_start)
                 entry = {}
                 entry['time'] = delta
                 entry['tempk1'] = self.status['tempk1']
@@ -75,7 +75,6 @@ class DataLoggerThread(threading.Thread):
                 # print 'DLT: record length %d.' % (len(self.data['list']))
             else:
                 self.set_state('Idle')
-                self._reset()
             while sleepduration > 0:
                 if self.exit_flag:
                     self.set_state('Not running')
@@ -89,8 +88,14 @@ class DataLoggerThread(threading.Thread):
         """
         return self.data
 
+    def reset_data(self):
+        """ Resets all logged data
+        """
+        self._reset()
+
     def start_logging(self):
         """ Starts the logging in the main loop """
+        self._reset()
         self.log_flag = True
 
     def stop_logging(self):
