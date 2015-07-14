@@ -12,6 +12,7 @@ import time
 
 import cook
 import datalogger
+import signal
 import wq
 
 from recipes import Recipes
@@ -34,6 +35,23 @@ dlt_thread = datalogger.DataLoggerThread(cook.status, cook.dlt_state_cb)
 dlt_thread.start()
 bm = wq.BlubberManager(cook.bm_state_cb)
 wq.bm = bm
+
+
+def handler(signum, frame):
+    print 'Signal handler called with signal', signum
+    threads = [pct_thread, tmt_thread, wqt_thread, dlt_thread]
+
+    # Stop all threads
+    for thread in threads:
+        if thread.is_alive():
+            print thread.name + ' is still alive'
+        thread.exit()
+        while thread.is_alive():
+            time.sleep(0.1)
+
+# Register signal handler that stopps all threads
+# signal.SIGTERM is issued from supervisor
+signal.signal(signal.SIGTERM, handler)
 
 last_action = 'Empty'
 
@@ -171,8 +189,8 @@ if __name__ == '__main__':
 
     # Stop all threads
     for thread in threads:
-        print thread.name + str(thread.is_alive())
+        if thread.is_alive():
+            print thread.name + ' is still alive'
         thread.exit()
         while thread.is_alive():
             time.sleep(0.1)
-        print thread.name + str(thread.is_alive())
