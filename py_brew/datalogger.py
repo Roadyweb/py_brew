@@ -8,10 +8,10 @@ import datetime
 import threading
 import time
 
+import config
+
 from helper import timedelta2sec
 
-THREAD_SLEEP_INT = 0.05  # seconds
-LOG_INT = 20.0           # seconds
 
 class DataLoggerThread(threading.Thread):
     """ Class to log data from the global status dictonary, add timestamps
@@ -27,7 +27,7 @@ class DataLoggerThread(threading.Thread):
         log_interval: log interval in seconds, defaults to 5
     """
 
-    def __init__(self, status, state_cb, log_interval=LOG_INT):
+    def __init__(self, status, state_cb, log_interval=config.LOG_INT):
         """ Initializes all attributes """
         threading.Thread.__init__(self, name='DLT')
         self.status = status
@@ -79,8 +79,8 @@ class DataLoggerThread(threading.Thread):
                 if self.exit_flag:
                     self.set_state('Not running')
                     return
-                time.sleep(THREAD_SLEEP_INT)
-                sleepduration -= THREAD_SLEEP_INT
+                time.sleep(config.THREAD_SLEEP_INT)
+                sleepduration -= config.THREAD_SLEEP_INT
 
     def get_data(self):
         """ Returns the current data as a list of dictonaries.

@@ -10,6 +10,7 @@ Main functions to create the webpages
 from flask import Flask, request, render_template
 import time
 
+import config
 import cook
 import datalogger
 import signal
@@ -192,9 +193,6 @@ def eval_manage_form(form):
 
 
 if __name__ == '__main__':
-    # app.debug = True
-    # Richards IP: 192.168.178.29
-    # Stefans  IP: 192.168.178.80
-    app.run(host='192.168.178.80')
-
+    app.debug = config.FLASK_DEBUG
+    app.run(host=config.IP_ADDRESS)
     stop_all_threads()

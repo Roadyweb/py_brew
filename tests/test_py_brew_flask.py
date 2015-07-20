@@ -9,6 +9,7 @@ import time
 import unittest
 
 import py_brew.cook as cook
+import py_brew.config as config
 import py_brew.helper as helper
 import py_brew.myflask as flask
 
@@ -20,7 +21,7 @@ class TestFlask(unittest.TestCase):
         global counter
         counter += 1
         print "SET UP", counter
-        cook.UPDATE_INT = 0.05
+        config.PCT_UPDATE_INT = 0.05
         flask.app.config['TESTING'] = True
         self.app = flask.app.test_client()
         print "SET UP END"

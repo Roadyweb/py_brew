@@ -10,13 +10,11 @@ import threading
 import time
 
 import brewio
+import config
 import wq
 
 from helper import timedelta2sec
 
-
-THREAD_SLEEP_INT = 0.05   # seconds
-UPDATE_INT = 1            # seconds
 
 # Global variables for inter thread communication
 status = {
@@ -36,7 +34,7 @@ status = {
                   'tmt_state': 'Not running',
                   'bm_state': 'Unknown',
                   'cook_state': 'Off',
-                  'simulation': brewio.SIMULATION
+                  'simulation': config.SIMULATION
                 }
 
 def dlt_state_cb(state):
@@ -94,7 +92,7 @@ class ProcControlThread (threading.Thread):
         """ Main Loop """
         self.set_state('Idle')
         while 42:
-            sleepduration = UPDATE_INT
+            sleepduration = config.PCT_UPDATE_INT
             # print 'PCT: %s - Req: %s' % (self.get_state(), self.pct_req)
 
             # Change thread state
@@ -114,8 +112,8 @@ class ProcControlThread (threading.Thread):
                 if self.tpc.control_temp_interval():
                     self.set_state('Idle')
             while sleepduration > 0:
-                time.sleep(THREAD_SLEEP_INT)
-                sleepduration -= THREAD_SLEEP_INT
+                time.sleep(config.THREAD_SLEEP_INT)
+                sleepduration -= config.THREAD_SLEEP_INT
 
     def start_cooking(self, recipe):
         """ Starts cookin in the main loop """
@@ -269,7 +267,7 @@ class TempMonThread (threading.Thread):
         """ Main loop """
         self.set_state('Running')
         while 42:
-            sleepduration = UPDATE_INT
+            sleepduration = config.SENSOR_UPDATE_INT
 
             status['tempk1'] = brewio.tempk1()
             status['tempk2'] = brewio.tempk2()
@@ -278,8 +276,8 @@ class TempMonThread (threading.Thread):
                 if self.exit_flag:
                     self.set_state('Not running')
                     return
-                time.sleep(THREAD_SLEEP_INT)
-                sleepduration -= THREAD_SLEEP_INT
+                time.sleep(config.THREAD_SLEEP_INT)
+                sleepduration -= config.THREAD_SLEEP_INT
 
     def exit(self):
         """ Exit the main loop """

@@ -7,6 +7,7 @@ import unittest
 import time
 
 import py_brew.cook as cook
+import py_brew.config as config
 import py_brew.recipes as recipes
 import py_brew.wq as wq
 
@@ -15,7 +16,7 @@ global wqt_thread
 class Test(unittest.TestCase):
     def setUp(self):
         # For the test increase update speed
-        cook.UPDATE_INT = 0.1
+        config.PCT_UPDATE_INT = 0.1
         tpc = cook.TempProcessControl(
                         cook.cook_state_cb,
                         cook.cook_temp_state_cb
