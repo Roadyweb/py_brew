@@ -11,7 +11,7 @@ import time
 import brewio
 import config
 import cook
-
+from helper import timedelta2sec
 
 # Variable to store instance for work queue thread and BlubberManager
 wqt_thread = None
@@ -37,9 +37,10 @@ class BlubberManager():
             self.waituntil = datetime.datetime.now() + \
                 datetime.timedelta(seconds=config.BLUBBER_INT)
             self.state = 'WAITING'
-            self.set_state('Waiting')
         elif self.state == 'WAITING':
-            if self.waituntil < datetime.datetime.now():
+            td2wait = timedelta2sec(self.waituntil - datetime.datetime.now())
+            self.set_state('Waiting for %d s' % td2wait)
+            if td2wait < 0:
                 self.waituntil = datetime.datetime.now() + \
                     datetime.timedelta(seconds=config.BLUBBER_DURA)
                 # Finally start blubbering
@@ -47,7 +48,9 @@ class BlubberManager():
                 self.state = 'BLUBBERING'
                 self.set_state('Blubbering')
         elif self.state == 'BLUBBERING':
-            if self.waituntil < datetime.datetime.now():
+            td2wait = timedelta2sec(self.waituntil - datetime.datetime.now())
+            self.set_state('Blubbering for %f s' % td2wait)
+            if td2wait < 0:
                 # We're done stop blubbering
                 self.reset()
         else:
