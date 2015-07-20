@@ -7,7 +7,7 @@ Main functions to create the webpages
 '''
 
 
-from flask import Flask, request, render_template, flash
+from flask import Flask, request, render_template
 import time
 
 import cook
@@ -37,11 +37,14 @@ bm = wq.BlubberManager(cook.bm_state_cb)
 wq.bm = bm
 
 
-def handler(signum, frame):
-    print 'Signal handler called with signal', signum
-    threads = [pct_thread, tmt_thread, wqt_thread, dlt_thread]
+last_action = 'Empty'
 
-    # Stop all threads
+recipes = Recipes()
+brew_recipe = recipes.get_default()
+
+
+def stop_all_threads():
+    threads = [pct_thread, tmt_thread, wqt_thread, dlt_thread]
     for thread in threads:
         if thread.is_alive():
             print thread.name + ' is still alive'
@@ -49,20 +52,23 @@ def handler(signum, frame):
         while thread.is_alive():
             time.sleep(0.1)
 
+
+def handler(signum, frame):
+    print 'Signal handler called with signal', signum
+    stop_all_threads()
+
 # Register signal handler that stopps all threads
 # signal.SIGTERM is issued from supervisor
 signal.signal(signal.SIGTERM, handler)
 
-last_action = 'Empty'
-
-recipes = Recipes()
-brew_recipe = recipes.get_default()
 
 @app.errorhandler(IOError)
 def special_exception_handler(error):
     return render_template('exception.html', heading='Error')
 
+
 class Error(): pass
+
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/run/', methods=['GET', 'POST'])
@@ -87,6 +93,7 @@ def run():
             pass # unknown
     return render_template('run.html', heading='Run', state=cook.status, data=brew_recipe)
 
+
 @app.route('/debug/', methods=['GET', 'POST'])
 def debug():
     global pct_thread
@@ -108,6 +115,7 @@ def debug():
         else:
             pass # unknown
     return render_template('debug.html', heading='Debug', state=cook.status, data=brew_recipe)
+
 
 @app.route('/edit/', methods=['GET', 'POST'])
 def edit():
@@ -131,6 +139,7 @@ def edit():
             pass
     return render_template('edit.html', heading='Edit', data=brew_recipe, last_action=last_action)
 
+
 @app.route('/manage/', methods=['GET', 'POST'])
 def manage():
     global brew_recipe
@@ -141,9 +150,11 @@ def manage():
     selected = recipes.get_selected_fname()
     return render_template('manage.html', heading='Manage', fnames=recipes.fnames, selected=selected)
 
+
 @app.route('/graph/')
 def graph():
     return render_template('graph.html', heading='Graph', data=dlt_thread.get_data())
+
 
 def eval_edit_form(form, brew_recipe):
     brew_recipe['name'] = form['name']
@@ -161,6 +172,7 @@ def eval_edit_form(form, brew_recipe):
         except:
             break
     brew_recipe['list'] = tmp_list
+
 
 def eval_manage_form(form):
     i = 0
@@ -180,17 +192,9 @@ def eval_manage_form(form):
 
 
 if __name__ == '__main__':
-    #app.debug = True
-    
+    # app.debug = True
     # Richards IP: 192.168.178.29
     # Stefans  IP: 192.168.178.80
-    app.run(host='192.168.178.29')
-    threads = [pct_thread, tmt_thread, wqt_thread, dlt_thread]
+    app.run(host='192.168.178.80')
 
-    # Stop all threads
-    for thread in threads:
-        if thread.is_alive():
-            print thread.name + ' is still alive'
-        thread.exit()
-        while thread.is_alive():
-            time.sleep(0.1)
+    stop_all_threads()
