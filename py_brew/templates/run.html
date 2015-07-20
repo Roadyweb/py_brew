@@ -51,13 +51,11 @@
         <table>
         <tr><td align="right">Temp K1: </td><td>{{'%0.1f' % state.tempk1 }} °C</td></tr>
         <tr><td align="right">Temp K2: </td><td>{{'%0.1f' % state.tempk2 }} °C</td></tr>
-        <tr><td align="right">Temp Offset: </td><td>{{'%0.1f' % state.temp_offset }} °C</td></tr>
-        
+        <tr><td align="right">Temp K1 Offset: </td><td>{{'%0.1f' % state.tempk1_offset }} °C</td></tr>
         <tr><td align="right">Pumpe 1: </td><td>{{ state.pump1 }}</td></tr>
         <tr><td align="right">Pumpe 2: </td><td>{{ state.pump2 }}</td></tr>
         <tr><td align="right">Heizung: </td><td>{{ state.heater }}</td></tr>
         <tr><td></td></tr>
-        
         </table>
     {% else %}
         <p>No current data available</p>
