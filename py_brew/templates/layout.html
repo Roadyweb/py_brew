@@ -22,14 +22,18 @@
   </head>
   <body>
     <script src="../static/js/bootstrap.min.js"></script>
-    <img src="../static/kopfklein.jpg">
-    <ul class="nav nav-pills">
-      <li role="presentation" {% if heading == 'Manage' %}class="active"{% endif%}><a href="{{ url_for('manage') }}">Rezepte</a></li>
-      <li role="presentation" {% if heading == 'Edit' %}class="active"{% endif%}><a href="{{ url_for('edit') }}">Eingabe</a></li>
-      <li role="presentation" {% if heading == 'Run' %}class="active"{% endif%}><a href="{{ url_for('run') }}">Start</a></li>
-      <li role="presentation" {% if heading == 'Graph' %}class="active"{% endif%}><a href="{{ url_for('graph') }}">Graph</a></li>
-      <li role="presentation" {% if heading == 'Debug' %}class="active"{% endif%}><a href="{{ url_for('debug') }}">Debug</a></li>
-    </ul>
+    <div class=title>
+      <img src="../static/kopfklein.jpg" class="img-responsive">
+    </div>
+    <div class="container">
+      <ul class="nav nav-pills">
+        <li role="presentation" {% if heading == 'Manage' %}class="active"{% endif%}><a href="{{ url_for('manage') }}">Rezepte</a></li>
+        <li role="presentation" {% if heading == 'Edit' %}class="active"{% endif%}><a href="{{ url_for('edit') }}">Eingabe</a></li>
+        <li role="presentation" {% if heading == 'Run' %}class="active"{% endif%}><a href="{{ url_for('run') }}">Start</a></li>
+        <li role="presentation" {% if heading == 'Graph' %}class="active"{% endif%}><a href="{{ url_for('graph') }}">Graph</a></li>
+        <li role="presentation" {% if heading == 'Debug' %}class="active"{% endif%}><a href="{{ url_for('debug') }}">Debug</a></li>
+      </ul>
+    </div>
     </p>
     <div class="container">
       {% block body %}
