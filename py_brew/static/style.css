@@ -3,42 +3,6 @@ body {
   padding-bottom: 0px;
 }
 
-#menu {
-        width: 200px;
-        margin: 10px;
-	float: left;
-        }
-
-#menu li {
-	list-style-type: none;
-}
-
-#menu li a {
-	height: 32px;
-	voice-family: "\"}\"";
-	voice-family: inherit;
-	height: 24px;
-}
-
-#menu li a:link, #menu li a:visited {
-        color: #708491;
-        display: block;
-        background: url(../static/menu.gif);
-        padding: 8px 0 0 10px;
-	list-style-type: none;
-	text-decoration: none;
-}
-
-#menu li a:hover {
-        color: #d00;
-        background: url(../static/menu.gif) 0 -32px;
-        padding: 8px 0 0 10px;
-}				  
-#menu li a:active    {
-        color: #d00;
-        background: url(../static/menu.gif) 0 -32px;
-        padding: 8px 0 0 10px;
-}
 
 .linke-spalte   { width: 60%; float: left; margin: 5% 1% 4% 1%; }
 .rechte-spalte  { width: 36%; float: right; margin: 5% 1% 4% 1%; text-align: left; }

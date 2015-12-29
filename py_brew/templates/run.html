@@ -6,76 +6,150 @@
 {% endblock %}
 
 {% block body %}
-    {% if data %}
-        <h2>Rezept: {{ data.name }}</h2>
-        <br />
-        Erstellt: {{ data.created }}<br />
-        Letzte Änderung: {{ data.last_saved }}<br />
-
-   <section class="linke-spalte">
-        <h3>Einstellungen:</h3>
-        <table>
-        <tr>
-        <td>Kochtemp. K1: {{ data.tempk1 }} °C</td>
-        <td>Kochdauer K1: {{ data.durak1 }} s</td>
-        </tr>
-        <tr></tr>
-        <tr></tr>
-        <tr></tr>
-        <tr></tr>
-        {% if data.method == 'K2' %}
-            <tr></tr>
-            <tr></tr>
-            <tr></tr>
-            <tr></tr>
-            {% for entry in data.list %}
-                <tr>
-                <td>Rasttemp. K2: {{ entry[0]|safe }} °C</td>
-                <td>Rastdauer K2: {{ entry[1]|safe }} s</td>
-                </tr>
-            {% else %}
-                <em>No entries</em>
-            {% endfor %}
-        {% endif %}
-        </table>
-        <br />
-
-        Methode: {{ data.method }}
-    {% endif %}
-    </section>
-
-
-<section class="rechte-spalte">
-    {% if state %}
-        <h3>Status:</h3>
-        <table>
-        <tr><td align="right">Temp K1: </td><td>{{'%0.1f' % state.tempk1 }} °C</td></tr>
-        <tr><td align="right">Temp K2: </td><td>{{'%0.1f' % state.tempk2 }} °C</td></tr>
-        <tr><td align="right">Temp K1 Offset: </td><td>{{'%0.1f' % state.tempk1_offset }} °C</td></tr>
-        <tr><td align="right">Pumpe 1: </td><td>{{ state.pump1 }}</td></tr>
-        <tr><td align="right">Pumpe 2: </td><td>{{ state.pump2 }}</td></tr>
-        <tr><td align="right">Heizung: </td><td>{{ state.heater }}</td></tr>
-        <tr><td></td></tr>
-        </table>
-    {% else %}
+  <div class="row">
+    <div class="col-md-6">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Rezept</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Name</td>
+            <td>{{ data.name }}</td>
+          </tr>
+          <tr>
+            <td>Erstellt</td>
+            <td>{{ data.created }}</td>
+          </tr>
+          <tr>
+            <td>Letzte Änderung</td>
+            <td>{{ data.last_saved }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Einstellungen</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Kochtemp. K1</td><td>{{ data.tempk1 }} °C</td>
+            <td>Kochdauer K1</td><td>{{ data.durak1 }} s</td>
+          </tr>
+          {% if data.method == 'K2' %}
+          {% for entry in data.list %}
+            <tr>
+              <td>Rasttemp. K2</td><td>{{ entry[0]|safe }} °C</td>
+              <td>Rastdauer K2</td><td>{{ entry[1]|safe }} s</td>
+            </tr>
+          {% else %}
+            <em>No entries</em>
+          {% endfor %}
+          {% endif %}
+          <tr>
+            <td>Methode</td>
+            <td>{{ data.method }}</td>
+            <td></td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+      <table class="table">
+        <tbody>
+        </tbody>
+      </table>
+      <form action="." method="POST">
+        <input type="submit" name="submit" class="btn btn-default" value="Start">
+        <input type="submit" name="submit" class="btn btn-default" value="Stop">
+        <input type="submit" name="submit" class="btn btn-warning" value="Reset Graph">
+        <input type="submit" name="submit" class="btn btn-default" value="+ 0.2 deg">
+        <input type="submit" name="submit" class="btn btn-default" value="- 0.2 deg">
+      </form>
+    </div>
+    <div class="col-md-6">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Status</th>
+          </tr>
+        </thead>
+        {% if state %}
+        <tbody>
+          <tr>
+            <td>Temp K1</td>
+            <td>{{'%0.1f' % state.tempk1 }} °C</td>
+            <td>Temp K2</td>
+            <td>{{'%0.1f' % state.tempk2 }} °C</td>
+          </tr>
+          <tr>
+            <td>Pumpe 1</td>
+            <td>{{ state.pump1 }}</td>
+            <td>Pumpe 2</td>
+            <td>{{ state.pump2 }}</td>
+          </tr>
+          <tr>
+            <td>Temp K1 Offset: </td>
+            <td>{{'%0.1f' % state.tempk1_offset }} °C</td>
+            <td>Heizung</td>
+            <td>{{ state.heater }}</td>
+          </tr>
+        </tbody>
+      {% else %}
         <p>No current data available</p>
-    {% endif %}
-    <br />
-</section>
-    <form action="." method="POST">
-        <input type="submit" name="submit" class="btn btn-sm btn-default" value="Start">
-        <input type="submit" name="submit" class="btn btn-sm btn-default" value="Stop">
-        <input type="submit" name="submit" class="btn btn-sm btn-default" value="Reset Graph">
-        <input type="submit" name="submit" class="btn btn-sm btn-default" value="+ 0.2 deg">
-        <input type="submit" name="submit" class="btn btn-sm btn-default" value="- 0.2 deg">
-    </form>
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
+      {% endif %}
+      </table>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Debug</th>
+            <th></th>
+            <th></th>
+            <th></th>
+          </tr>
+        </thead>
+        {% if state %}
+        <tbody>
+          <tr>
+            <td>Set Temp K1</td><td>{{'%0.1f' % state.settempk1 }} °C</td>
+            <td>Set Temp K2</td><td>{{'%0.1f' % state.settempk2 }} °C</td>
+          </tr>
+            <td>Set Dura K1</td><td>{{'%0.1f' % state.setdurak1 }} s</td>
+            <td>Set Dura K2</td><td>{{'%0.1f' % state.setdurak2 }} s</td>
+          </tr>
+          <tr>
+            <td>Cook State</td><td>{{ state.cook_state }}</td>
+            <td>ProcControl</td><td>{{ state.pct_state }}</td>
+          </tr>
+          <tr>
+            <td>TempMon</td><td>{{ state.tmt_state }}</td>
+            <td>WorkQueue</td><td>{{ state.wqt_state }}</td>
+          </tr>
+          <tr>
+            <td>DataLogger</td><td>{{ state.dlt_state }}</td>
+            <td>BlubberManager</td><td>{{ state.bm_state }}</td>
+          </tr>
+          <tr>
+            <td>Simulation</td><td>{{ state.simulation }}</td>
+            <td></td><td></td>
+          </tr>
+        </tbody>
+      {% else %}
+        <p>No current data available</p>
+      {% endif %}
+      </table>
+    </div>
+  </div>
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
         <ul class=flashes>
         {% for message in messages %}
             <li>{{ message }}</li>
         {% endfor %}
         </ul>
-        {% endif %}
-    {% endwith %}
+    {% endif %}
+  {% endwith %}
 {% endblock %}
