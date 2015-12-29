@@ -1,4 +1,18 @@
-body, h1, h2, a { font-family: sans-serif; background: #eee; }
+body {
+  padding-top: 200px;
+  padding-bottom: 0px;
+}
+.navbar-brand {
+  padding-bottom: 0px;
+  height: 115px
+}
+.navbar {
+  padding-top: 0px;
+  background: #eee;
+}
+
+
+body h1, h2, a { font-family: sans-serif; background: #eee; }
 h1, h4		{ color: white; }
 a, h2       	{ color: black; }
 h1, h2          { margin: 0; }

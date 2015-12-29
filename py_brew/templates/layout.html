@@ -9,7 +9,7 @@
 
     <link rel="icon" href="../../favicon.ico">
     <link href="../static/css/bootstrap.min.css" rel="stylesheet">
-    <link href="../static/css/bootstrap-theme.min.css" rel="stylesheet">
+    <!-- link href="../static/css/bootstrap-theme.min.css" rel="stylesheet"-->
 
     <!-- Custom styles for this template -->
     <link href="../static/style.css" rel="stylesheet">
@@ -20,41 +20,28 @@
     <title>Py Brew</title>
     {% endblock %}
   </head>
-  <body>
+  <body role="document">
     <script src="../static/js/bootstrap.min.js"></script>
+    <!-- Fixed navbar -->
     <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container-fluid">
         <div class="navbar-header">
           <a class="navbar-brand" href="#">
-          <img alt="Brand" src="../static/kopfklein.jpg">
+            <img alt="Brand" src="../static/kopfklein.jpg">
           </a>
         </div>
-      </div>
-      <div class="container">
         <div id="navbar" class="navbar-collapse collapse">
-          <ul class="nav navbar-nav">
-            <li class="active"><a href="#">Home</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#contact">Contact</a></li>
-          </ul>
+          <ul class="nav navbar-nav navbar-left">
+              <li><a class="active" href="{{ url_for('manage') }}">Rezepte</a><br />
+              <li><a href="{{ url_for('edit') }}">Eingabe</a><br />
+              <li><a href="{{ url_for('run') }}">Start</a><br />
+              <li><a href="{{ url_for('graph') }}">Graph</a><br />
+              <li><a href="{{ url_for('debug') }}">Debug</a><br />
+            </ul>
         </div><!--/.nav-collapse -->
-      </div>
+      </div><!--container -->
     </nav>
 
-    <div class=title>
-      <img src ="../static/kopfklein.jpg">
-    </div>
-    <div id="menu">
-      <ul>
-      <li><a class="active" href="{{ url_for('manage')    }}">Rezepte</a><br />
-      <li><a href="{{ url_for('edit')      }}">Eingabe</a><br />
-      <li><a href="{{ url_for('run')       }}">Start</a><br />
-      <li><a href="{{ url_for('graph')     }}">Graph</a><br />
-      <li><a href="{{ url_for('debug')     }}">Debug</a><br />
-      </ul>
-    <br /><br />
-    <br /><br />
-    </div>
     <div class=page>
       {% if heading %}
         <h1>{{ heading }}</h1>
