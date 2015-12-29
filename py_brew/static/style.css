@@ -1,14 +1,6 @@
 body {
-  padding-top: 180px;
-  padding-bottom: 0px;
-}
-.navbar-brand {
-  padding-bottom: 0px;
-  height: 115px
-}
-.navbar {
   padding-top: 0px;
-  background: #eee;
+  padding-bottom: 0px;
 }
 
 #menu {

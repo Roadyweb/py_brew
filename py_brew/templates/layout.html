@@ -22,26 +22,14 @@
   </head>
   <body>
     <script src="../static/js/bootstrap.min.js"></script>
-    <!-- Fixed navbar -->
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container">
-        <div class="navbar-header">
-          <a class="navbar-brand" href="#">
-            <img alt="Brand" src="../static/kopfklein.jpg">
-          </a>
-        </div>
-        <div id="navbar" class="navbar-collapse collapse">
-          <ul class="nav navbar-nav navbar-left">
-              <li><a class="active" href="{{ url_for('manage') }}">Rezepte</a><br />
-              <li><a href="{{ url_for('edit') }}">Eingabe</a><br />
-              <li><a href="{{ url_for('run') }}">Start</a><br />
-              <li><a href="{{ url_for('graph') }}">Graph</a><br />
-              <li><a href="{{ url_for('debug') }}">Debug</a><br />
-            </ul>
-        </div><!--/.nav-collapse -->
-      </div><!--container -->
-    </nav>
-
+    <img src="../static/kopfklein.jpg">
+    <ul class="nav nav-pills">
+      <li role="presentation" class="active"><a href="{{ url_for('manage') }}">Rezepte</a></li>
+      <li role="presentation"><a href="{{ url_for('edit') }}">Eingabe</a></li>
+      <li role="presentation"><a href="{{ url_for('run') }}">Start</a></li>
+      <li role="presentation"><a href="{{ url_for('graph') }}">Graph</a></li>
+      <li role="presentation"><a href="{{ url_for('debug') }}">Debug</a></li>
+    </ul>
     <div class="container">
       {% if heading %}
         <h1>{{ heading }}</h1>
