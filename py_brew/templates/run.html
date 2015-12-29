@@ -11,28 +11,25 @@
       <table class="table">
         <thead>
           <tr>
-            <th>Rezept</th>
+            <th colspan="4">Rezept</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td>Name</td>
-            <td>{{ data.name }}</td>
+            <td>Name</td><td>{{ data.name }}</td>
           </tr>
           <tr>
-            <td>Erstellt</td>
-            <td>{{ data.created }}</td>
+            <td>Erstellt</td><td>{{ data.created }}</td>
           </tr>
           <tr>
-            <td>Letzte Änderung</td>
-            <td>{{ data.last_saved }}</td>
+            <td>Letzte Änderung</td><td>{{ data.last_saved }}</td>
           </tr>
         </tbody>
       </table>
       <table class="table">
         <thead>
           <tr>
-            <th>Einstellungen</th>
+            <th colspan="4">Einstellungen</th>
           </tr>
         </thead>
         <tbody>
@@ -52,9 +49,7 @@
           {% endif %}
           <tr>
             <td>Methode</td>
-            <td>{{ data.method }}</td>
-            <td></td>
-            <td></td>
+            <td colspan="3">{{ data.method }}</td>
           </tr>
         </tbody>
       </table>
@@ -74,28 +69,22 @@
       <table class="table">
         <thead>
           <tr>
-            <th>Status</th>
+            <th colspan="4">Status</th>
           </tr>
         </thead>
         {% if state %}
         <tbody>
           <tr>
-            <td>Temp K1</td>
-            <td>{{'%0.1f' % state.tempk1 }} °C</td>
-            <td>Temp K2</td>
-            <td>{{'%0.1f' % state.tempk2 }} °C</td>
+            <td>Temp K1</td><td>{{'%0.1f' % state.tempk1 }} °C</td>
+            <td>Temp K2</td><td>{{'%0.1f' % state.tempk2 }} °C</td>
           </tr>
           <tr>
-            <td>Pumpe 1</td>
-            <td>{{ state.pump1 }}</td>
-            <td>Pumpe 2</td>
-            <td>{{ state.pump2 }}</td>
+            <td>Pumpe 1</td><td>{{ state.pump1 }}</td>
+            <td>Pumpe 2</td><td>{{ state.pump2 }}</td>
           </tr>
           <tr>
-            <td>Temp K1 Offset: </td>
-            <td>{{'%0.1f' % state.tempk1_offset }} °C</td>
-            <td>Heizung</td>
-            <td>{{ state.heater }}</td>
+            <td>Temp K1 Offset</td><td>{{'%0.1f' % state.tempk1_offset }} °C</td>
+            <td>Heizung</td><td>{{ state.heater }}</td>
           </tr>
         </tbody>
       {% else %}
@@ -105,10 +94,7 @@
       <table class="table">
         <thead>
           <tr>
-            <th>Debug</th>
-            <th></th>
-            <th></th>
-            <th></th>
+            <th colspan="4">Debug</th>
           </tr>
         </thead>
         {% if state %}
@@ -133,8 +119,7 @@
             <td>BlubberManager</td><td>{{ state.bm_state }}</td>
           </tr>
           <tr>
-            <td>Simulation</td><td>{{ state.simulation }}</td>
-            <td></td><td></td>
+            <td>Simulation</td><td colspan="3">{{ state.simulation }}</td>
           </tr>
         </tbody>
       {% else %}
