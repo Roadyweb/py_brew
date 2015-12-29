@@ -24,16 +24,14 @@
     <script src="../static/js/bootstrap.min.js"></script>
     <img src="../static/kopfklein.jpg">
     <ul class="nav nav-pills">
-      <li role="presentation" class="active"><a href="{{ url_for('manage') }}">Rezepte</a></li>
-      <li role="presentation"><a href="{{ url_for('edit') }}">Eingabe</a></li>
-      <li role="presentation"><a href="{{ url_for('run') }}">Start</a></li>
-      <li role="presentation"><a href="{{ url_for('graph') }}">Graph</a></li>
-      <li role="presentation"><a href="{{ url_for('debug') }}">Debug</a></li>
+      <li role="presentation" {% if heading == 'Manage' %}class="active"{% endif%}><a href="{{ url_for('manage') }}">Rezepte</a></li>
+      <li role="presentation" {% if heading == 'Edit' %}class="active"{% endif%}><a href="{{ url_for('edit') }}">Eingabe</a></li>
+      <li role="presentation" {% if heading == 'Run' %}class="active"{% endif%}><a href="{{ url_for('run') }}">Start</a></li>
+      <li role="presentation" {% if heading == 'Graph' %}class="active"{% endif%}><a href="{{ url_for('graph') }}">Graph</a></li>
+      <li role="presentation" {% if heading == 'Debug' %}class="active"{% endif%}><a href="{{ url_for('debug') }}">Debug</a></li>
     </ul>
+    </p>
     <div class="container">
-      {% if heading %}
-        <h1>{{ heading }}</h1>
-      {% endif %}
       {% block body %}
       {% endblock %}
     </div>
