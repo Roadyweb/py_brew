@@ -39,10 +39,10 @@
         Modus: 
         <input type="radio" name="method" value="K1"{% if data.method == 'K1' %}checked{% endif%}> K1 
         <input type="radio" name="method" value="K2"{% if data.method == 'K2' %}checked{% endif%}> K2 <br /><br />
-        <input type="submit" name="submit" value="Add_Row">
-        <input type="submit" name="submit" value="Delete_Row">
-        <input type="submit" name="submit" value="Save">
-        <input type="submit" name="submit" value="Reset">
+        <input type="submit" name="submit" class="btn btn-sm btn-default" value="Add_Row">
+        <input type="submit" name="submit" class="btn btn-sm btn-default" value="Delete_Row">
+        <input type="submit" name="submit" class="btn btn-sm btn-default" value="Save">
+        <input type="submit" name="submit" class="btn btn-sm btn-warning" value="Reset">
     </form>
     {% if last_action %}
         <p>Letzte Aktion: {{ last_action }}</p>
