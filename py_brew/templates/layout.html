@@ -20,11 +20,11 @@
     <title>Py Brew</title>
     {% endblock %}
   </head>
-  <body role="document">
+  <body>
     <script src="../static/js/bootstrap.min.js"></script>
     <!-- Fixed navbar -->
     <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container-fluid">
+      <div class="container">
         <div class="navbar-header">
           <a class="navbar-brand" href="#">
             <img alt="Brand" src="../static/kopfklein.jpg">
@@ -42,7 +42,7 @@
       </div><!--container -->
     </nav>
 
-    <div class=page>
+    <div class="container">
       {% if heading %}
         <h1>{{ heading }}</h1>
       {% endif %}
