@@ -1,22 +1,30 @@
 {% extends "layout.html" %}
 {% block body %}
-    <form action="." method="POST">
-        <table>
+    <form action="." method="POST" class="form-horizontal">
+      <div class="form-group">
         {% for fname in fnames %}
-            <tr>
-            <td> <input type="submit" name="s{{ loop.index0 }}" class="btn btn-sm btn-default" value="Select">
-                 <input type="submit" name="d{{ loop.index0 }}" class="btn btn-sm btn-default" value="Delete">
-                 {{ fname }} 
-            </td>
-            </tr>
+          <div class="row">
+            <div class="col-sm-2">
+              <input type="submit" name="s{{ loop.index0 }}" class="btn btn-default" value="Select">
+              <input type="submit" name="d{{ loop.index0 }}" class="btn btn-warning" value="Delete">
+            </div>
+            <div class="col-sm-10">
+              <p class="form-control-static">{{ fname }}</p>
+            </div>
+          </div>
         {% else %}
             <em>No entries</em>
         {% endfor %}
-        </table>
+      </div><!-- form-group -->
+      <div class="form-group">
+          <div class="row">
+            <label class="col-sm-2 control-label">Ausgewähltes Rezept</label>
+            <div class="col-sm-10">
+              <p class="form-control-static">{{ selected }}</p>
+            </div>
+          </div>
+       </div>
     </form>
-    {% if selected %}
-        <p>Ausgewähltes Rezept: {{ selected }}</p>
-    {% endif %}
     {% if last_action %}
         <p>Last Action: {{ last_action }}</p>
     {% endif %}
