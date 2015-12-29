@@ -1,5 +1,5 @@
 body {
-  padding-top: 200px;
+  padding-top: 180px;
   padding-bottom: 0px;
 }
 .navbar-brand {
@@ -10,14 +10,6 @@ body {
   padding-top: 0px;
   background: #eee;
 }
-
-
-body h1, h2, a { font-family: sans-serif; background: #eee; }
-h1, h4		{ color: white; }
-a, h2       	{ color: black; }
-h1, h2          { margin: 0; }
-h1              { border-bottom: 5px solid #eee; }
-h2              { font-size: 1.4em; }
 
 #menu {
         width: 200px;
@@ -61,14 +53,12 @@ h2              { font-size: 1.4em; }
 
 .title          { width: auto; background-color: #de0000; text-align: center; border: 3px solid #eee; }
 
-.footer         { width: auto; background-color: #de0000; clear: both;
-                  text-align: center; }
+.footer         { width: auto; background-color: #de0000; clear: both; text-align: center; }
 
 .menu           { background-color: #eee; height: auto; width: 200px; float: left; font-size: 1.2em}
 
-.page           { margin: 0px 3pt 50px 0px ; width: 5em auto; border: 3px solid #de0000;
-                  padding: 0.3em; background: white; position: relative;
-                  overflow: auto; z-index: 0; }
+.page           { margin: 5px 3pt 5px 5px; background: white; 
+                   }
 .entries        { list-style: none; margin: 0; padding: 0; }
 .entries li     { margin: 0.8em 1.2em; }
 .entries li h2  { margin-left: -1em; }
