@@ -1,48 +1,69 @@
-<!doctype html>
-<head>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <link rel="icon" href="../../favicon.ico">
+    <link href="../static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../static/css/bootstrap-theme.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="../static/style.css" rel="stylesheet">
+    <!-- link href="theme.css" rel="stylesheet" -->
+    <!-- link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}" -->
+
     {% block head %}
     <title>Py Brew</title>
-    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
     {% endblock %}
-</head>
+  </head>
+  <body>
+    <script src="../static/js/bootstrap.min.js"></script>
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#">
+          <img alt="Brand" src="../static/kopfklein.jpg">
+          </a>
+        </div>
+      </div>
+      <div class="container">
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="#">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
 
-<div class=title>
-
-<img src ="../static/kopfklein.jpg">
-</div>
-
-
-
-<div id="menu">
-
-
-
-<ul>
-<li><a class="active" href="{{ url_for('manage')    }}">Rezepte</a><br />
-<li><a href="{{ url_for('edit')      }}">Eingabe</a><br />
-<li><a href="{{ url_for('run')       }}">Start</a><br />
-<li><a href="{{ url_for('graph')     }}">Graph</a><br />
-<li><a href="{{ url_for('debug')     }}">Debug</a><br />
-</ul>
-
-<br /><br />
-<br /><br />
-</div>
-
-
-
-
-
-
-
-
-<div class=page>
-{% if heading %}
-    <h1>{{ heading }}</h1>
-{% endif %}
-{% block body %}{% endblock %}
-</div>
-
-<div class=footer>
-	 <h4>© Schnipplberger</h4>
-</div>
+    <div class=title>
+      <img src ="../static/kopfklein.jpg">
+    </div>
+    <div id="menu">
+      <ul>
+      <li><a class="active" href="{{ url_for('manage')    }}">Rezepte</a><br />
+      <li><a href="{{ url_for('edit')      }}">Eingabe</a><br />
+      <li><a href="{{ url_for('run')       }}">Start</a><br />
+      <li><a href="{{ url_for('graph')     }}">Graph</a><br />
+      <li><a href="{{ url_for('debug')     }}">Debug</a><br />
+      </ul>
+    <br /><br />
+    <br /><br />
+    </div>
+    <div class=page>
+      {% if heading %}
+        <h1>{{ heading }}</h1>
+      {% endif %}
+      {% block body %}
+      {% endblock %}
+    </div>
+    <div class=footer>
+      <h4>© Schnipplberger</h4>
+    </div>
+  </body>
+</html>
