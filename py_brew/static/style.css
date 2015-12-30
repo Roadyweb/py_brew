@@ -3,6 +3,14 @@ body {
   padding-bottom: 0px;
 }
 
+.nav-pills > li.active > a, .nav-pills > li.active > a:hover, .nav-pills > li.active > a:focus {
+    color: black;
+    background-color: #F92C2C;
+}
+
+.nav-pills a {
+    color:black;
+}
 
 .linke-spalte   { width: 60%; float: left; margin: 5% 1% 4% 1%; }
 .rechte-spalte  { width: 36%; float: right; margin: 5% 1% 4% 1%; text-align: left; }
