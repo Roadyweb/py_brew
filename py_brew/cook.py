@@ -13,7 +13,7 @@ import brewio
 import config
 import wq
 
-from helper import timedelta2sec
+from helper import timedelta2sec, timedelta2min
 
 
 # Global variables for inter thread communication
@@ -30,6 +30,7 @@ status = {
                   'heater': 0,
                   'dlt_state': 'Not running',
                   'pct_state': 'Not running',
+                  'pct_state_min_to_wait': '',
                   'wqt_state': 'Not running',
                   'tmt_state': 'Not running',
                   'bm_state': 'Unknown',
@@ -40,8 +41,12 @@ status = {
 def dlt_state_cb(state):
     status['dlt_state'] = state
 
-def pct_state_cb(state):
+def pct_state_cb(state, min_to_wait=None):
     status['pct_state'] = state
+    if min_to_wait is not None:
+        status['pct_state_min_to_wait'] = min_to_wait
+    else:
+        status['pct_state_min_to_wait'] = ''
 
 def pct_get_state_cb():
     return status['pct_state']
@@ -114,12 +119,15 @@ class ProcControlThread (threading.Thread):
             if self.get_state() == 'Running':
                 if self.tpc.control_temp_interval():
                     self.set_state('Idle')
+
             if self.get_state() == 'Waiting':
                 now = datetime.datetime.now()
-                print now, self.start_at
                 if now > self.start_at:
                     self.set_state('Running')
                     self.tpc.start(self.recipe)
+                else:
+                    min_to_wait = str(timedelta2min(self.start_at - now))
+                    self.set_state('Waiting', min_to_wait + ' min')
 
             while sleepduration > 0:
                 time.sleep(config.THREAD_SLEEP_INT)

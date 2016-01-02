@@ -12,6 +12,10 @@ def timedelta2sec(td):
     #seconds = td.total_seconds()
     return (td.microseconds + (td.seconds + td.days * 24 * 3600) * 10**6) / 10**6
 
+def timedelta2min(td):
+    minutes, seconds = divmod(timedelta2sec(td), 60)
+    return minutes
+
 def str_timestamp_now():
     return datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
