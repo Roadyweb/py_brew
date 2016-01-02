@@ -14,10 +14,10 @@ WQ_UPDATE_INT = 1.0     # work queue update interval in seconds
 THREAD_SLEEP_INT = 0.1  # time in seconds a thread is max allowed to sleep
 TEMP_HYST = 0.2         # The range Temp +/- TEMP_HYST is valid
 
-# Richards IP: 192.168.178.29
+# Richards IP: 192.168.178.57
 # Richards LAN IP: 192.168.178.55
 # Stefans  IP: 192.168.178.80
-IP_ADDRESS = '192.168.178.29'
+IP_ADDRESS = '0.0.0.0'
 
 # Blubber settings
 BLUBBER_INT = 300       # interval in seconds
@@ -27,7 +27,7 @@ BLUBBER_DURA = 30       # duration in seconds
 LOG_INT = 20.0          # log every x seconds
 
 # Simulation settings
-SIMULATION = True
+SIMULATION = False
 AMBIENT_TEMP = 10.0     # minimum temperature when no heating is applied
 COOLING_FACTOR = 0.001  # cooling in degrees =
                         # (curr temp - AMBIENT_TEMP) / COOLING_FACTOR
