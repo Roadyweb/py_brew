@@ -82,10 +82,11 @@ def run():
     # if not pct_thread or not pct_thread.is_alive():
     #    raise RuntimeError('ProcControlThread is not running')
     if request.method == 'POST':
-        if request.form['submit'] == 'Start':
+        print request.form
+        if 'btn_start' in request.form:
             pct_thread.start_cooking(brew_recipe)
             dlt_thread.start_logging()
-        elif request.form['submit'] == 'Starte um':
+        elif 'btn_start_at' in request.form:
             # Calculate datetime object when cooking should start
             str_time = request.form['start_time']
             default_str_time = str_time
@@ -102,14 +103,14 @@ def run():
             print now, start_at
             pct_thread.start_cooking(brew_recipe, start_at)
             dlt_thread.start_logging()
-        elif request.form['submit'] == 'Stop':
+        elif 'btn_stop' in request.form:
             pct_thread.stop_cooking()
             dlt_thread.stop_logging()
-        elif request.form['submit'] == 'Reset Graph':
+        elif 'btn_reset_graph' in request.form:
             dlt_thread.reset_data()
-        elif request.form['submit'] == 'K1 + 0.2 K':
+        elif 'btn_t1_up' in request.form:
             tpc.inc_offset(0.2)
-        elif request.form['submit'] == 'K1 - 0.2 K':
+        elif 'btn_t1_down' in request.form:
             tpc.inc_offset(-0.2)
         else:
             pass # unknown
@@ -127,19 +128,20 @@ def edit():
     global brew_recipe
     last_action = 'Empty'
     if request.method == 'POST':
-        if request.form['submit'] == 'Zeile hinzu':
+        print request.form
+        if 'btn_add_row' in request.form:
             brew_recipe['list'].append((0.0,0))
             last_action = 'Zeile hinzu'
-        elif request.form['submit'] == 'Zeile loeschen':
+        elif 'btn_del_row' in request.form:
             brew_recipe['list'].pop(-1)
-            last_action = 'Zeile loeschen'
-        elif request.form['submit'] == 'Speichern':
+            last_action = u'Zeile löschen'
+        elif 'btn_save' in request.form:
             eval_edit_form(request.form, brew_recipe)
             recipes.save(brew_recipe)
             last_action = 'Speichern'
-        elif request.form['submit'] == 'Zuruecksetzen':
+        elif 'btn_reset' in request.form:
             brew_recipe = recipes.get_default()
-            last_action = 'Zuruecksetzen'
+            last_action = u'Zurücksetzen'
         else:
             pass
     return render_template('edit.html', heading='Edit', data=brew_recipe, last_action=last_action)
