@@ -5,75 +5,75 @@
 {% endblock %}
 
 {% block body %}
-    <form action="." method="POST" class="form-horizontal">
-      <div class="form-group">
-        <div class="row">
-          <label class="col-sm-2 control-label">Rezept</label>
-          <div class="col-sm-4">
-            <input type="text" class="form-control" name="name" value={{ data.name|safe }}>
-          </div>
+<form action="." method="POST" class="form-horizontal">
+  <div class="form-group">
+    <div class="row">
+      <label class="col-xs-4 col-sm-2 control-label">Rezeptname</label>
+      <div class="col-xs-8 col-sm-4">
+        <input type="text" class="form-control" name="name" value={{ data.name|safe }}>
+      </div>
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="row">
+      <label class="col-xs-4 col-sm-2 control-label">Kochtemp. K1</label>
+      <div class="col-xs-8 col-sm-4">
+        <input type="text" class="form-control" name="tk1" value={{ data.tempk1 }}>
+      </div>
+    <label class="col-xs-4 col-sm-2 control-label">Kochdauer T1</label>
+      <div class="col-xs-8 col-sm-4">
+        <input type="text" class="form-control" name="dk1" value={{ data.durak1 }}>
+      </div>
+    </div>
+  </div><!-- form-group -->
+  <div class="form-group">
+    {% for entry in data.list %}
+      <div class="row">
+        <label class="col-xs-4 col-sm-2 control-label">Rasttemp. K2</label>
+        <div class="col-xs-8 col-sm-4">
+          <input type="text" class="form-control" name="t{{ loop.index0 }}" value={{ entry[0] }}>
+        </div>
+        <label class="col-xs-4 col-sm-2 control-label">Rastdauer T2</label>
+        <div class="col-xs-8 col-sm-4">
+          <input type="text" class="form-control" name="d{{ loop.index0 }}" value={{ entry[1] }}>
         </div>
       </div>
-      <div class="form-group">
-        <div class="row">
-          <label class="col-sm-2 control-label">Kochtemperatur K1</label>
-          <div class="col-sm-4">
-            <input type="text" class="form-control" name="tk1" value={{ data.tempk1 }}>
-          </div>
-        <label class="col-sm-2 control-label">Kochdauer T1</label>
-          <div class="col-sm-4">
-            <input type="text" class="form-control" name="dk1" value={{ data.durak1 }}>
-          </div>
-        </div>
-      </div><!-- form-group -->
-      <div class="form-group">
-        {% for entry in data.list %}
-          <div class="row">
-            <label class="col-sm-2 control-label">Rasttemperatur K2</label>
-            <div class="col-sm-4">
-              <input type="text" class="form-control" name="t{{ loop.index0 }}" value={{ entry[0] }}>
-            </div>
-            <label class="col-sm-2 control-label">Rastdauer T2</label>
-            <div class="col-sm-4">
-              <input type="text" class="form-control" name="d{{ loop.index0 }}" value={{ entry[1] }}>
-            </div>
-          </div>
-        {% else %}
-            <em>No entries</em>
-        {% endfor %}
-      </div><!-- form-group -->
-      <div class="form-group">
-        <div class="row">
-          <label class="col-sm-2 control-label">Modus</label>
-          <div class="col-sm-10">
-            <label class="radio-inline">
-              <input type="radio" name="method" value="K1"{% if data.method == 'K1' %}checked{% endif%}> K1
-            </label>
-            <label class="radio-inline">
-              <input type="radio" name="method" value="K2"{% if data.method == 'K2' %}checked{% endif%}> K2
-            </label>
-          </div>
-        </div>
-      </div><!-- form-group -->
-      <div class="form-group">
-        <div class="row">
-          <div class="col-sm-offset-2 col-sm-10">
-          <input type="submit" name="submit" class="btn btn-default" value="Add_Row">
-          <input type="submit" name="submit" class="btn btn-default" value="Delete_Row">
-          <input type="submit" name="submit" class="btn btn-default" value="Save">
-          <input type="submit" name="submit" class="btn btn-warning" value="Reset">
-          </div>
-        </div>
-      </div><!-- form-group -->
-    {% if last_action %}
-      <div class="form-group">
-        <div class="row">
-          <label class="col-sm-2 control-label">Letzte Aktion</label>
-          <div class="col-sm-10">
-            <p class="form-control-static">{{ last_action }}</p>
-          </div>
-        </div>
-      </div><!-- form-group -->
-    {% endif %}
-    </form>
+    {% else %}
+        <em>No entries</em>
+    {% endfor %}
+  </div><!-- form-group -->
+  <div class="form-group">
+    <div class="row">
+      <label class="col-sm-2 control-label">Modus</label>
+      <div class="col-sm-10">
+        <label class="radio-inline">
+          <input type="radio" name="method" value="K1"{% if data.method == 'K1' %}checked{% endif%}> K1
+        </label>
+        <label class="radio-inline">
+          <input type="radio" name="method" value="K2"{% if data.method == 'K2' %}checked{% endif%}> K2
+        </label>
+      </div>
+    </div>
+  </div><!-- form-group -->
+  <div class="form-group">
+    <div class="row">
+      <div class="col-sm-offset-2 col-sm-10">
+      <input type="submit" name="submit" class="btn btn-default" value="Add_Row">
+      <input type="submit" name="submit" class="btn btn-default" value="Delete_Row">
+      <input type="submit" name="submit" class="btn btn-default" value="Save">
+      <input type="submit" name="submit" class="btn btn-warning" value="Reset">
+      </div>
+    </div>
+  </div><!-- form-group -->
+  {% if last_action %}
+  <div class="form-group">
+    <div class="row">
+      <label class="col-xs-4 col-sm-2 control-label">Letzte Aktion</label>
+      <div class="col-xs-8 col-sm-10">
+        <p class="form-control-static">{{ last_action }}</p>
+      </div>
+    </div>
+  </div><!-- form-group -->
+  {% endif %}
+</form>
 {% endblock %}
