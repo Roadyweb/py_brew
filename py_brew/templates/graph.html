@@ -11,15 +11,15 @@ $(function() {
         radius: 3,
     };
 
-    var timelabel = "Time";
+    var timelabel = "Zeit";
     var time = [ {% for line in data.list %}{{ line.time }}/60,{% endfor %} ];
-    var t1_label = "Temp K1"
+    var t1_label = "Temperatur K1"
     var t1 = [ {% for line in data.list %}{{ line.tempk1 }},{% endfor %} ];
-    var t2_label = "Temp K2"
+    var t2_label = "Temperatur K2"
     var t2 = [ {% for line in data.list %}{{ line.tempk2 }},{% endfor %} ];
-    var sp_t1_label = "Setpoint Temp K1"
+    var sp_t1_label = "Zieltemperatur K1"
     var sp_t1 = [ {% for line in data.list %}{{ line.settempk1 }},{% endfor %} ];
-    var sp_t2_label = "Setpoint Temp K2"
+    var sp_t2_label = "Zieltemperatur K2"
     var sp_t2 = [ {% for line in data.list %}{{ line.settempk2 }},{% endfor %} ];
 
     var tooltip = [ time, t1, t2, sp_t1, sp_t2];
@@ -41,7 +41,7 @@ $(function() {
         {color: "yellow", points: data_points, data: sp_t2_set, label: sp_t2_label},
     ];
     var options = {
-        legend: { position: "sw", show: true },
+        legend: { position: "se", show: true },
         series: {
             lines: { show: true, lineWidth: 1 },
             shadowSize: 0 
@@ -57,8 +57,8 @@ $(function() {
 
     bindTooltip(container, tooltip);
 
-    addXAxis("Time [min]")
-    addYAxis("Temperature [°C]");
+    addXAxis("Zeit [min]")
+    addYAxis("Temperatur [°C]");
 });
 </script>
 {% endblock %}
@@ -68,6 +68,6 @@ $(function() {
         <div id="placeholder" class="demo-placeholder"></div>
     </div>
     <p class="message"></p>
-        <p>Zooming, panning and tooltips supported.</p>
+        <p>Zooming, Panning und Tooltips werden unterstützt.</p>
     </div>
 {% endblock %}

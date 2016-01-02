@@ -12,8 +12,8 @@
         <tbody>
           {% for fname in fnames %}
           <tr>
-              <td><input type="submit" name="s{{ loop.index0 }}" class="btn btn-default" value="Select">
-              <input type="submit" name="d{{ loop.index0 }}" class="btn btn-warning" value="Delete"></td>
+              <td><input type="submit" name="s{{ loop.index0 }}" class="btn btn-default" value="Auswählen">
+              <input type="submit" name="d{{ loop.index0 }}" class="btn btn-warning" value="Löschen"></td>
               <td><p class="form-control-static">{{ fname }}</p></td>
           </tr>
         {% else %}

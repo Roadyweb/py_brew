@@ -77,8 +77,8 @@
         <br/><br/>
         <input type="submit" name="submit" class="btn btn-default" value="Start" {% if state.pct_state == "Waiting" or state.pct_state == "Running" %}disabled{% endif %}>
         <input type="submit" name="submit" class="btn btn-default" value="Stop">
-        <input type="submit" name="submit" class="btn btn-default" value="+ 0.2 deg">
-        <input type="submit" name="submit" class="btn btn-default" value="- 0.2 deg">
+        <input type="submit" name="submit" class="btn btn-default" value="K1 + 0.2 K">
+        <input type="submit" name="submit" class="btn btn-default" value="K1 - 0.2 K">
         <input type="submit" name="submit" class="btn btn-warning" value="Reset Graph">
       </form>
     </div>
@@ -100,7 +100,7 @@
             <td>Pumpe 2</td><td>{{ state.pump2 }}</td>
           </tr>
           <tr>
-            <td>Temp K1 Offset</td><td>{{'%0.1f' % state.tempk1_offset }} °C</td>
+            <td>Korrektur Temp K1</td><td>{{'%0.1f' % state.tempk1_offset }} °C</td>
             <td>Heizung</td><td>{{ state.heater }}</td>
           </tr>
         </tbody>
@@ -117,12 +117,12 @@
         {% if state %}
         <tbody>
           <tr>
-            <td>Set Temp K1</td><td>{{'%0.1f' % state.settempk1 }} °C</td>
-            <td>Set Temp K2</td><td>{{'%0.1f' % state.settempk2 }} °C</td>
+            <td>Zieltemp K1</td><td>{{'%0.1f' % state.settempk1 }} °C</td>
+            <td>Zieltemp K2</td><td>{{'%0.1f' % state.settempk2 }} °C</td>
           </tr>
           <tr>
-            <td>Set Dura K1</td><td>{{'%0.1f' % state.setdurak1 }} s</td>
-            <td>Set Dura K2</td><td>{{'%0.1f' % state.setdurak2 }} s</td>
+            <td>Dauer K1</td><td>{{'%d' % state.setdurak1 }} s</td>
+            <td>Dauer K2</td><td>{{'%d' % state.setdurak2 }} s</td>
           </tr>
           <tr>
             <td>ProcControl</td><td>{{ state.pct_state }} {{ state.pct_state_min_to_wait }}</td>

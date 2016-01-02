@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 '''
 Created on 10.07.2012
 @author: baumanst
@@ -39,7 +40,7 @@ bm = wq.BlubberManager(cook.bm_state_cb)
 wq.bm = bm
 
 
-last_action = 'Empty'
+last_action = 'Leer'
 default_str_time = '07:00'
 
 recipes = Recipes()
@@ -106,9 +107,9 @@ def run():
             dlt_thread.stop_logging()
         elif request.form['submit'] == 'Reset Graph':
             dlt_thread.reset_data()
-        elif request.form['submit'] == '+ 0.2 deg':
+        elif request.form['submit'] == 'K1 + 0.2 K':
             tpc.inc_offset(0.2)
-        elif request.form['submit'] == '- 0.2 deg':
+        elif request.form['submit'] == 'K1 - 0.2 K':
             tpc.inc_offset(-0.2)
         else:
             pass # unknown
@@ -126,19 +127,19 @@ def edit():
     global brew_recipe
     last_action = 'Empty'
     if request.method == 'POST':
-        if request.form['submit'] == 'Add_Row':
+        if request.form['submit'] == 'Zeile hinzu':
             brew_recipe['list'].append((0.0,0))
-            last_action = 'Add_Row'
-        elif request.form['submit'] == 'Delete_Row':
+            last_action = 'Zeile hinzu'
+        elif request.form['submit'] == 'Zeile loeschen':
             brew_recipe['list'].pop(-1)
-            last_action = 'Delete_Row'
-        elif request.form['submit'] == 'Save':
+            last_action = 'Zeile loeschen'
+        elif request.form['submit'] == 'Speichern':
             eval_edit_form(request.form, brew_recipe)
             recipes.save(brew_recipe)
-            last_action = 'Save'
-        elif request.form['submit'] == 'Reset':
+            last_action = 'Speichern'
+        elif request.form['submit'] == 'Zuruecksetzen':
             brew_recipe = recipes.get_default()
-            last_action = 'Reset'
+            last_action = 'Zuruecksetzen'
         else:
             pass
     return render_template('edit.html', heading='Edit', data=brew_recipe, last_action=last_action)

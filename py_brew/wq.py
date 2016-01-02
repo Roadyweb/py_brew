@@ -39,7 +39,7 @@ class BlubberManager():
             self.state = 'WAITING'
         elif self.state == 'WAITING':
             td2wait = timedelta2sec(self.waituntil - datetime.datetime.now())
-            self.set_state('Waiting for %d s' % td2wait)
+            self.set_state('Waiting %d s' % td2wait)
             if td2wait < 0:
                 self.waituntil = datetime.datetime.now() + \
                     datetime.timedelta(seconds=config.BLUBBER_DURA)
@@ -49,7 +49,7 @@ class BlubberManager():
                 self.set_state('Blubbering')
         elif self.state == 'BLUBBERING':
             td2wait = timedelta2sec(self.waituntil - datetime.datetime.now())
-            self.set_state('Blubbering for %f s' % td2wait)
+            self.set_state('Blubbering %d s' % td2wait)
             if td2wait < 0:
                 # We're done stop blubbering
                 self.reset()
