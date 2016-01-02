@@ -125,7 +125,7 @@
           </tr>
           <tr>
             <td>ProcControl</td><td>{{ state.pct_state }} {{ state.pct_state_min_to_wait }}</td>
-            <td>Cook State</td><td>{{ state.cook_state }}</td>
+            <td>Simulation</td><td>{{ state.simulation }}</td>
           </tr>
           <tr>
             <td>TempMon</td><td>{{ state.tmt_state }}</td>
@@ -136,7 +136,7 @@
             <td>BlubberManager</td><td>{{ state.bm_state }}</td>
           </tr>
           <tr>
-            <td>Simulation</td><td colspan="3">{{ state.simulation }}</td>
+            <td>Cook State</td><td colspan="3">{{ state.cook_state }}</td>
           </tr>
         </tbody>
       {% else %}
