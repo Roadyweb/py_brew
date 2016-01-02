@@ -15,6 +15,7 @@ THREAD_SLEEP_INT = 0.1  # time in seconds a thread is max allowed to sleep
 TEMP_HYST = 0.2         # The range Temp +/- TEMP_HYST is valid
 
 # Richards IP: 192.168.178.29
+# Richards LAN IP: 192.168.178.55
 # Stefans  IP: 192.168.178.80
 IP_ADDRESS = '192.168.178.29'
 
