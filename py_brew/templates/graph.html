@@ -2,7 +2,7 @@
 
 {% block flot_head %}
 {{ super() }}
-<meta http-equiv="refresh" content="5" >
+<meta http-equiv="refresh" content="30" >
 <script type="text/javascript">
 $(function() {
     // Style for bars
@@ -12,7 +12,7 @@ $(function() {
     };
 
     var timelabel = "Time";
-    var time = [ {% for line in data.list %}{{ line.time }},{% endfor %} ];
+    var time = [ {% for line in data.list %}{{ line.time }}/60,{% endfor %} ];
     var t1_label = "Temp K1"
     var t1 = [ {% for line in data.list %}{{ line.tempk1 }},{% endfor %} ];
     var t2_label = "Temp K2"
@@ -23,7 +23,7 @@ $(function() {
     var sp_t2 = [ {% for line in data.list %}{{ line.settempk2 }},{% endfor %} ];
 
     var tooltip = [ time, t1, t2, sp_t1, sp_t2];
-    // Get the week/year for the tooltip
+
     var t1_set = [], t2_set = [],
         sp_t1_set = [], sp_t2_set = [];
 
@@ -47,11 +47,8 @@ $(function() {
             shadowSize: 0 
         },
         grid: { hoverable: true, clickable: true },
-        xaxis: { min: 0, zoomRange: [-30, 50], panRange: [-30, 50]},
-        yaxis: {
-            zoomRange: [20, 75],
-            panRange: [20, 75]
-        },
+        xaxis: { min: 0, zoomRange: null, panRange: [0, null]},
+        yaxis: { min: 0, zoomRange: [50, 100],  panRange: [0, 100]},
         zoom: { interactive: true },
         pan: { interactive: true }
     };
@@ -60,10 +57,8 @@ $(function() {
 
     bindTooltip(container, tooltip);
 
-    addXAxis("Time [s]")
+    addXAxis("Time [min]")
     addYAxis("Temperature [°C]");
-    addZoomButton();
-    addArrows();
 });
 </script>
 {% endblock %}

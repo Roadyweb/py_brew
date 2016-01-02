@@ -106,11 +106,14 @@ function bindTooltip(container, data) {
             if (previousPoint != item.dataIndex) {
                 previousPoint = item.dataIndex;
                 $("#tooltip").remove();
-                var time = item.datapoint[0].toFixed(0),
-                t1 = item.datapoint[1].toFixed(2),
-                t2 = data[2][item.dataIndex].toFixed(2);
+                var time = item.datapoint[0].toFixed(1),
+                t1 = data[1][item.dataIndex].toFixed(1),
+                t2 = data[2][item.dataIndex].toFixed(1);
+                sp_t1 = data[3][item.dataIndex].toFixed(1),
+                sp_t2 = data[4][item.dataIndex].toFixed(1);
                 showTooltip(item.pageX, item.pageY,
-                "Zeit: " + time + " T1: " + t1 + " T2: " + t2);
+                    "Zeit: " + time + " T1: " + t1 + " (" + sp_t1 + ") T2: " 
+                    + t2 + " (" + sp_t2 + ")");
             }
         } else {
              $("#tooltip").remove();
