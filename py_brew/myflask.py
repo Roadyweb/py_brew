@@ -40,6 +40,7 @@ wq.bm = bm
 
 
 last_action = 'Empty'
+default_str_time = '07:00'
 
 recipes = Recipes()
 brew_recipe = recipes.get_default()
@@ -76,6 +77,7 @@ class Error(): pass
 @app.route('/run/', methods=['GET', 'POST'])
 def run():
     global pct_thread
+    global default_str_time
     # if not pct_thread or not pct_thread.is_alive():
     #    raise RuntimeError('ProcControlThread is not running')
     if request.method == 'POST':
@@ -85,6 +87,7 @@ def run():
         elif request.form['submit'] == 'Starte um':
             # Calculate datetime object when cooking should start
             str_time = request.form['start_time']
+            default_str_time = str_time
             start_at_hour = int(str_time.split(':')[0])
             start_at_min = int(str_time.split(':')[1])
             now = datetime.datetime.now()
@@ -114,7 +117,8 @@ def run():
         # to the different task. The tasks then change their status. And the 
         # current status is displayed afterwards
         time.sleep(2)
-    return render_template('run.html', heading='Run', state=cook.status, data=brew_recipe)
+    return render_template('run.html', heading='Run', start_at=default_str_time,
+                           state=cook.status, data=brew_recipe)
 
 
 @app.route('/debug/', methods=['GET', 'POST'])
@@ -137,7 +141,7 @@ def debug():
             tpc.inc_offset(-0.2)
         else:
             pass # unknown
-    return render_template('debug.html', heading='Debug', state=cook.status, data=brew_recipe)
+    return render_template('debug.html', heading='Debug', start_at=default_str_time, state=cook.status, data=brew_recipe)
 
 
 @app.route('/edit/', methods=['GET', 'POST'])

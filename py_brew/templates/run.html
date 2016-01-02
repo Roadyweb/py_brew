@@ -70,7 +70,7 @@
       </table>
       <form action="." method="POST">
         <input type="submit" name="submit" class="btn btn-default" value="Starte um" {% if state.pct_state == "Waiting" or state.pct_state == "Running" %}disabled{% endif %}>
-        <input type="text" name="start_time" id="basic_example_2" value="07:00" />
+        <input type="text" name="start_time" id="basic_example_2" value="{{ start_at }}" />
         <script type="text/javascript">
           $('#basic_example_2').timepicker();
         </script>
