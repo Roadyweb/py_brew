@@ -12,14 +12,6 @@
     <script type="text/javascript" src="../static/plugins/timepicker/jquery-ui-timepicker-addon.js"></script>
     <script type="text/javascript" src="../static/plugins/timepicker/i18n/jquery-ui-timepicker-addon-i18n.min.js"></script>
     <script type="text/javascript" src="../static/plugins/timepicker/jquery-ui-sliderAccess.js"></script>
-    <script type="text/javascript">
-            $(function(){
-                $('#tabs').tabs();
-                $('.example-container > pre').each(function(i){
-                    eval($(this).text());
-                });
-            });
-    </script>
     <script type="text/javascript" src="https://sellfy.com/js/api_buttons.js"></script>
 {% endblock %}
 
@@ -131,8 +123,8 @@
             <td>Set Dura K2</td><td>{{'%0.1f' % state.setdurak2 }} s</td>
           </tr>
           <tr>
+            <td>ProcControl</td><td>{{ state.pct_state }} {{ state.pct_state_min_to_wait }}</td>
             <td>Cook State</td><td>{{ state.cook_state }}</td>
-            <td>ProcControl</td><td>{{ state.pct_state }}</td>
           </tr>
           <tr>
             <td>TempMon</td><td>{{ state.tmt_state }}</td>
