@@ -84,9 +84,9 @@ def run():
             dlt_thread.start_logging()
         elif request.form['submit'] == 'Starte um':
             # Calculate datetime object when cooking should start
-            time = request.form['start_time']
-            start_at_hour = int(time.split(':')[0])
-            start_at_min = int(time.split(':')[1])
+            str_time = request.form['start_time']
+            start_at_hour = int(str_time.split(':')[0])
+            start_at_min = int(str_time.split(':')[1])
             now = datetime.datetime.now()
             start_at = datetime.datetime.now().replace(hour=start_at_hour,
                                                        minute=start_at_min,
@@ -109,6 +109,11 @@ def run():
             tpc.inc_offset(-0.2)
         else:
             pass # unknown
+
+        # We have to wait some time to allow the posted action to be distributed
+        # to the different task. The tasks then change their status. And the 
+        # current status is displayed afterwards
+        time.sleep(2)
     return render_template('run.html', heading='Run', state=cook.status, data=brew_recipe)
 
 

@@ -2,7 +2,8 @@
 
 {% block head %}
     {{ super() }}
-    <meta http-equiv="refresh" content="5" >
+    {% if state.pct_state == "Waiting" or state.pct_state == "Running" %}<meta http-equiv="refresh" content="5" >{% endif %}
+    {% if state.pct_state == "Idle" or state.pct_state == "Not running" %}<meta http-equiv="refresh" content="30" >{% endif %}
 
     <link rel="stylesheet" media="all" type="text/css" href="http://code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css" />
     <link rel="stylesheet" media="all" type="text/css" href="../static/plugins/timepicker/jquery-ui-timepicker-addon.css" />
@@ -68,7 +69,7 @@
         </tbody>
       </table>
       <form action="." method="POST">
-        <input type="submit" name="submit" class="btn btn-default" value="Starte um"  {% if state.pct_state == "Waiting" or state.pct_state == "Running" %}disabled{% endif %}>
+        <input type="submit" name="submit" class="btn btn-default" value="Starte um" {% if state.pct_state == "Waiting" or state.pct_state == "Running" %}disabled{% endif %}>
         <input type="text" name="start_time" id="basic_example_2" value="07:00" />
         <script type="text/javascript">
           $('#basic_example_2').timepicker();
