@@ -1,31 +1,36 @@
 {% extends "layout.html" %}
 {% block body %}
-    <form action="." method="POST" class="form-horizontal">
-      <div class="form-group">
-        {% for fname in fnames %}
-          <div class="row">
-            <div class="col-sm-2">
-              <input type="submit" name="s{{ loop.index0 }}" class="btn btn-default" value="Select">
-              <input type="submit" name="d{{ loop.index0 }}" class="btn btn-warning" value="Delete">
-            </div>
-            <div class="col-sm-10">
-              <p class="form-control-static">{{ fname }}</p>
-            </div>
-          </div>
+<form action="." method="POST" class="form-horizontal">
+  <div class="row">
+    <div class="col-md-6">
+      <table class="table">
+        <thead>
+          <tr>
+            <th colspan="4">Verfügbare Rezepte</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for fname in fnames %}
+          <tr>
+              <td><input type="submit" name="s{{ loop.index0 }}" class="btn btn-default" value="Select">
+              <input type="submit" name="d{{ loop.index0 }}" class="btn btn-warning" value="Delete"></td>
+              <td><p class="form-control-static">{{ fname }}</p></td>
+          </tr>
         {% else %}
             <em>No entries</em>
         {% endfor %}
-      </div><!-- form-group -->
-      <div class="form-group">
-          <div class="row">
-            <label class="col-sm-2 control-label">Ausgewähltes Rezept</label>
-            <div class="col-sm-10">
-              <p class="form-control-static">{{ selected }}</p>
-            </div>
-          </div>
-       </div>
-    </form>
-    {% if last_action %}
-        <p>Last Action: {{ last_action }}</p>
-    {% endif %}
+        </tbody>
+        <thead>
+          <tr>
+            <th><label class="control-label">Ausgewähltes Rezept</label></th>
+            <th><p class="form-control-static">{{ selected }}</p></th>
+          </tr>
+        </thead>
+      </table>
+    </div>
+  </div>
+</form>
+{% if last_action %}
+    <p>Last Action: {{ last_action }}</p>
+{% endif %}
 {% endblock %}
