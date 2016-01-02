@@ -12,9 +12,6 @@ body {
     color:black;
 }
 
-.linke-spalte   { width: 60%; float: left; margin: 5% 1% 4% 1%; }
-.rechte-spalte  { width: 36%; float: right; margin: 5% 1% 4% 1%; text-align: left; }
-
 .title          { width: auto; background-color: #de0000; text-align: center; border: 3px solid #eee; }
 
 .footer         { width: auto; background-color: #de0000; clear: both; text-align: center; }
