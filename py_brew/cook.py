@@ -83,9 +83,10 @@ class ProcControlThread (threading.Thread):
         threading.Thread.__init__(self, name='PCT')
         self.set_state = state_cb
         self.get_state = get_state_cb
-        self.pct_req = ''   # Could be START, STOP or EXIT
+        self.pct_req = ''   # Could be START, START_AT, STOP or EXIT
         self.recipe = None
         self.tpc = tpc
+        self.start_at = None
         self.set_state('Initialized')
 
     def run(self):
@@ -99,6 +100,8 @@ class ProcControlThread (threading.Thread):
             if self.pct_req == 'START':
                 self.set_state('Running')
                 self.tpc.start(self.recipe)
+            elif self.pct_req == 'START_AT':
+                self.set_state('Waiting')
             elif self.pct_req == 'STOP':
                 self.set_state('Idle')
                 self.tpc.stop()
@@ -111,14 +114,28 @@ class ProcControlThread (threading.Thread):
             if self.get_state() == 'Running':
                 if self.tpc.control_temp_interval():
                     self.set_state('Idle')
+            if self.get_state() == 'Waiting':
+                now = datetime.datetime.now()
+                print now, self.start_at
+                if now > self.start_at:
+                    self.set_state('Running')
+                    self.tpc.start(self.recipe)
+
             while sleepduration > 0:
                 time.sleep(config.THREAD_SLEEP_INT)
                 sleepduration -= config.THREAD_SLEEP_INT
 
-    def start_cooking(self, recipe):
+    def start_cooking(self, recipe, start_at=None):
         """ Starts cookin in the main loop """
         self.recipe = copy.deepcopy(recipe)
-        self.pct_req = 'START'
+        print start_at
+        if start_at is None:
+            print "Starting"
+            self.pct_req = 'START'
+        else:
+            self.start_at = start_at
+            print "Starting AT"
+            self.pct_req = 'START_AT'
 
     def stop_cooking(self):
         """ Starts cooking in the main loop """

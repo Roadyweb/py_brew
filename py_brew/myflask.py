@@ -8,6 +8,7 @@ Main functions to create the webpages
 
 
 from flask import Flask, request, render_template
+import datetime
 import time
 
 import config
@@ -80,6 +81,22 @@ def run():
     if request.method == 'POST':
         if request.form['submit'] == 'Start':
             pct_thread.start_cooking(brew_recipe)
+            dlt_thread.start_logging()
+        elif request.form['submit'] == 'Starte um':
+            # Calculate datetime object when cooking should start
+            time = request.form['start_time']
+            start_at_hour = int(time.split(':')[0])
+            start_at_min = int(time.split(':')[1])
+            now = datetime.datetime.now()
+            start_at = datetime.datetime.now().replace(hour=start_at_hour,
+                                                       minute=start_at_min,
+                                                       second=0,
+                                                       microsecond=0)
+            # Add a day when start_at is in the past
+            if now > start_at:
+                start_at += datetime.timedelta(days=1)
+            print now, start_at
+            pct_thread.start_cooking(brew_recipe, start_at)
             dlt_thread.start_logging()
         elif request.form['submit'] == 'Stop':
             pct_thread.stop_cooking()

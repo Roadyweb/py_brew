@@ -3,6 +3,24 @@
 {% block head %}
     {{ super() }}
     <meta http-equiv="refresh" content="5" >
+
+    <link rel="stylesheet" media="all" type="text/css" href="http://code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css" />
+    <link rel="stylesheet" media="all" type="text/css" href="../static/plugins/timepicker/jquery-ui-timepicker-addon.css" />
+
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="http://code.jquery.com/ui/1.11.0/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="../static/plugins/timepicker/jquery-ui-timepicker-addon.js"></script>
+    <script type="text/javascript" src="../static/plugins/timepicker/i18n/jquery-ui-timepicker-addon-i18n.min.js"></script>
+    <script type="text/javascript" src="../static/plugins/timepicker/jquery-ui-sliderAccess.js"></script>
+    <script type="text/javascript">
+            $(function(){
+                $('#tabs').tabs();
+                $('.example-container > pre').each(function(i){
+                    eval($(this).text());
+                });
+            });
+    </script>
+    <script type="text/javascript" src="https://sellfy.com/js/api_buttons.js"></script>
 {% endblock %}
 
 {% block body %}
@@ -58,6 +76,12 @@
         </tbody>
       </table>
       <form action="." method="POST">
+        <input type="submit" name="submit" class="btn btn-default" value="Starte um">
+        <input type="text" name="start_time" id="basic_example_2" value="07:00" />
+        <script type="text/javascript">
+          $('#basic_example_2').timepicker();
+        </script>
+        <br/>
         <input type="submit" name="submit" class="btn btn-default" value="Start">
         <input type="submit" name="submit" class="btn btn-default" value="Stop">
         <input type="submit" name="submit" class="btn btn-warning" value="Reset Graph">
