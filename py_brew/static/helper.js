@@ -99,19 +99,19 @@ function showTooltip(x, y, contents) {
     }).appendTo("body").fadeIn(200);
 }
 
-function bindTooltip(container, weekyear) {
+function bindTooltip(container, data) {
     var previousPoint = null;
     container.bind("plothover", function (event, pos, item) {
         if (item) {
-             if (previousPoint != item.dataIndex) {
-                  previousPoint = item.dataIndex;
-                  $("#tooltip").remove();
-                  var x = item.datapoint[0].toFixed(2),
-                  y = item.datapoint[1].toFixed(2),
-                  wy = weekyear[item.dataIndex];
-                  showTooltip(item.pageX, item.pageY,
-                      item.series.label + " of " + x + " = " + y + " @ " + wy);
-             }
+            if (previousPoint != item.dataIndex) {
+                previousPoint = item.dataIndex;
+                $("#tooltip").remove();
+                var time = item.datapoint[0].toFixed(0),
+                t1 = item.datapoint[1].toFixed(2),
+                t2 = data[2][item.dataIndex].toFixed(2);
+                showTooltip(item.pageX, item.pageY,
+                "Zeit: " + time + " T1: " + t1 + " T2: " + t2);
+            }
         } else {
              $("#tooltip").remove();
              previousPoint = null;
