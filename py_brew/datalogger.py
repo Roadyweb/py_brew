@@ -60,10 +60,17 @@ class DataLoggerThread(threading.Thread):
                 now = datetime.datetime.now()
                 if self.time_start is None:
                     self.time_start = now
-                self.set_state('Logging')
+                self.set_state('Running')
                 delta = timedelta2sec(now - self.time_start)
                 entry = {}
                 entry['time'] = delta
+                entry['state'] = (
+                    self.status['cook_state'][0] + '-' +
+                    self.status['pct_state'][0] + '-' +
+                    self.status['wqt_state'][0] + '-' +
+                    self.status['dlt_state'][0] + '-' +
+                    self.status['tmt_state'][0] + '-' +
+                    self.status['bm_state'][0])
                 entry['tempk1'] = self.status['tempk1']
                 entry['tempk2'] = self.status['tempk2']
                 entry['settempk1'] = self.status['settempk1']

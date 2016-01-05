@@ -34,6 +34,7 @@ $(document).ready(function() {
     <th>P1</th>
     <th>P2</th>
     <th>H</th>
+    <th>C-P-W-L-T-B</th>
     <th>ZT1</th>
     <th>T1</th>
     <th>ZT2</th>
@@ -43,7 +44,7 @@ $(document).ready(function() {
 <tbody align="left">
 {% for line in data.list %}
 <tr>
-    <td>{{ line.time }}</td><td>{{ line.pump1 }}</td><td>{{ line.pump2  }}</td><td>{{ line.heater }}</td>
+    <td>{{ line.time }}</td><td>{{ line.pump1 }}</td><td>{{ line.pump2  }}</td><td>{{ line.heater }}</td><td>{{ line.state }}</td>
     <td>{{ line.settempk1 }}</td><td>{{ '%0.1f' % line.tempk1  }}</td><td>{{ line.settempk2 }}</td><td>{{ '%0.1f' % line.tempk2 }}</td>
 </tr>
 {% endfor %}
