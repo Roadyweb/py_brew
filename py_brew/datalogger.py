@@ -10,7 +10,7 @@ import time
 
 import config
 
-from helper import timedelta2sec
+from helper import timedelta2sec, getsize
 
 
 class DataLoggerThread(threading.Thread):
@@ -72,6 +72,7 @@ class DataLoggerThread(threading.Thread):
                 entry['pump2'] = self.status['pump2']
                 entry['heater'] = self.status['heater']
                 self.data['list'].append(entry)
+                print 'Data size: %d bytes' % getsize(self.data)
                 # print 'DLT: record length %d.' % (len(self.data['list']))
             else:
                 self.set_state('Idle')
