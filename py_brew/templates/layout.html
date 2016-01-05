@@ -31,6 +31,7 @@
         <li role="presentation" {% if heading == 'Edit' %}class="active"{% endif%}><a href="{{ url_for('edit') }}">Eingabe</a></li>
         <li role="presentation" {% if heading == 'Run' %}class="active"{% endif%}><a href="{{ url_for('run') }}">Start</a></li>
         <li role="presentation" {% if heading == 'Graph' %}class="active"{% endif%}><a href="{{ url_for('graph') }}">Graph</a></li>
+        <li role="presentation" {% if heading == 'Table' %}class="active"{% endif%}><a href="{{ url_for('table') }}">Tabelle</a></li>
       </ul>
     </div>
     <br />

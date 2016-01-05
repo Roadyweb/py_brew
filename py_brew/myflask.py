@@ -144,7 +144,10 @@ def edit():
             last_action = u'Zurücksetzen'
         else:
             pass
-    return render_template('edit.html', heading='Edit', data=brew_recipe, last_action=last_action)
+    return render_template('edit.html',
+                           heading='Edit',
+                           data=brew_recipe,
+                           last_action=last_action)
 
 
 @app.route('/manage/', methods=['GET', 'POST'])
@@ -155,12 +158,24 @@ def manage():
         brew_recipe = recipes.get_selected_recipe()
 
     selected = recipes.get_selected_fname()
-    return render_template('manage.html', heading='Manage', fnames=recipes.fnames, selected=selected)
+    return render_template('manage.html',
+                           heading='Manage',
+                           fnames=recipes.fnames,
+                           selected=selected)
 
 
 @app.route('/graph/')
 def graph():
-    return render_template('graph.html', heading='Graph', data=dlt_thread.get_data())
+    return render_template('graph.html',
+                           heading='Graph',
+                           data=dlt_thread.get_data())
+
+
+@app.route('/table/')
+def table():
+    return render_template('table.html',
+                           heading='Table',
+                           data=dlt_thread.get_data())
 
 
 def eval_edit_form(form, brew_recipe):
