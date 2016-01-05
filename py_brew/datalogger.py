@@ -64,8 +64,10 @@ class DataLoggerThread(threading.Thread):
                 delta = timedelta2sec(now - self.time_start)
                 entry = {}
                 entry['time'] = delta
+                # Put together a status string
                 entry['state'] = (
-                    self.status['cook_state'][0] + '-' +
+                    self.status['cook_state'][0] +
+                    str(self.status['cook_state_stage']) + '-' +
                     self.status['pct_state'][0] + '-' +
                     self.status['wqt_state'][0] + '-' +
                     self.status['dlt_state'][0] + '-' +

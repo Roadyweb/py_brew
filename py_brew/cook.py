@@ -35,6 +35,8 @@ status = {
                   'tmt_state': 'Not running',
                   'bm_state': 'Unknown',
                   'cook_state': 'Off',
+                  'cook_state_stage': '',
+                  'cook_state_extended': '',
                   'simulation': config.SIMULATION
                 }
 
@@ -60,8 +62,16 @@ def tmt_state_cb(state):
 def bm_state_cb(state):
     status['bm_state'] = state
 
-def cook_state_cb(state):
+def cook_state_cb(state, stage=None, extended=None):
     status['cook_state'] = state
+    if stage is not None:
+        status['cook_state_stage'] = stage
+    else:
+        status['cook_state_stage'] = ''
+    if extended is not None:
+        status['cook_state_extended'] = extended
+    else:
+        status['cook_state_extended'] = ''
 
 def cook_temp_state_cb(settempk1, setdurak1, settempk2, setdurak2, tempk1_offset):
     status['settempk1'] = settempk1
@@ -217,16 +227,16 @@ class TempProcessControl(object):
     def control_temp_interval(self):
         ''' returns true when finished '''
         if self.state == 'INIT':
-            self.set_state('Stage %d - Init' % (self.cur_idx + 1))
+            self.set_state('Init', stage=self.cur_idx + 1)
             self.set_temp, self.set_dura = self._get_temp_dura()
             if self.control_temp() == True:
                 self.state = 'WAITING'
                 self.wait_start = datetime.datetime.now()
         elif self.state == 'WAITING':
             td_sec = timedelta2sec(datetime.datetime.now() - self.wait_start)
-            self.set_state('Stage %d - Cooking for %d of of %d seconds' \
-                % (self.cur_idx + 1, td_sec, self.set_dura)
-                )
+            self.set_state('Cooking',
+                           stage=self.cur_idx + 1,
+                           extended= '%d von %d sek'% (td_sec, self.set_dura))
             self.set_temp, self.set_dura = self._get_temp_dura()
             self.control_temp()
             if td_sec < self.set_dura:

@@ -137,7 +137,8 @@
             <td>BlubberManager</td><td>{{ state.bm_state }}</td>
           </tr>
           <tr>
-            <td>Cook State</td><td colspan="3">{{ state.cook_state }}</td>
+            <td>Cook State</td>
+            <td colspan="3">{{ state.cook_state }} Stufe {{ state.cook_state_stage }} - {{ state.cook_state_extended }}</td>
           </tr>
         </tbody>
       {% else %}
