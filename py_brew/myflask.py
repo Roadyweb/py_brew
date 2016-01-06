@@ -106,8 +106,6 @@ def run():
         elif 'btn_stop' in request.form:
             pct_thread.stop_cooking()
             dlt_thread.stop_logging()
-        elif 'btn_reset_graph' in request.form:
-            dlt_thread.reset_data()
         elif 'btn_t1_up' in request.form:
             tpc.inc_offset(0.2)
         elif 'btn_t1_down' in request.form:
@@ -164,8 +162,11 @@ def manage():
                            selected=selected)
 
 
-@app.route('/graph/')
+@app.route('/graph/', methods=['GET', 'POST'])
 def graph():
+    if request.method == 'POST':
+        if 'btn_reset_graph' in request.form:
+            dlt_thread.reset_data()
     return render_template('graph.html',
                            heading='Graph',
                            data=dlt_thread.get_data())
