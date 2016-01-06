@@ -81,8 +81,8 @@ class DataLoggerThread(threading.Thread):
                 entry['pump2'] = self.status['pump2']
                 entry['heater'] = self.status['heater']
                 self.data['list'].append(entry)
-                print 'Data size: %d bytes' % getsize(self.data)
-                # print 'DLT: record length %d.' % (len(self.data['list']))
+                # Write log size back to global status dict
+                self.status['log_size'] = getsize(self.data)
             else:
                 self.set_state('Idle')
             while sleepduration > 0:
@@ -102,6 +102,7 @@ class DataLoggerThread(threading.Thread):
         """ Resets all logged data
         """
         self._reset()
+        self.status['log_size'] = 0
 
     def start_logging(self):
         """ Starts the logging in the main loop """

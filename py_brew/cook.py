@@ -38,7 +38,8 @@ status = {
                   'cook_state': 'Off',
                   'cook_state_stage': '',
                   'cook_state_extended': '',
-                  'simulation': config.SIMULATION
+                  'simulation': config.SIMULATION,
+                  'log_size': 0
                 }
 
 def dlt_state_cb(state):

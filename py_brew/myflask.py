@@ -169,7 +169,8 @@ def graph():
             dlt_thread.reset_data()
     return render_template('graph.html',
                            heading='Graph',
-                           data=dlt_thread.get_data())
+                           data=dlt_thread.get_data(),
+                           state=cook.status)
 
 
 @app.route('/table/')
