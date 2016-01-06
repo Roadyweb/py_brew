@@ -63,7 +63,9 @@
           {% endif %}
           <tr>
             <td>Methode</td>
-            <td colspan="3">{{ data.method }}</td>
+            <td>{{ data.method }}</td>
+            <td>Hysterese</td>
+            <td>+/- {{'%0.1f' % state.hyst }} K</td>
           </tr>
         </tbody>
       </table>
