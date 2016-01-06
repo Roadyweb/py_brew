@@ -17,6 +17,9 @@
 {% endblock %}
 
 {% block body %}
+  <!-- some local variables for jinja-->
+  {% set running = state.pct_state == "Waiting" or state.pct_state == "Running" %}
+  {% set running_k2 = data.method == 'K2' and running %}
   <div class="row">
     <div class="col-md-6">
       <table class="table">
@@ -69,13 +72,13 @@
         </tbody>
       </table>
       <form action="." method="POST">
-        <input type="submit" name="btn_start_at" class="btn btn-default" value="Starte um" {% if state.pct_state == "Waiting" or state.pct_state == "Running" %}disabled{% endif %}>
+        <input type="submit" name="btn_start_at" class="btn btn-default" value="Starte um" {% if running %}disabled{% endif %}>
         <input type="text" name="start_time" id="basic_example_2" value="{{ start_at }}" />
         <script type="text/javascript">
           $('#basic_example_2').timepicker();
         </script>
         <br/><br/>
-        <input type="submit" name="btn_start" class="btn btn-default" value="Start" {% if state.pct_state == "Waiting" or state.pct_state == "Running" %}disabled{% endif %}>
+        <input type="submit" name="btn_start" class="btn btn-default" value="Start" {% if running %}disabled{% endif %}>
         <input type="submit" name="btn_stop" class="btn btn-default" value="Stop">
         <input type="submit" name="btn_t1_up" class="btn btn-default" value="K1 + 0.2 K">
         <input type="submit" name="btn_t1_down" class="btn btn-default" value="K1 - 0.2 K">
@@ -98,15 +101,15 @@
           <tr>
             <td>Temp K1</td>
             <td
-              {% if (state.pct_state == "Waiting" or state.pct_state == "Running") and state.tempk1 < ( state.settempk1 - state.hyst) %}bgcolor="#D1D1FF" {% endif %}
-              {% if (state.pct_state == "Waiting" or state.pct_state == "Running") and state.tempk1 > ( state.settempk1 + state.hyst) %}bgcolor="#FFD2D2" {% endif %}
-              {% if (state.pct_state == "Waiting" or state.pct_state == "Running") and (state.tempk1 > ( state.settempk1 - state.hyst) and state.tempk1 < ( state.settempk1 + state.hyst)) %}bgcolor="#D1FFD1" {% endif %}
+              {% if running and state.tempk1 < ( state.settempk1 - state.hyst) %}bgcolor="#D1D1FF" {% endif %}
+              {% if running and state.tempk1 > ( state.settempk1 + state.hyst) %}bgcolor="#FFD2D2" {% endif %}
+              {% if running and (state.tempk1 > ( state.settempk1 - state.hyst) and state.tempk1 < ( state.settempk1 + state.hyst)) %}bgcolor="#D1FFD1" {% endif %}
             >{{'%0.1f' % state.tempk1 }} °C </td>
             <td>Temp K2</td>
             <td 
-              {% if data.method == 'K2' and (state.pct_state == "Waiting" or state.pct_state == "Running") and state.tempk2 < ( state.settempk2 - state.hyst) %}bgcolor="#D1D1FF" {% endif %}
-              {% if data.method == 'K2' and (state.pct_state == "Waiting" or state.pct_state == "Running") and state.tempk2 > ( state.settempk2 + state.hyst) %}bgcolor="#FFD2D2" {% endif %}
-              {% if data.method == 'K2' and (state.pct_state == "Waiting" or state.pct_state == "Running") and (state.tempk2 > ( state.settempk2 - state.hyst) and state.tempk2 < ( state.settempk2 + state.hyst)) %}bgcolor="#D1FFD1" {% endif %}
+              {% if running_k2 and state.tempk2 < ( state.settempk2 - state.hyst) %}bgcolor="#D1D1FF" {% endif %}
+              {% if running_k2 and state.tempk2 > ( state.settempk2 + state.hyst) %}bgcolor="#FFD2D2" {% endif %}
+              {% if running_k2 and (state.tempk2 > ( state.settempk2 - state.hyst) and state.tempk2 < ( state.settempk2 + state.hyst)) %}bgcolor="#D1FFD1" {% endif %}
             >{{'%0.1f' % state.tempk2 }} °C</td>
           </tr>
           <tr>
