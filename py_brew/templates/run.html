@@ -47,13 +47,19 @@
           </tr>
         </thead>
         <tbody>
-          <tr {% if data.method == 'K1' and state.cook_state_stage == 1 %}bgcolor="#FFD2D2"{% endif %}>
+          <tr
+            {% if data.method == 'K1' and state.cook_state == 'Init' and state.cook_state_stage == 1 %}bgcolor="#FFD2D2"{% endif %}
+            {% if data.method == 'K1' and state.cook_state == 'Cooking' and state.cook_state_stage == 1 %}bgcolor="#D1FFD1"{% endif %}
+          >
             <td>Kochtemp. K1</td><td>{{ data.tempk1 }} °C</td>
             <td>Kochdauer K1</td><td>{{ data.durak1 }} s</td>
           </tr>
           {% if data.method == 'K2' %}
           {% for entry in data.list %}
-            <tr {% if data.method == 'K2' and state.cook_state_stage == loop.index %}bgcolor="#FFD2D2"{% endif %}>
+            <tr
+              {% if data.method == 'K2' and state.cook_state == 'Init' and state.cook_state_stage == loop.index %}bgcolor="#FFD2D2"{% endif %}
+              {% if data.method == 'K2' and state.cook_state == 'Cooking' and state.cook_state_stage == loop.index %}bgcolor="#D1FFD1"{% endif %}
+            >
               <td>Rasttemp. K2</td><td>{{ entry[0]|safe }} °C</td>
               <td>Rastdauer K2</td><td>{{ entry[1]|safe }} s</td>
             </tr>
