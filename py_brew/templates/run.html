@@ -6,13 +6,12 @@
     {% if state.pct_state == "Idle" or state.pct_state == "Not running" %}<meta http-equiv="refresh" content="30" >{% endif %}
 
     <link rel="stylesheet" media="all" type="text/css" href="http://code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css" />
-    <link rel="stylesheet" media="all" type="text/css" href="../static/plugins/timepicker/jquery-ui-timepicker-addon.css" />
+    <link rel="stylesheet" media="all" type="text/css" href="{{ url_for('static', filename='plugins/timepicker/jquery-ui-timepicker-addon.css') }}" />
 
-    <script type="text/javascript" src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
     <script type="text/javascript" src="http://code.jquery.com/ui/1.11.0/jquery-ui.min.js"></script>
-    <script type="text/javascript" src="../static/plugins/timepicker/jquery-ui-timepicker-addon.js"></script>
-    <script type="text/javascript" src="../static/plugins/timepicker/i18n/jquery-ui-timepicker-addon-i18n.min.js"></script>
-    <script type="text/javascript" src="../static/plugins/timepicker/jquery-ui-sliderAccess.js"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='plugins/timepicker/jquery-ui-timepicker-addon.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='plugins/timepicker/i18n/jquery-ui-timepicker-addon-i18n.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='plugins/timepicker/jquery-ui-sliderAccess.js') }}"></script>
     <script type="text/javascript" src="https://sellfy.com/js/api_buttons.js"></script>
 {% endblock %}
 
