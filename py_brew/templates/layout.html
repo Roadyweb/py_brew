@@ -7,7 +7,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <link rel="icon" href="../../favicon.ico">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
     <!-- link href="../static/css/bootstrap-theme.min.css" rel="stylesheet"-->
 
@@ -16,7 +16,7 @@
     <!-- link href="theme.css" rel="stylesheet" -->
     <!-- link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}" -->
 
-    <script type="text/javascript" src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='plugins/jquery/jquery-1.11.1.min.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
 
     {% block head %}
