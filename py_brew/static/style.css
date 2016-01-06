@@ -12,6 +12,10 @@ body {
     color:black;
 }
 
+.table-bg-green { background-color: #D1FFD1; }
+.table-bg-red   { background-color: #FFD2D2; }
+.table-bg-blue  { background-color: #D1D1FF; }
+
 .title          { width: auto; background-color: #BD3305; text-align: center; border: 3px solid #eee; }
 
 .footer         { width: auto; background-color: #DB5123; clear: both; text-align: center; }

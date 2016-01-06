@@ -48,8 +48,8 @@
         </thead>
         <tbody>
           <tr
-            {% if data.method == 'K1' and state.cook_state == 'Init' and state.cook_state_stage == 1 %}bgcolor="#FFD2D2"{% endif %}
-            {% if data.method == 'K1' and state.cook_state == 'Cooking' and state.cook_state_stage == 1 %}bgcolor="#D1FFD1"{% endif %}
+            {% if data.method == 'K1' and state.cook_state == 'Init' and state.cook_state_stage == 1 %}class=table-bg-red{% endif %}
+            {% if data.method == 'K1' and state.cook_state == 'Cooking' and state.cook_state_stage == 1 %}class=table-bg-green{% endif %}
           >
             <td>Kochtemp. K1</td><td>{{ data.tempk1 }} °C</td>
             <td>Kochdauer K1</td><td>{{ data.durak1 }} s</td>
@@ -57,8 +57,8 @@
           {% if data.method == 'K2' %}
           {% for entry in data.list %}
             <tr
-              {% if data.method == 'K2' and state.cook_state == 'Init' and state.cook_state_stage == loop.index %}bgcolor="#FFD2D2"{% endif %}
-              {% if data.method == 'K2' and state.cook_state == 'Cooking' and state.cook_state_stage == loop.index %}bgcolor="#D1FFD1"{% endif %}
+              {% if data.method == 'K2' and state.cook_state == 'Init' and state.cook_state_stage == loop.index %}class=table-bg-red{% endif %}
+              {% if data.method == 'K2' and state.cook_state == 'Cooking' and state.cook_state_stage == loop.index %}class=table-bg-green{% endif %}
             >
               <td>Rasttemp. K2</td><td>{{ entry[0]|safe }} °C</td>
               <td>Rastdauer K2</td><td>{{ entry[1]|safe }} s</td>
@@ -90,7 +90,6 @@
         <input type="submit" name="btn_stop" class="btn btn-default" value="Stop">
         <input type="submit" name="btn_t1_up" class="btn btn-default" value="K1 + 0.2 K">
         <input type="submit" name="btn_t1_down" class="btn btn-default" value="K1 - 0.2 K">
-        <input type="submit" name="btn_reset_graph" class="btn btn-warning" value="Graph zurücksetzen">
       </form>
     </div>
     <div class="col-md-6">
@@ -109,15 +108,15 @@
           <tr>
             <td>Temp K1</td>
             <td
-              {% if running and state.tempk1 < ( state.settempk1 - state.hyst) %}bgcolor="#D1D1FF" {% endif %}
-              {% if running and state.tempk1 > ( state.settempk1 + state.hyst) %}bgcolor="#FFD2D2" {% endif %}
-              {% if running and (state.tempk1 > ( state.settempk1 - state.hyst) and state.tempk1 < ( state.settempk1 + state.hyst)) %}bgcolor="#D1FFD1" {% endif %}
+              {% if running and state.tempk1 < ( state.settempk1 - state.hyst) %}class=table-bg-blue {% endif %}
+              {% if running and state.tempk1 > ( state.settempk1 + state.hyst) %}class=table-bg-red {% endif %}
+              {% if running and (state.tempk1 > ( state.settempk1 - state.hyst) and state.tempk1 < ( state.settempk1 + state.hyst)) %}class=table-bg-green {% endif %}
             >{{'%0.1f' % state.tempk1 }} °C </td>
             <td>Temp K2</td>
             <td 
-              {% if running_k2 and state.tempk2 < ( state.settempk2 - state.hyst) %}bgcolor="#D1D1FF" {% endif %}
-              {% if running_k2 and state.tempk2 > ( state.settempk2 + state.hyst) %}bgcolor="#FFD2D2" {% endif %}
-              {% if running_k2 and (state.tempk2 > ( state.settempk2 - state.hyst) and state.tempk2 < ( state.settempk2 + state.hyst)) %}bgcolor="#D1FFD1" {% endif %}
+              {% if running_k2 and state.tempk2 < ( state.settempk2 - state.hyst) %}class=table-bg-blue {% endif %}
+              {% if running_k2 and state.tempk2 > ( state.settempk2 + state.hyst) %}class=table-bg-red {% endif %}
+              {% if running_k2 and (state.tempk2 > ( state.settempk2 - state.hyst) and state.tempk2 < ( state.settempk2 + state.hyst)) %}class=table-bg-green {% endif %}
             >{{'%0.1f' % state.tempk2 }} °C</td>
           </tr>
           <tr>
