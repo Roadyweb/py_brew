@@ -21,6 +21,7 @@ status = {
                   'tempk1': 10.0,
                   'tempk2': 10.0,
                   'tempk1_offset': 0.0,
+                  'hyst': config.TEMP_HYST,
                   'settempk1': 0.0,
                   'settempk2': 0.0,
                   'setdurak1': 0.0,

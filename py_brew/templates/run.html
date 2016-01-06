@@ -92,16 +92,30 @@
         {% if state %}
         <tbody>
           <tr>
-            <td>Temp K1</td><td>{{'%0.1f' % state.tempk1 }} °C</td>
-            <td>Temp K2</td><td>{{'%0.1f' % state.tempk2 }} °C</td>
+            <td>Zieltemp K1</td><td>{{'%0.1f' % state.settempk1 }} °C</td>
+            <td>Zieltemp K2</td><td>{{'%0.1f' % state.settempk2 }} °C</td>
           </tr>
           <tr>
-            <td>Pumpe 1</td><td>{{ state.pump1 }}</td>
-            <td>Pumpe 2</td><td>{{ state.pump2 }}</td>
+            <td>Temp K1</td>
+            <td
+              {% if (state.pct_state == "Waiting" or state.pct_state == "Running") and state.tempk1 < ( state.settempk1 - state.hyst) %}bgcolor="#D1D1FF" {% endif %}
+              {% if (state.pct_state == "Waiting" or state.pct_state == "Running") and state.tempk1 > ( state.settempk1 + state.hyst) %}bgcolor="#FFD2D2" {% endif %}
+              {% if (state.pct_state == "Waiting" or state.pct_state == "Running") and (state.tempk1 > ( state.settempk1 - state.hyst) and state.tempk1 < ( state.settempk1 + state.hyst)) %}bgcolor="#D1FFD1" {% endif %}
+            >{{'%0.1f' % state.tempk1 }} °C </td>
+            <td>Temp K2</td>
+            <td 
+              {% if data.method == 'K2' and (state.pct_state == "Waiting" or state.pct_state == "Running") and state.tempk2 < ( state.settempk2 - state.hyst) %}bgcolor="#D1D1FF" {% endif %}
+              {% if data.method == 'K2' and (state.pct_state == "Waiting" or state.pct_state == "Running") and state.tempk2 > ( state.settempk2 + state.hyst) %}bgcolor="#FFD2D2" {% endif %}
+              {% if data.method == 'K2' and (state.pct_state == "Waiting" or state.pct_state == "Running") and (state.tempk2 > ( state.settempk2 - state.hyst) and state.tempk2 < ( state.settempk2 + state.hyst)) %}bgcolor="#D1FFD1" {% endif %}
+            >{{'%0.1f' % state.tempk2 }} °C</td>
           </tr>
           <tr>
             <td>Korrektur Temp K1</td><td>{{'%0.1f' % state.tempk1_offset }} °C</td>
             <td>Heizung</td><td>{{ state.heater }}</td>
+          </tr>
+          <tr>
+            <td>Pumpe 1</td><td>{{ state.pump1 }}</td>
+            <td>Pumpe 2</td><td>{{ state.pump2 }}</td>
           </tr>
         </tbody>
       {% else %}
@@ -116,10 +130,6 @@
         </thead>
         {% if state %}
         <tbody>
-          <tr>
-            <td>Zieltemp K1</td><td>{{'%0.1f' % state.settempk1 }} °C</td>
-            <td>Zieltemp K2</td><td>{{'%0.1f' % state.settempk2 }} °C</td>
-          </tr>
           <tr>
             <td>Dauer K1</td><td>{{'%d' % state.setdurak1 }} s</td>
             <td>Dauer K2</td><td>{{'%d' % state.setdurak2 }} s</td>
