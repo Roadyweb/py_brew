@@ -5,16 +5,16 @@ body {
 
 .nav-pills > li.active > a, .nav-pills > li.active > a:hover, .nav-pills > li.active > a:focus {
     color: black;
-    background-color: #F92C2C;
+    background-color: #DB5123;
 }
 
 .nav-pills a {
     color:black;
 }
 
-.title          { width: auto; background-color: #de0000; text-align: center; border: 3px solid #eee; }
+.title          { width: auto; background-color: #BD3305; text-align: center; border: 3px solid #eee; }
 
-.footer         { width: auto; background-color: #de0000; clear: both; text-align: center; }
+.footer         { width: auto; background-color: #DB5123; clear: both; text-align: center; }
 
 .menu           { background-color: #eee; height: auto; width: 200px; float: left; font-size: 1.2em}
 
