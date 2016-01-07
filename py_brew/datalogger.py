@@ -5,6 +5,7 @@ Created on Apr 22, 2015
 '''
 
 import datetime
+import json
 import threading
 import time
 
@@ -27,11 +28,12 @@ class DataLoggerThread(threading.Thread):
         log_interval: log interval in seconds, defaults to 5
     """
 
-    def __init__(self, status, state_cb, log_interval=config.LOG_INT):
+    def __init__(self, status, state_cb, socketio, log_interval=config.LOG_INT):
         """ Initializes all attributes """
         threading.Thread.__init__(self, name='DLT')
         self.status = status
         self.set_state = state_cb
+        self.socketio = socketio
         self.log_interval = log_interval
         self.time_start = None
         self.log_flag = False
@@ -85,6 +87,9 @@ class DataLoggerThread(threading.Thread):
                 self.status['log_size'] = getsize(self.data)
             else:
                 self.set_state('Idle')
+
+            self.socketio.emit('data', json.dumps(self.status),
+                               broadcast=True)
             while sleepduration > 0:
                 if self.exit_flag:
                     self.set_state('Not running')

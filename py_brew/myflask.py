@@ -9,6 +9,7 @@ Main functions to create the webpages
 
 
 from flask import Flask, request, render_template
+import flask_socketio
 import datetime
 import time
 
@@ -23,6 +24,7 @@ from recipes import Recipes
 app = Flask(__name__)
 app.jinja_env.add_extension('jinja2.ext.loopcontrols')
 app.secret_key = 'some_secret'
+socketio = flask_socketio.SocketIO(app)
 
 global wqt_thread
 
@@ -34,7 +36,7 @@ tmt_thread.start()
 wqt_thread = wq.WorkQueueThread(cook.wqt_state_cb)
 wqt_thread.start()
 wq.wqt_thread = wqt_thread
-dlt_thread = datalogger.DataLoggerThread(cook.status, cook.dlt_state_cb)
+dlt_thread = datalogger.DataLoggerThread(cook.status, cook.dlt_state_cb, socketio)
 dlt_thread.start()
 bm = wq.BlubberManager(cook.bm_state_cb)
 wq.bm = bm
@@ -215,7 +217,45 @@ def eval_manage_form(form):
             break
 
 
+@socketio.on('connect')
+def test_connect():
+    print('Server: Someone connected. Emitting ')
+    socketio.send('Response to connect')
+    #socketio.emit('my response', {'data': 'Connected'})
+
+
+@socketio.on('disconnect')
+def test_disconnect():
+    print('Server: Someone disconnected')
+    #socketio.emit('my response', {'data': 'Connected'})
+
+
+@socketio.on_error()        # Handles the default namespace
+def error_handler(e):
+    print e
+
+
+@socketio.on('message')
+def handle_message(message):
+    print('received message: ' + message)
+
+
+@socketio.on('json')
+def handle_json(json):
+    print('received json: ' + str(json))
+
+
+@socketio.on('my event')
+def handle_my_custom_event(json):
+    print('my_event - received json: ' + str(json))
+
+
 if __name__ == '__main__':
-    app.debug = config.FLASK_DEBUG
-    app.run(host=config.IP_ADDRESS)
+    try:
+        app.debug = config.FLASK_DEBUG
+        app.run(host=config.IP_ADDRESS)
+        socketio.run(app)
+    except KeyboardInterrupt:
+        socketio.stop()
+
     stop_all_threads()

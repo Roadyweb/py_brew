@@ -2,9 +2,6 @@
 
 {% block head %}
     {{ super() }}
-    {% if state.pct_state == "Waiting" or state.pct_state == "Running" %}<meta http-equiv="refresh" content="5" >{% endif %}
-    {% if state.pct_state == "Idle" or state.pct_state == "Not running" %}<meta http-equiv="refresh" content="30" >{% endif %}
-
     <link rel="stylesheet" media="all" type="text/css" href="{{ url_for('static', filename='plugins/jquery/jquery-ui.css') }}" />
     <link rel="stylesheet" media="all" type="text/css" href="{{ url_for('static', filename='plugins/timepicker/jquery-ui-timepicker-addon.css') }}" />
 
@@ -13,6 +10,45 @@
     <script type="text/javascript" src="{{ url_for('static', filename='plugins/timepicker/i18n/jquery-ui-timepicker-addon-i18n.min.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='plugins/timepicker/jquery-ui-sliderAccess.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/api_buttons.js') }}"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+    <script type="text/javascript" charset="utf-8">
+        var socket = io.connect('http://' + document.domain + ':' + location.port);
+        socket.on('connect', function() {
+            socket.emit('my event', {data: 'Client: I\'m connected!'});
+            console.log('Client: I\'m connected!');
+        });
+        socket.on('message', function(data) {
+            socket.emit('my event', {data: 'Client: Received a message'});
+            console.log('message ' + String(data));
+        });
+        socket.on('data', function(data) {
+            socket.emit('my event', {data: 'Client: Received a data message'});
+            console.log('data ' + typeof(data) + data);
+            var jdata = $.parseJSON(data);
+            console.log('jdata ' + typeof(jdata) + jdata);
+            document.getElementById('val_ztk1').innerHTML = jdata.settempk1.toFixed(1) + '°C';
+            document.getElementById('val_ztk2').innerHTML = jdata.settempk2.toFixed(1) + '°C';
+            document.getElementById('val_tk1').innerHTML = jdata.tempk1.toFixed(1) + '°C';
+            document.getElementById('val_tk2').innerHTML = jdata.tempk2.toFixed(1) + '°C';
+            document.getElementById('val_korr_tk1').innerHTML = jdata.tempk1_offset.toFixed(1) + '°C';
+            document.getElementById('val_heater').innerHTML = jdata.heater;
+            document.getElementById('val_pump1').innerHTML = jdata.pump1;
+            document.getElementById('val_pump2').innerHTML = jdata.pump2;
+            document.getElementById('val_dura_k1').innerHTML = jdata.setdurak1 + 's';
+            document.getElementById('val_dura_k2').innerHTML = jdata.setdurak2 + 's';
+            document.getElementById('val_pct_state').innerHTML = jdata.pct_state + ' ' + jdata.pct_state_min_to_wait;
+            document.getElementById('val_simulation').innerHTML = jdata.simulation;
+            document.getElementById('val_tmt_state').innerHTML = jdata.tmt_state;
+            document.getElementById('val_wqt_state').innerHTML = jdata.wqt_state;
+            document.getElementById('val_dlt_state').innerHTML = jdata.dlt_state;
+            document.getElementById('val_bm_state').innerHTML = jdata.bm_state;
+            document.getElementById('val_cook_state').innerHTML = jdata.cook_state + ' Stufe ' + jdata.cook_state_stage + ' - ' + jdata.cook_state_extended;
+        });
+        socket.on('disconnect', function() {
+            socket.emit('my event', {data: 'Client: I\'m disconnected!'});
+            console.log('Client: I\'m disconnected!');
+        });
+    </script>
 {% endblock %}
 
 {% block body %}
@@ -101,30 +137,30 @@
         {% if state %}
         <tbody>
           <tr>
-            <td>Zieltemp K1</td><td>{{'%0.1f' % state.settempk1 }} °C</td>
-            <td>Zieltemp K2</td><td>{{'%0.1f' % state.settempk2 }} °C</td>
+            <td>Zieltemp K1</td><td id="val_ztk1">{{'%0.1f' % state.settempk1 }} °C</td>
+            <td>Zieltemp K2</td><td id="val_ztk2">{{'%0.1f' % state.settempk2 }} °C</td>
           </tr>
           <tr>
             <td>Temp K1</td>
-            <td
+            <td id="val_tk1"
               {% if running and state.tempk1 < ( state.settempk1 - state.hyst) %}class=table-bg-blue {% endif %}
               {% if running and state.tempk1 > ( state.settempk1 + state.hyst) %}class=table-bg-red {% endif %}
               {% if running and (state.tempk1 > ( state.settempk1 - state.hyst) and state.tempk1 < ( state.settempk1 + state.hyst)) %}class=table-bg-green {% endif %}
             >{{'%0.1f' % state.tempk1 }} °C </td>
             <td>Temp K2</td>
-            <td 
+            <td id="val_tk2"
               {% if running_k2 and state.tempk2 < ( state.settempk2 - state.hyst) %}class=table-bg-blue {% endif %}
               {% if running_k2 and state.tempk2 > ( state.settempk2 + state.hyst) %}class=table-bg-red {% endif %}
               {% if running_k2 and (state.tempk2 > ( state.settempk2 - state.hyst) and state.tempk2 < ( state.settempk2 + state.hyst)) %}class=table-bg-green {% endif %}
             >{{'%0.1f' % state.tempk2 }} °C</td>
           </tr>
           <tr>
-            <td>Korrektur Temp K1</td><td>{{'%0.1f' % state.tempk1_offset }} °C</td>
-            <td>Heizung</td><td>{{ state.heater }}</td>
+            <td>Korrektur Temp K1</td><td id="val_korr_tk1">{{'%0.1f' % state.tempk1_offset }} °C</td>
+            <td>Heizung</td><td id="val_heater">{{ state.heater }}</td>
           </tr>
           <tr>
-            <td>Pumpe 1</td><td>{{ state.pump1 }}</td>
-            <td>Pumpe 2</td><td>{{ state.pump2 }}</td>
+            <td>Pumpe 1</td><td id="val_pump1">{{ state.pump1 }}</td>
+            <td>Pumpe 2</td><td id="val_pump2">{{ state.pump2 }}</td>
           </tr>
         </tbody>
       {% else %}
@@ -140,24 +176,24 @@
         {% if state %}
         <tbody>
           <tr>
-            <td>Dauer K1</td><td>{{'%d' % state.setdurak1 }} s</td>
-            <td>Dauer K2</td><td>{{'%d' % state.setdurak2 }} s</td>
+            <td>Dauer K1</td><td id="val_dura_k1">{{'%d' % state.setdurak1 }} s</td>
+            <td>Dauer K2</td><td id="val_dura_k2">{{'%d' % state.setdurak2 }} s</td>
           </tr>
           <tr>
-            <td>ProcControl</td><td>{{ state.pct_state }} {{ state.pct_state_min_to_wait }}</td>
-            <td>Simulation</td><td>{{ state.simulation }}</td>
+            <td>ProcControl</td><td id="val_pct_state">{{ state.pct_state }} {{ state.pct_state_min_to_wait }}</td>
+            <td>Simulation</td><td id="val_simulation">{{ state.simulation }}</td>
           </tr>
           <tr>
-            <td>TempMon</td><td>{{ state.tmt_state }}</td>
-            <td>WorkQueue</td><td>{{ state.wqt_state }}</td>
+            <td>TempMon</td><td id="val_tmt_state">{{ state.tmt_state }}</td>
+            <td>WorkQueue</td><td id="val_wqt_state">{{ state.wqt_state }}</td>
           </tr>
           <tr>
-            <td>DataLogger</td><td>{{ state.dlt_state }}</td>
-            <td>BlubberManager</td><td>{{ state.bm_state }}</td>
+            <td>DataLogger</td><td id="val_dlt_state">{{ state.dlt_state }}</td>
+            <td>BlubberManager</td><td id="val_bm_state">{{ state.bm_state }}</td>
           </tr>
           <tr>
             <td>Cook State</td>
-            <td colspan="3">{{ state.cook_state }} Stufe {{ state.cook_state_stage }} - {{ state.cook_state_extended }}</td>
+            <td colspan="3"  id="val_cook_state">{{ state.cook_state }} Stufe {{ state.cook_state_stage }} - {{ state.cook_state_extended }}</td>
           </tr>
         </tbody>
       {% else %}
