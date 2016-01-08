@@ -39,18 +39,21 @@ status = {
                   'cook_state_stage': '',
                   'cook_state_extended': '',
                   'simulation': config.SIMULATION,
-                  'log_size': 0
+                  'log_size': 0,
+                  'recipe': None
                 }
 
 def dlt_state_cb(state):
     status['dlt_state'] = state
 
-def pct_state_cb(state, min_to_wait=None):
+def pct_state_cb(state, min_to_wait=None, recipe=None):
     status['pct_state'] = state
     if min_to_wait is not None:
         status['pct_state_min_to_wait'] = min_to_wait
     else:
         status['pct_state_min_to_wait'] = ''
+    if recipe is not None:
+        status['recipe'] = recipe
 
 def pct_get_state_cb():
     return status['pct_state']
@@ -115,7 +118,7 @@ class ProcControlThread (threading.Thread):
 
             # Change thread state
             if self.pct_req == 'START':
-                self.set_state('Running')
+                self.set_state('Running', recipe=self.recipe)
                 self.tpc.start(self.recipe)
             elif self.pct_req == 'START_AT':
                 self.set_state('Waiting')
