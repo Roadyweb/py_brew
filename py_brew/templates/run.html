@@ -79,7 +79,28 @@
             } else {
               $( "#val_tk2" ).attr('class', '')
             }
+  
+              // Adjust background color for K1 recipe
+            if (jdata.recipe != null && jdata.recipe.method == 'K1' && jdata.cook_state == 'Init' && jdata.cook_state_stage == 1) {
+              console.log('Recipe K1 red');
+              $( "#row_k1" ).attr('class', 'table-bg-red');
+            } else if (jdata.recipe != null && jdata.recipe.method == 'K1' && jdata.cook_state == 'Cooking' && jdata.cook_state_stage == 1) {
+              console.log('Recipe K1 green');
+              $( "#row_k1" ).attr('class', 'table-bg-green');
+            } else {
+              $( "#row_k1" ).attr('class', '')
+            }
 
+            // Adjust background color for K2 recipe
+            if (jdata.recipe != null && jdata.recipe.method == 'K2' && jdata.cook_state == 'Init') {
+              console.log('Recipe K2 red');
+              $( "#row_k2_" +  jdata.cook_state_stage ).attr('class', 'table-bg-red');
+            } else if (jdata.recipe != null && jdata.recipe.method == 'K2' && jdata.cook_state == 'Cooking') {
+              console.log('Recipe K2 green');
+              $( "#row_k2_" +  jdata.cook_state_stage ).attr('class', 'table-bg-green');
+            } else {
+              $( "#row_k2_" +  jdata.cook_state_stage ).attr('class', '');
+            }
         });
         socket.on('disconnect', function() {
             socket.emit('my event', {data: 'Client: I\'m disconnected!'});
@@ -119,7 +140,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr
+          <tr id="row_k1"
             {% if data.method == 'K1' and state.cook_state == 'Init' and state.cook_state_stage == 1 %}class=table-bg-red{% endif %}
             {% if data.method == 'K1' and state.cook_state == 'Cooking' and state.cook_state_stage == 1 %}class=table-bg-green{% endif %}
           >
@@ -128,7 +149,7 @@
           </tr>
           {% if data.method == 'K2' %}
           {% for entry in data.list %}
-            <tr
+            <tr id="row_k2_{{ loop.index }}"
               {% if data.method == 'K2' and state.cook_state == 'Init' and state.cook_state_stage == loop.index %}class=table-bg-red{% endif %}
               {% if data.method == 'K2' and state.cook_state == 'Cooking' and state.cook_state_stage == loop.index %}class=table-bg-green{% endif %}
             >
