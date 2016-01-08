@@ -253,8 +253,7 @@ def handle_my_custom_event(json):
 if __name__ == '__main__':
     try:
         app.debug = config.FLASK_DEBUG
-        app.run(host=config.IP_ADDRESS)
-        socketio.run(app)
+        socketio.run(app, host=config.IP_ADDRESS)
     except KeyboardInterrupt:
         socketio.stop()
 
