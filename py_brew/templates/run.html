@@ -101,6 +101,25 @@
             } else {
               $( "#row_k2_" +  jdata.cook_state_stage ).attr('class', '');
             }
+
+            // Disable/enable buttons
+            if (running) {
+              console.log('Running adjusting buttons');
+              $( "#btn_start_at" ).attr('disabled', true); 
+              $( "#time_start_at" ).attr('disabled', true); 
+              $( "#btn_start" ).attr('disabled', true); 
+              $( "#btn_stop" ).removeAttr('disabled'); 
+              $( "#btn_t1_up" ).removeAttr('disabled'); 
+              $( "#btn_t1_down" ).removeAttr('disabled'); 
+            } else {
+              console.log('Not running adjusting buttons');
+              $( "#btn_start_at" ).removeAttr('disabled');
+              $( "#time_start_at" ).removeAttr('disabled');
+              $( "#btn_start" ).removeAttr('disabled'); 
+              $( "#btn_stop" ).attr("disabled", true); 
+              $( "#btn_t1_up" ).attr("disabled", true); 
+              $( "#btn_t1_down" ).attr("disabled", true); 
+            }
         });
         socket.on('disconnect', function() {
             socket.emit('my event', {data: 'Client: I\'m disconnected!'});
@@ -173,16 +192,16 @@
         </tbody>
       </table>
       <form action="." method="POST">
-        <input type="submit" name="btn_start_at" class="btn btn-default" value="Starte um" {% if running %}disabled{% endif %}>
-        <input type="text" name="start_time" id="basic_example_2" value="{{ start_at }}" />
+        <input type="submit" id="btn_start_at" name="btn_start_at" class="btn btn-default" value="Starte um" {% if running %}disabled{% endif %}>
+        <input type="text" id="time_start_at" name="start_time" id="basic_example_2" value="{{ start_at }}" />
         <script type="text/javascript">
           $('#basic_example_2').timepicker();
         </script>
         <br/><br/>
-        <input type="submit" name="btn_start" class="btn btn-default" value="Start" {% if running %}disabled{% endif %}>
-        <input type="submit" name="btn_stop" class="btn btn-default" value="Stop">
-        <input type="submit" name="btn_t1_up" class="btn btn-default" value="K1 + 0.2 K">
-        <input type="submit" name="btn_t1_down" class="btn btn-default" value="K1 - 0.2 K">
+        <input type="submit" id="btn_start" name="btn_start" class="btn btn-default" value="Start" {% if running %}disabled{% endif %}>
+        <input type="submit" id="btn_stop" name="btn_stop" class="btn btn-default" value="Stop">
+        <input type="submit" id="btn_t1_up" name="btn_t1_up" class="btn btn-default" value="K1 + 0.2 K">
+        <input type="submit" id="btn_t1_down" name="btn_t1_down" class="btn btn-default" value="K1 - 0.2 K">
       </form>
     </div>
     <div class="col-md-6">
