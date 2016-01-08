@@ -67,10 +67,10 @@
             }
 
             // Adjust background color for Temp K2
-            if (running && jdata.tempk2 < (jdata.settempk2 - jdata.hyst)) {
+            if (running && jdata.recipe != null && jdata.recipe.method == 'K2' && jdata.tempk2 < (jdata.settempk2 - jdata.hyst)) {
               console.log('K2 cool');
               $( "#val_tk2" ).attr('class', 'table-bg-blue')
-            } else if (running && jdata.tempk2 > (jdata.settempk2 + jdata.hyst)) {
+            } else if (running && jdata.recipe != null && jdata.recipe.method == 'K2' && jdata.tempk2 > (jdata.settempk2 + jdata.hyst)) {
               console.log('K2 hot');
               $( "#val_tk2" ).attr('class', 'table-bg-red')
             } else if (running && (jdata.tempk2 > (jdata.settempk2 - jdata.hyst)) && (jdata.tempk2 < (jdata.settempk2 + jdata.hyst))) {
