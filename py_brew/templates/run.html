@@ -160,8 +160,8 @@
         </thead>
         <tbody>
           <tr id="row_k1">
-            <td>Kochtemp. K1</td><td>---</td>
-            <td>Kochdauer K1</td><td>---</td>
+            <td>Kochtemp. K1</td><td>{{ data.tempk1 }} °C</td>
+            <td>Kochdauer K1</td><td>{{ data.durak1 }} s</td>
           </tr>
           {% if data.method == 'K2' %}
           {% for entry in data.list %}
