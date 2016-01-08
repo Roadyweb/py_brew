@@ -159,19 +159,13 @@
           </tr>
         </thead>
         <tbody>
-          <tr id="row_k1"
-            {% if data.method == 'K1' and state.cook_state == 'Init' and state.cook_state_stage == 1 %}class=table-bg-red{% endif %}
-            {% if data.method == 'K1' and state.cook_state == 'Cooking' and state.cook_state_stage == 1 %}class=table-bg-green{% endif %}
-          >
-            <td>Kochtemp. K1</td><td>{{ data.tempk1 }} °C</td>
-            <td>Kochdauer K1</td><td>{{ data.durak1 }} s</td>
+          <tr id="row_k1">
+            <td>Kochtemp. K1</td><td>---</td>
+            <td>Kochdauer K1</td><td>---</td>
           </tr>
           {% if data.method == 'K2' %}
           {% for entry in data.list %}
-            <tr id="row_k2_{{ loop.index }}"
-              {% if data.method == 'K2' and state.cook_state == 'Init' and state.cook_state_stage == loop.index %}class=table-bg-red{% endif %}
-              {% if data.method == 'K2' and state.cook_state == 'Cooking' and state.cook_state_stage == loop.index %}class=table-bg-green{% endif %}
-            >
+            <tr id="row_k2_{{ loop.index }}">
               <td>Rasttemp. K2</td><td>{{ entry[0]|safe }} °C</td>
               <td>Rastdauer K2</td><td>{{ entry[1]|safe }} s</td>
             </tr>
@@ -192,13 +186,13 @@
         </tbody>
       </table>
       <form action="." method="POST">
-        <input type="submit" id="btn_start_at" name="btn_start_at" class="btn btn-default" value="Starte um" {% if running %}disabled{% endif %}>
-        <input type="text" id="time_start_at" name="start_time" id="basic_example_2" value="{{ start_at }}" />
+        <input type="submit" id="btn_start_at" name="btn_start_at" class="btn btn-default" value="Starte um">
+        <input type="text" id="time_start_at" name="start_time" id="basic_example_2" value="{{ start_at }}">
         <script type="text/javascript">
           $('#basic_example_2').timepicker();
         </script>
         <br/><br/>
-        <input type="submit" id="btn_start" name="btn_start" class="btn btn-default" value="Start" {% if running %}disabled{% endif %}>
+        <input type="submit" id="btn_start" name="btn_start" class="btn btn-default" value="Start">
         <input type="submit" id="btn_stop" name="btn_stop" class="btn btn-default" value="Stop">
         <input type="submit" id="btn_t1_up" name="btn_t1_up" class="btn btn-default" value="K1 + 0.2 K">
         <input type="submit" id="btn_t1_down" name="btn_t1_down" class="btn btn-default" value="K1 - 0.2 K">
@@ -214,30 +208,20 @@
         {% if state %}
         <tbody>
           <tr>
-            <td>Zieltemp K1</td><td id="val_ztk1">{{'%0.1f' % state.settempk1 }} °C</td>
-            <td>Zieltemp K2</td><td id="val_ztk2">{{'%0.1f' % state.settempk2 }} °C</td>
+            <td>Zieltemp K1</td><td id="val_ztk1">---</td>
+            <td>Zieltemp K2</td><td id="val_ztk2">---</td>
           </tr>
           <tr>
-            <td>Temp K1</td>
-            <td id="val_tk1"
-              {% if running and state.tempk1 < ( state.settempk1 - state.hyst) %}class=table-bg-blue {% endif %}
-              {% if running and state.tempk1 > ( state.settempk1 + state.hyst) %}class=table-bg-red {% endif %}
-              {% if running and (state.tempk1 > ( state.settempk1 - state.hyst) and state.tempk1 < ( state.settempk1 + state.hyst)) %}class=table-bg-green {% endif %}
-            >{{'%0.1f' % state.tempk1 }} °C </td>
-            <td>Temp K2</td>
-            <td id="val_tk2"
-              {% if running_k2 and state.tempk2 < ( state.settempk2 - state.hyst) %}class=table-bg-blue {% endif %}
-              {% if running_k2 and state.tempk2 > ( state.settempk2 + state.hyst) %}class=table-bg-red {% endif %}
-              {% if running_k2 and (state.tempk2 > ( state.settempk2 - state.hyst) and state.tempk2 < ( state.settempk2 + state.hyst)) %}class=table-bg-green {% endif %}
-            >{{'%0.1f' % state.tempk2 }} °C</td>
+            <td>Temp K1</td><td id="val_tk1">---</td>
+            <td>Temp K2</td><td id="val_tk2">---</td>
           </tr>
           <tr>
-            <td>Korrektur Temp K1</td><td id="val_korr_tk1">{{'%0.1f' % state.tempk1_offset }} °C</td>
-            <td>Heizung</td><td id="val_heater">{{ state.heater }}</td>
+            <td>Korrektur Temp K1</td><td id="val_korr_tk1">---</td>
+            <td>Heizung</td><td id="val_heater">---</td>
           </tr>
           <tr>
-            <td>Pumpe 1</td><td id="val_pump1">{{ state.pump1 }}</td>
-            <td>Pumpe 2</td><td id="val_pump2">{{ state.pump2 }}</td>
+            <td>Pumpe 1</td><td id="val_pump1">---</td>
+            <td>Pumpe 2</td><td id="val_pump2">---</td>
           </tr>
         </tbody>
       {% else %}
@@ -253,24 +237,24 @@
         {% if state %}
         <tbody>
           <tr>
-            <td>Dauer K1</td><td id="val_dura_k1">{{'%d' % state.setdurak1 }} s</td>
-            <td>Dauer K2</td><td id="val_dura_k2">{{'%d' % state.setdurak2 }} s</td>
+            <td>Dauer K1</td><td id="val_dura_k1">---</td>
+            <td>Dauer K2</td><td id="val_dura_k2">---</td>
           </tr>
           <tr>
-            <td>ProcControl</td><td id="val_pct_state">{{ state.pct_state }} {{ state.pct_state_min_to_wait }}</td>
-            <td>Simulation</td><td id="val_simulation">{{ state.simulation }}</td>
+            <td>ProcControl</td><td id="val_pct_state">---</td>
+            <td>Simulation</td><td id="val_simulation">---</td>
           </tr>
           <tr>
-            <td>TempMon</td><td id="val_tmt_state">{{ state.tmt_state }}</td>
-            <td>WorkQueue</td><td id="val_wqt_state">{{ state.wqt_state }}</td>
+            <td>TempMon</td><td id="val_tmt_state">---</td>
+            <td>WorkQueue</td><td id="val_wqt_state">---</td>
           </tr>
           <tr>
-            <td>DataLogger</td><td id="val_dlt_state">{{ state.dlt_state }}</td>
-            <td>BlubberManager</td><td id="val_bm_state">{{ state.bm_state }}</td>
+            <td>DataLogger</td><td id="val_dlt_state">---</td>
+            <td>BlubberManager</td><td id="val_bm_state">---</td>
           </tr>
           <tr>
             <td>Cook State</td>
-            <td colspan="3"  id="val_cook_state">{{ state.cook_state }} Stufe {{ state.cook_state_stage }} - {{ state.cook_state_extended }}</td>
+            <td colspan="3"  id="val_cook_state">---</td>
           </tr>
         </tbody>
       {% else %}
