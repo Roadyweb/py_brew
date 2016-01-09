@@ -54,13 +54,13 @@
 
             // Adjust background color for Temp K1
             if (running && jdata.tempk1 < (jdata.settempk1 - jdata.hyst)) {
-              console.log('K1 cool');
+              // console.log('K1 cool');
               $( "#val_tk1" ).attr('class', 'table-bg-blue')
             } else if (running && jdata.tempk1 > (jdata.settempk1 + jdata.hyst)) {
-              console.log('K1 hot');
+              // console.log('K1 hot');
               $( "#val_tk1" ).attr('class', 'table-bg-red')
             } else if (running && (jdata.tempk1 > (jdata.settempk1 - jdata.hyst)) && (jdata.tempk1 < (jdata.settempk1 + jdata.hyst))) {
-              console.log('K1 right');
+              // console.log('K1 right');
               $( "#val_tk1" ).attr('class', 'table-bg-green')
             } else {
               $( "#val_tk1" ).attr('class', '')
@@ -68,24 +68,24 @@
 
             // Adjust background color for Temp K2
             if (running && jdata.recipe != null && jdata.recipe.method == 'K2' && jdata.tempk2 < (jdata.settempk2 - jdata.hyst)) {
-              console.log('K2 cool');
+              // console.log('K2 cool');
               $( "#val_tk2" ).attr('class', 'table-bg-blue')
             } else if (running && jdata.recipe != null && jdata.recipe.method == 'K2' && jdata.tempk2 > (jdata.settempk2 + jdata.hyst)) {
-              console.log('K2 hot');
+              // console.log('K2 hot');
               $( "#val_tk2" ).attr('class', 'table-bg-red')
             } else if (running && (jdata.tempk2 > (jdata.settempk2 - jdata.hyst)) && (jdata.tempk2 < (jdata.settempk2 + jdata.hyst))) {
-              console.log('K2 right');
+              // console.log('K2 right');
               $( "#val_tk2" ).attr('class', 'table-bg-green')
             } else {
               $( "#val_tk2" ).attr('class', '')
             }
   
-              // Adjust background color for K1 recipe
+            // Adjust background color for K1 recipe
             if (jdata.recipe != null && jdata.recipe.method == 'K1' && jdata.cook_state == 'Init' && jdata.cook_state_stage == 1) {
-              console.log('Recipe K1 red');
+              // console.log('Recipe K1 red');
               $( "#row_k1" ).attr('class', 'table-bg-red');
             } else if (jdata.recipe != null && jdata.recipe.method == 'K1' && jdata.cook_state == 'Cooking' && jdata.cook_state_stage == 1) {
-              console.log('Recipe K1 green');
+              // console.log('Recipe K1 green');
               $( "#row_k1" ).attr('class', 'table-bg-green');
             } else {
               $( "#row_k1" ).attr('class', '')
@@ -93,10 +93,10 @@
 
             // Adjust background color for K2 recipe
             if (jdata.recipe != null && jdata.recipe.method == 'K2' && jdata.cook_state == 'Init') {
-              console.log('Recipe K2 red');
+              // console.log('Recipe K2 red');
               $( "#row_k2_" +  jdata.cook_state_stage ).attr('class', 'table-bg-red');
             } else if (jdata.recipe != null && jdata.recipe.method == 'K2' && jdata.cook_state == 'Cooking') {
-              console.log('Recipe K2 green');
+              // console.log('Recipe K2 green');
               $( "#row_k2_" +  jdata.cook_state_stage ).attr('class', 'table-bg-green');
             } else {
               $( "#row_k2_" +  jdata.cook_state_stage ).attr('class', '');
@@ -104,7 +104,7 @@
 
             // Disable/enable buttons
             if (running) {
-              console.log('Running adjusting buttons');
+              // console.log('Running adjusting buttons');
               $( "#btn_start_at" ).attr('disabled', true); 
               $( "#time_start_at" ).attr('disabled', true); 
               $( "#btn_start" ).attr('disabled', true); 
@@ -112,7 +112,7 @@
               $( "#btn_t1_up" ).removeAttr('disabled'); 
               $( "#btn_t1_down" ).removeAttr('disabled'); 
             } else {
-              console.log('Not running adjusting buttons');
+              // console.log('Not running adjusting buttons');
               $( "#btn_start_at" ).removeAttr('disabled');
               $( "#time_start_at" ).removeAttr('disabled');
               $( "#btn_start" ).removeAttr('disabled'); 
