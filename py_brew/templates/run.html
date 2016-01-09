@@ -13,12 +13,12 @@
     <script type="text/javascript" charset="utf-8">
         var socket = io.connect('http://' + document.domain + ':' + location.port);
         socket.on('connect', function() {
-            socket.emit('my event', {data: 'Client: I\'m connected!'});
-            console.log('Client: I\'m connected!');
+            socket.send('Client: I\'m connected!');
+            // console.log('Client: I\'m connected!');
         });
         socket.on('message', function(data) {
-            socket.emit('my event', {data: 'Client: Received a message'});
-            console.log('message ' + String(data));
+            socket.send('Client: Received a message');
+            // console.log('message ' + String(data));
         });
         socket.on('data', function(data) {
             // socket.emit('my event', {data: 'Client: Received a data message'});
@@ -121,8 +121,8 @@
             }
         });
         socket.on('disconnect', function() {
-            socket.emit('my event', {data: 'Client: I\'m disconnected!'});
-            console.log('Client: I\'m disconnected!');
+            socket.send('Client: I\'m disconnected!');
+            // console.log('Client: I\'m disconnected!');
         });
     </script>
 {% endblock %}

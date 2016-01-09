@@ -221,19 +221,14 @@ def eval_manage_form(form):
 @socketio.on('connect')
 def test_connect():
     print('Server: Someone connected. Emitting ')
-    socketio.send('Response to connect')
-    #socketio.emit('my response', {'data': 'Connected'})
+    # socketio.send('Response to connect')
+    # socketio.emit('my response', {'data': 'Connected'})
 
 
 @socketio.on('disconnect')
 def test_disconnect():
     print('Server: Someone disconnected')
-    #socketio.emit('my response', {'data': 'Connected'})
-
-
-@socketio.on_error()        # Handles the default namespace
-def error_handler(e):
-    print e
+    # socketio.emit('my response', {'data': 'Connected'})
 
 
 @socketio.on('message')
@@ -241,14 +236,14 @@ def handle_message(message):
     print('received message: ' + message)
 
 
-@socketio.on('json')
-def handle_json(json):
-    print('received json: ' + str(json))
-
-
 @socketio.on('my event')
 def handle_my_custom_event(json):
     print('my_event - received json: ' + str(json))
+
+
+@socketio.on_error()        # Handles the default namespace
+def error_handler(e):
+    print e
 
 
 if __name__ == '__main__':
