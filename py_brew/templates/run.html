@@ -187,9 +187,9 @@
       </table>
       <form action="." method="POST">
         <input type="submit" id="btn_start_at" name="btn_start_at" class="btn btn-default" value="Starte um">
-        <input type="text" id="time_start_at" name="start_time" id="basic_example_2" value="{{ start_at }}">
+        <input type="text" name="start_time" id="time_start_at" value="{{ start_at }}">
         <script type="text/javascript">
-          $('#basic_example_2').timepicker();
+          $('#time_start_at').timepicker();
         </script>
         <br/><br/>
         <input type="submit" id="btn_start" name="btn_start" class="btn btn-default" value="Start">
