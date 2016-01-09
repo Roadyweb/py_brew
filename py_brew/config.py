@@ -26,6 +26,9 @@ BLUBBER_DURA = 30       # duration in seconds
 # Logger settings
 LOG_INT = 20.0          # log every x seconds
 
+# Socket message settings
+SM_INT = 2.0            # send status every x seconds
+
 # Simulation settings
 SIMULATION = False
 AMBIENT_TEMP = 10.0     # minimum temperature when no heating is applied

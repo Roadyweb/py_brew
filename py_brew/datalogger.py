@@ -28,12 +28,11 @@ class DataLoggerThread(threading.Thread):
         log_interval: log interval in seconds, defaults to 5
     """
 
-    def __init__(self, status, state_cb, socketio, log_interval=config.LOG_INT):
+    def __init__(self, status, state_cb, log_interval=config.LOG_INT):
         """ Initializes all attributes """
         threading.Thread.__init__(self, name='DLT')
         self.status = status
         self.set_state = state_cb
-        self.socketio = socketio
         self.log_interval = log_interval
         self.time_start = None
         self.log_flag = False
@@ -87,9 +86,6 @@ class DataLoggerThread(threading.Thread):
                 self.status['log_size'] = getsize(self.data)
             else:
                 self.set_state('Idle')
-
-            self.socketio.emit('data', json.dumps(self.status),
-                               broadcast=True)
             while sleepduration > 0:
                 if self.exit_flag:
                     self.set_state('Not running')
@@ -117,6 +113,31 @@ class DataLoggerThread(threading.Thread):
     def stop_logging(self):
         """ Stops the logging in the main loop """
         self.log_flag = False
+
+    def exit(self):
+        """ Exit the main loop """
+        self.exit_flag = True
+
+
+class SocketMessageThread(threading.Thread):
+    def __init__(self, status, socketio, log_interval=config.SM_INT):
+        """ Initializes all attributes """
+        threading.Thread.__init__(self, name='SMT')
+        self.status = status
+        self.socketio = socketio
+        self.log_interval = log_interval
+        self.exit_flag = False
+
+    def run(self):
+        while 42:
+            sleepduration = self.log_interval
+            self.socketio.emit('data', json.dumps(self.status),
+                               broadcast=True)
+            while sleepduration > 0:
+                if self.exit_flag:
+                    return
+                time.sleep(config.THREAD_SLEEP_INT)
+                sleepduration -= config.THREAD_SLEEP_INT
 
     def exit(self):
         """ Exit the main loop """

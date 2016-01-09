@@ -36,11 +36,12 @@ tmt_thread.start()
 wqt_thread = wq.WorkQueueThread(cook.wqt_state_cb)
 wqt_thread.start()
 wq.wqt_thread = wqt_thread
-dlt_thread = datalogger.DataLoggerThread(cook.status, cook.dlt_state_cb, socketio)
+dlt_thread = datalogger.DataLoggerThread(cook.status, cook.dlt_state_cb)
 dlt_thread.start()
 bm = wq.BlubberManager(cook.bm_state_cb)
 wq.bm = bm
-
+smt_thread = datalogger.SocketMessageThread(cook.status, socketio)
+smt_thread.start()
 
 last_action = 'Leer'
 default_str_time = '07:00'
@@ -50,7 +51,7 @@ brew_recipe = recipes.get_default()
 
 
 def stop_all_threads():
-    threads = [pct_thread, tmt_thread, wqt_thread, dlt_thread]
+    threads = [pct_thread, tmt_thread, wqt_thread, dlt_thread, smt_thread]
     for thread in threads:
         if thread.is_alive():
             print thread.name + ' is still alive'
