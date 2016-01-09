@@ -27,7 +27,7 @@ def tempk2():
 
 def read_sensor(path):
     ''' reads the value from device in the given path
-        return a float, the sensor value when successful, float('NaN' otherwise
+        return a float, the sensor value when successful, -99.0 otherwise
     '''
     try:
         fd = open(path, "r")
@@ -40,7 +40,7 @@ def read_sensor(path):
         fd.close()
     except (IOError), e:
         print time.strftime("%x %X"), "Error reading", path, ": ", e
-        value = float('NaN')
+        value = -99.0
     return value
 
 def pump1(state):
