@@ -114,13 +114,14 @@ def run():
             tpc.inc_offset(-0.2)
         else:
             pass # unknown
-
-        # We have to wait some time to allow the posted action to be distributed
-        # to the different task. The tasks then change their status. And the 
-        # current status is displayed afterwards
-        time.sleep(2)
+    # When cooking is started always use the recipe that is currently running
+    if cook.status['pct_state'] == 'Waiting' or \
+       cook.status['pct_state'] == 'Running':
+        cur_recipe = cook.status['recipe']
+    else:
+        cur_recipe = brew_recipe
     return render_template('run.html', heading='Run', start_at=default_str_time,
-                           state=cook.status, data=brew_recipe)
+                           state=cook.status, data=cur_recipe)
 
 
 @app.route('/edit/', methods=['GET', 'POST'])
