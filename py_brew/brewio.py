@@ -40,7 +40,10 @@ def read_sensor(path):
         fd.close()
     except (IOError), e:
         print time.strftime("%x %X"), "Error reading", path, ": ", e
-        value = -99.0
+        # As an error value use a higher than normal temperature to avoid that
+        # the heater is switched on. E.g. with negative values the heater would
+        # start to raise the temperature even more.
+        value = 999.0
     return value
 
 def pump1(state):
