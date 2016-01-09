@@ -46,7 +46,7 @@
             // Some local variables
             var running = false;
             var running_k2 = false;
-            if (jdata.pct_state == 'Waiting' || jdata.pct_state == 'Running') { running = true };
+            if (jdata.pct_state == 'Running') { running = true };
             if (jdata.recipe != null && jdata.recipe.method == 'K2' && running) { running_k2 = true };
             // console.log('Running: ' + String(running))
             // console.log('Running K2: ' + String(running_k2))
@@ -66,13 +66,13 @@
             }
 
             // Adjust background color for Temp K2
-            if (running && jdata.recipe != null && jdata.recipe.method == 'K2' && jdata.tempk2 < (jdata.settempk2 - jdata.hyst)) {
+            if (running_k2 && jdata.tempk2 < (jdata.settempk2 - jdata.hyst)) {
               // console.log('K2 cool');
               $( "#val_tk2" ).attr('class', 'table-bg-blue')
-            } else if (running && jdata.recipe != null && jdata.recipe.method == 'K2' && jdata.tempk2 > (jdata.settempk2 + jdata.hyst)) {
+            } else if (running_k2 && jdata.tempk2 > (jdata.settempk2 + jdata.hyst)) {
               // console.log('K2 hot');
               $( "#val_tk2" ).attr('class', 'table-bg-red')
-            } else if (running && (jdata.tempk2 > (jdata.settempk2 - jdata.hyst)) && (jdata.tempk2 < (jdata.settempk2 + jdata.hyst))) {
+            } else if (running_k2 && (jdata.tempk2 > (jdata.settempk2 - jdata.hyst)) && (jdata.tempk2 < (jdata.settempk2 + jdata.hyst))) {
               // console.log('K2 right');
               $( "#val_tk2" ).attr('class', 'table-bg-green')
             } else {
@@ -100,7 +100,13 @@
             } else {
               $( "#row_k2_" +  jdata.cook_state_stage ).attr('class', '');
             }
-
+            // Remove all background from previous stages
+            var current_stage = parseInt(jdata.cook_state_stage);
+            if (current_stage > 1) {
+              for (current_stage--; current_stage > 0; current_stage--) {
+                $( "#row_k2_" +  String(current_stage) ).attr('class', '');
+              }
+            }
             // Disable/enable buttons
             if (running) {
               // console.log('Running adjusting buttons');
