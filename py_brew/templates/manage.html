@@ -1,6 +1,14 @@
 {% extends "layout.html" %}
 {% block body %}
+<script type="text/javascript">
+$(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip({
+        placement : 'top'
+    });
+});
+</script>
 <form action="." method="POST" class="form-horizontal">
+
   <table class="table table-hover table-condensed">
     <thead>
       <tr>
@@ -12,8 +20,8 @@
       <tr>
           <td class="col-xs-2">
             <div class="btn-group" role="group" aria-label="...">
-              <button type="submit" name="s{{ loop.index0 }}" class="btn btn-success"><span class="glyphicon glyphicon-ok"></span></button>
-              <button type="submit" name="d{{ loop.index0 }}" class="btn btn-warning"><span class="glyphicon glyphicon-remove"></span></button>
+              <button type="submit" name="s{{ loop.index0 }}" class="btn btn-success" data-toggle="tooltip" title="Auswählen"><span class="glyphicon glyphicon-ok"></span></button>
+              <button type="submit" name="d{{ loop.index0 }}" class="btn btn-warning" data-toggle="tooltip" title="Löschen"><span class="glyphicon glyphicon-remove"></span></button>
             </div>
           </td>
           <td lass="col-xs-10"><p class="form-control-static">{{ fname|replace("../recipes/", "")|replace(".rcp", "")|replace("_", " ") }}</p></td>
