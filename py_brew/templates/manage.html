@@ -1,37 +1,33 @@
 {% extends "layout.html" %}
 {% block body %}
 <form action="." method="POST" class="form-horizontal">
-  <div class="row">
-    <div class="col-md-6">
-      <table class="table">
-        <thead>
-          <tr>
-            <th colspan="4">Verfügbare Rezepte</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for fname in fnames %}
-          <tr>
-              <td>
-                <div class="btn-group" role="group" aria-label="...">
-                  <button type="submit" name="s{{ loop.index0 }}" class="btn btn-success"><span class="glyphicon glyphicon-ok"></span></button>
-                  <button type="submit" name="d{{ loop.index0 }}" class="btn btn-warning"><span class="glyphicon glyphicon-remove"></span></button>
-                </div>
-              </td>
-              <td><p class="form-control-static">{{ fname|replace("../recipes/", "")|replace(".rcp", "") }}</p></td>
-          </tr>
-        {% else %}
-            <em>No entries</em>
-        {% endfor %}
-        </tbody>
-        <thead>
-          <tr>
-            <th><label class="control-label">Ausgewähltes Rezept</label></th>
-            <th><p class="form-control-static">{{ selected|replace("../recipes/", "")|replace(".rcp", "") }}</p></th>
-          </tr>
-        </thead>
-      </table>
-    </div>
-  </div>
+  <table class="table table-hover table-condensed">
+    <thead>
+      <tr>
+        <th colspan="2">Verfügbare Rezepte</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for fname in fnames %}
+      <tr>
+          <td class="col-xs-2">
+            <div class="btn-group" role="group" aria-label="...">
+              <button type="submit" name="s{{ loop.index0 }}" class="btn btn-success"><span class="glyphicon glyphicon-ok"></span></button>
+              <button type="submit" name="d{{ loop.index0 }}" class="btn btn-warning"><span class="glyphicon glyphicon-remove"></span></button>
+            </div>
+          </td>
+          <td lass="col-xs-10"><p class="form-control-static">{{ fname|replace("../recipes/", "")|replace(".rcp", "") }}</p></td>
+      </tr>
+    {% else %}
+        <em>No entries</em>
+    {% endfor %}
+    </tbody>
+    <thead>
+      <tr>
+        <th><p class="form-control-static">Ausgewähltes Rezept</p></th>
+        <th><p class="form-control-static">{{ selected|replace("../recipes/", "")|replace(".rcp", "") }}</p></th>
+      </tr>
+    </thead>
+  </table>
 </form>
 {% endblock %}
