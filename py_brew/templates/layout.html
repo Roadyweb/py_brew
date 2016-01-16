@@ -29,11 +29,11 @@
     </div>
     <div class="container">
       <ul class="nav nav-pills">
-        <li role="presentation" {% if heading == 'Manage' %}class="active"{% endif%}><a href="{{ url_for('manage') }}">Rezepte</a></li>
-        <li role="presentation" {% if heading == 'Edit' %}class="active"{% endif%}><a href="{{ url_for('edit') }}">Eingabe</a></li>
-        <li role="presentation" {% if heading == 'Run' %}class="active"{% endif%}><a href="{{ url_for('run') }}">Start</a></li>
-        <li role="presentation" {% if heading == 'Graph' %}class="active"{% endif%}><a href="{{ url_for('graph') }}">Graph</a></li>
-        <li role="presentation" {% if heading == 'Table' %}class="active"{% endif%}><a href="{{ url_for('table') }}">Tabelle</a></li>
+        <li role="presentation" {% if heading == 'Manage' %}class="active"{% endif%}><a href="{{ url_for('manage') }}"><span class="glyphicon glyphicon-search"></span> Rezepte</a></li>
+        <li role="presentation" {% if heading == 'Edit' %}class="active"{% endif%}><a href="{{ url_for('edit') }}"><span class="glyphicon glyphicon-pencil"></span> Eingabe</a></li>
+        <li role="presentation" {% if heading == 'Run' %}class="active"{% endif%}><a href="{{ url_for('run') }}"><span class="glyphicon glyphicon-cog"></span> Start</a></li>
+        <li role="presentation" {% if heading == 'Graph' %}class="active"{% endif%}><a href="{{ url_for('graph') }}"><span class="glyphicon glyphicon-signal"></span> Graph</a></li>
+        <li role="presentation" {% if heading == 'Table' %}class="active"{% endif%}><a href="{{ url_for('table') }}"><span class="glyphicon glyphicon-th-list"></span> Tabelle</a></li>
       </ul>
     </div>
     <br />
