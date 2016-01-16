@@ -12,8 +12,12 @@
         <tbody>
           {% for fname in fnames %}
           <tr>
-              <td><input type="submit" name="s{{ loop.index0 }}" class="btn btn-default" value="Auswählen">
-              <input type="submit" name="d{{ loop.index0 }}" class="btn btn-warning" value="Löschen"></td>
+              <td>
+                <div class="btn-group" role="group" aria-label="...">
+                  <button type="submit" name="s{{ loop.index0 }}" class="btn btn-success"><span class="glyphicon glyphicon-ok"></span></button>
+                  <button type="submit" name="d{{ loop.index0 }}" class="btn btn-warning"><span class="glyphicon glyphicon-remove"></span></button>
+                </div>
+              </td>
               <td><p class="form-control-static">{{ fname|replace("../recipes/", "")|replace(".rcp", "") }}</p></td>
           </tr>
         {% else %}
