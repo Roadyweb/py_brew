@@ -191,16 +191,16 @@
         </tbody>
       </table>
       <form action="." method="POST">
-        <input type="submit" id="btn_start_at" name="btn_start_at" class="btn btn-default" value="Starte um">
+        <button type="submit" id="btn_start_at" name="btn_start_at" class="btn btn-default"><span class="glyphicon glyphicon-time"></span> Starte um</button>
         <input type="text" name="start_time" id="time_start_at" value="{{ start_at }}">
         <script type="text/javascript">
           $('#time_start_at').timepicker();
         </script>
         <br/><br/>
-        <input type="submit" id="btn_start" name="btn_start" class="btn btn-default" value="Start">
-        <input type="submit" id="btn_stop" name="btn_stop" class="btn btn-default" value="Stop">
-        <input type="submit" id="btn_t1_up" name="btn_t1_up" class="btn btn-default" value="K1 + 0.2 K">
-        <input type="submit" id="btn_t1_down" name="btn_t1_down" class="btn btn-default" value="K1 - 0.2 K">
+        <button type="submit" id="btn_start" name="btn_start" class="btn btn-default"><span class="glyphicon glyphicon-play"></span> Start</button>
+        <button type="submit" id="btn_stop" name="btn_stop" class="btn btn-default"><span class="glyphicon glyphicon-stop"></span> Stop</button>
+        <button type="submit" id="btn_t1_up" name="btn_t1_up" class="btn btn-default"><span class="glyphicon glyphicon-plus"></span> 0,2 K</button>
+        <button type="submit" id="btn_t1_down" name="btn_t1_down" class="btn btn-default"><span class="glyphicon glyphicon-minus"></span> 0,2 K</button>
       </form>
     </div>
     <div class="col-md-6">
