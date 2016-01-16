@@ -14,7 +14,7 @@
           <tr>
               <td><input type="submit" name="s{{ loop.index0 }}" class="btn btn-default" value="Auswählen">
               <input type="submit" name="d{{ loop.index0 }}" class="btn btn-warning" value="Löschen"></td>
-              <td><p class="form-control-static">{{ fname }}</p></td>
+              <td><p class="form-control-static">{{ fname|replace("../recipes/", "")|replace(".rcp", "") }}</p></td>
           </tr>
         {% else %}
             <em>No entries</em>
@@ -23,7 +23,7 @@
         <thead>
           <tr>
             <th><label class="control-label">Ausgewähltes Rezept</label></th>
-            <th><p class="form-control-static">{{ selected }}</p></th>
+            <th><p class="form-control-static">{{ selected|replace("../recipes/", "")|replace(".rcp", "") }}</p></th>
           </tr>
         </thead>
       </table>
