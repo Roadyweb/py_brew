@@ -16,7 +16,7 @@
               <button type="submit" name="d{{ loop.index0 }}" class="btn btn-warning"><span class="glyphicon glyphicon-remove"></span></button>
             </div>
           </td>
-          <td lass="col-xs-10"><p class="form-control-static">{{ fname|replace("../recipes/", "")|replace(".rcp", "") }}</p></td>
+          <td lass="col-xs-10"><p class="form-control-static">{{ fname|replace("../recipes/", "")|replace(".rcp", "")|replace("_", " ") }}</p></td>
       </tr>
     {% else %}
         <em>No entries</em>
@@ -25,7 +25,7 @@
     <thead>
       <tr>
         <th><p class="form-control-static">Ausgewähltes Rezept</p></th>
-        <th><p class="form-control-static">{{ selected|replace("../recipes/", "")|replace(".rcp", "") }}</p></th>
+        <th><p class="form-control-static">{{ selected|replace("../recipes/", "")|replace(".rcp", "")|replace("_", " ") }}</p></th>
       </tr>
     </thead>
   </table>
