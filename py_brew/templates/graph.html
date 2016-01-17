@@ -71,6 +71,6 @@ $(function() {
         <p>Zooming, Panning und Tooltips werden unterstützt. Aktuelle Datengröße ist {{ state.log_size }} Bytes.</p>
     </div>
     <form action="." method="POST">
-      <input type="submit" name="btn_reset_graph" class="btn btn-warning" value="Graph zurücksetzen">
+      <button type="submit" name="btn_reset_graph" class="btn btn-warning" data-toggle="tooltip" title="Daten werden irreversibel gelöscht"><span class="glyphicon glyphicon-remove"></span> Graph zurücksetzen</button>
     </form>
 {% endblock %}
