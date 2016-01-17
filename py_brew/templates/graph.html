@@ -35,10 +35,10 @@ $(function() {
     }
 
     var data = [
-        {color: "red",    points: data_points, data: t1_set,    label: t1_label},
-        {color: "blue",   points: data_points, data: t2_set,    label: t2_label},
-        {color: "green",  points: data_points, data: sp_t1_set, label: sp_t1_label},
-        {color: "yellow", points: data_points, data: sp_t2_set, label: sp_t2_label},
+        {color: "#ff9999", lines: { show: true, lineWidth: 10 }, data: sp_t1_set, label: sp_t1_label},
+        {color: "#9999ff", lines: { show: true, lineWidth: 10 }, data: sp_t2_set, label: sp_t2_label},
+        {color: "red",    points: { show: true, radius: 3 }, data: t1_set, label: t1_label},
+        {color: "blue",   points: { show: true, radius: 3 }, data: t2_set, label: t2_label},
     ];
     var options = {
         legend: { position: "se", show: true },
