@@ -2,15 +2,9 @@
 
 {% block flot_head %}
 {{ super() }}
-<meta http-equiv="refresh" content="30" >
+<meta http-equiv="refresh" content="120" >
 <script type="text/javascript">
 $(function() {
-    // Style for bars
-    var data_points = {
-        show: true,
-        radius: 3,
-    };
-
     var timelabel = "Zeit";
     var time = [ {% for line in data.list %}{{ line.time }}/60,{% endfor %} ];
     var t1_label = "Temperatur K1"
@@ -46,31 +40,71 @@ $(function() {
             lines: { show: true, lineWidth: 1 },
             shadowSize: 0 
         },
-        grid: { hoverable: true, clickable: true },
-        xaxis: { min: 0, zoomRange: null, panRange: [0, null]},
-        yaxis: { min: 0, zoomRange: [50, 100],  panRange: [0, 100]},
-        zoom: { interactive: true },
-        pan: { interactive: true }
+        grid: { hoverable: true },
+        pan: { interactive: true },
+        selection: { mode: "xy" },
     };
     var container = $("#placeholder");
     var plot = $.plot(container, data , options);
-
     bindTooltip(container, tooltip);
 
     addXAxis("Zeit [min]")
     addYAxis("Temperatur [°C]");
+
+    // Create the overview plot
+    var overview = $.plot("#overview", data, {
+      legend: { show: false },
+      series: { lines: { show: true, lineWidth: 1 }, shadowSize: 0 },
+      xaxis: { ticks: 4 },
+      yaxis: { ticks: 3 },
+      grid: { color: "#999" },
+      selection: { mode: "xy" }
+    });
+
+    // now connect the two
+    $("#placeholder").bind("plotselected", function (event, ranges) {
+
+      // clamp the zooming to prevent eternal zoom
+      if (ranges.xaxis.to - ranges.xaxis.from < 0.01) {
+        ranges.xaxis.to = ranges.xaxis.from + 0.01;
+      }
+
+      if (ranges.yaxis.to - ranges.yaxis.from < 0.01) {
+        ranges.yaxis.to = ranges.yaxis.from + 0.01;
+      }
+
+      // do the zooming
+      plot = $.plot("#placeholder", data,
+        $.extend(true, {}, options, {
+          xaxis: { min: ranges.xaxis.from, max: ranges.xaxis.to },
+          yaxis: { min: ranges.yaxis.from, max: ranges.yaxis.to }
+        })
+      );
+
+      // don't fire event on the overview to prevent eternal loop
+      overview.setSelection(ranges, true);
+    });
+
+    $("#overview").bind("plotselected", function (event, ranges) {
+      plot.setSelection(ranges);
+    });
+    $("#whole").click(function () {
+      $.plot("#placeholder", data , options);
+    });
 });
 </script>
 {% endblock %}
 {% block body %}
-    <div id="content">
+  <div id="content">
     <div class="demo-container">
-        <div id="placeholder" class="demo-placeholder"></div>
+        <div id="placeholder" class="demo-placeholder" style="float:left; width:600px;"></div>
+        <div id="overview" class="demo-placeholder" style="float:right;width:160px; height:125px;"></div>
     </div>
     <p class="message"></p>
-        <p>Zooming, Panning und Tooltips werden unterstützt. Aktuelle Datengröße ist {{ state.log_size }} Bytes.</p>
-    </div>
+        <p>Wähle ein Region im Graph um zu vergrößern. Aktuelle Datengröße ist {{ state.log_size }} Bytes.</p>
     <form action="." method="POST">
-      <button type="submit" name="btn_reset_graph" class="btn btn-warning" data-toggle="tooltip" title="Daten werden irreversibel gelöscht"><span class="glyphicon glyphicon-remove"></span> Graph zurücksetzen</button>
+      <button id="whole" name="btn_reset_graph" class="btn btn-default"><span class="glyphicon glyphicon-remove"></span> Graph zurücksetzen</button>
+      <button type="submit" name="btn_delete_data" class="btn btn-warning" data-toggle="tooltip" title="Daten werden irreversibel gelöscht"><span class="glyphicon glyphicon-trash"></span> Lösche Daten</button>
     </form>
+  </div>
 {% endblock %}

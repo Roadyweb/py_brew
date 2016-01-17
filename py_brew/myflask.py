@@ -169,7 +169,7 @@ def manage():
 @app.route('/graph/', methods=['GET', 'POST'])
 def graph():
     if request.method == 'POST':
-        if 'btn_reset_graph' in request.form:
+        if 'btn_delete_data' in request.form:
             dlt_thread.reset_data()
     return render_template('graph.html',
                            heading='Graph',

@@ -19,7 +19,7 @@ input[type=checkbox] {
 #content {
 	width: 880px;
 	margin: 0 auto;
-	padding: 10px;
+	padding: 0px;
 }
 
 #footer {
@@ -32,9 +32,9 @@ input[type=checkbox] {
 
 .demo-container {
 	box-sizing: border-box;
-	width: 800px;
+	width: 820px;
 	height: 450px;
-	padding: 15px 25px 25px 35px;
+	padding: 5px 25px 25px 25px;
 	margin: auto auto auto auto;
 	border: 1px solid #ddd;
 	background: #fff;
