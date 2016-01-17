@@ -95,16 +95,14 @@ $(function() {
 </script>
 {% endblock %}
 {% block body %}
-  <div class="form-group">
     <div class="demo-container">
         <div id="placeholder" class="demo-placeholder" style="float:left; width:600px;"></div>
         <div id="overview" class="demo-placeholder" style="float:right;width:160px; height:125px;"></div>
     </div>
-    <p class="message"></p>
-        <p>Wähle ein Region im Graph um zu vergrößern. Aktuelle Datengröße ist {{ state.log_size }} Bytes.</p>
+    <br/>
+    <p>Wähle eine Region im Graph um zu vergrößern. Aktuelle Datengröße ist {{ state.log_size }} Bytes.</p>
     <form action="." method="POST">
       <button id="whole" name="btn_reset_graph" class="btn btn-default"><span class="glyphicon glyphicon-remove"></span> Graph zurücksetzen</button>
       <button type="submit" name="btn_delete_data" class="btn btn-warning" data-toggle="tooltip" title="Daten werden irreversibel gelöscht"><span class="glyphicon glyphicon-trash"></span> Lösche Daten</button>
     </form>
-  </div>
 {% endblock %}

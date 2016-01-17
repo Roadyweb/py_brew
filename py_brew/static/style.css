@@ -18,7 +18,7 @@ body {
 
 .title          { width: auto; background-color: #DE0000; text-align: center; border: 3px solid #eee; }
 
-.footer         { width: auto; background-color: #DE0000; clear: both; text-align: center; color: #fff; }
+.footer         { width: auto; background-color: #DE0000; clear: both; text-align: center; color: #fff; border: 3px solid #eee}
 
 .menu           { background-color: #eee; height: auto; width: 200px; float: left; font-size: 1.2em}
 

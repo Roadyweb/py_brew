@@ -2,10 +2,9 @@
 
 .demo-container {
 	box-sizing: border-box;
-	width: 820px;
+	width: 800px;
 	height: 450px;
-	padding: 5px 25px 25px 25px;
-	margin: auto auto auto auto;
+	padding: 5px 5px 25px 25px;
 	border: 1px solid #ddd;
 	background: #fff;
 	background: linear-gradient(#f6f6f6 0, #fff 50px);
