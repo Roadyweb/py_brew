@@ -18,7 +18,13 @@
 
     <script type="text/javascript" src="{{ url_for('static', filename='plugins/jquery/jquery-1.11.1.min.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='plugins/bootstrap/js/bootstrap.min.js') }}"></script>
-
+    <script type="text/javascript">
+    $(document).ready(function(){
+        $('[data-toggle="tooltip"]').tooltip({
+            placement : 'top'
+        });
+    });
+    </script>
     {% block head %}
     <title>Py Brew</title>
     {% endblock %}
