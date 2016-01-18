@@ -25,16 +25,16 @@
             // console.log('data ' + typeof(data) + data);
             var jdata = $.parseJSON(data);
             console.log('jdata ' + typeof(jdata) + data);
-            $( "#val_ztk1" ).text(jdata.settempk1.toFixed(1) + ' °C');
-            $( "#val_ztk2" ).text(jdata.settempk2.toFixed(1) + ' °C');
-            $( "#val_tk1" ).text(jdata.tempk1.toFixed(1) + ' °C');
-            $( "#val_tk2" ).text(jdata.tempk2.toFixed(1) + ' °C');
-            $( "#val_korr_tk1" ).text(jdata.tempk1_offset.toFixed(1) + ' °C');
+            $( "#val_ztk1" ).text(jdata.settempk1.toFixed(1) + '\xa0°C');
+            $( "#val_ztk2" ).text(jdata.settempk2.toFixed(1) + '\xa0°C');
+            $( "#val_tk1" ).text(jdata.tempk1.toFixed(1) + '\xa0°C');
+            $( "#val_tk2" ).text(jdata.tempk2.toFixed(1) + '\xa0°C');
+            $( "#val_korr_tk1" ).text(jdata.tempk1_offset.toFixed(1) + '\xa0°C');
             $( "#val_heater" ).text(jdata.heater);
             $( "#val_pump1" ).text(jdata.pump1);
             $( "#val_pump2" ).text(jdata.pump2);
-            $( "#val_dura_k1" ).text(jdata.setdurak1 + ' s');
-            $( "#val_dura_k2" ).text(jdata.setdurak2 + ' s');
+            $( "#val_dura_k1" ).text(jdata.setdurak1 + '\xa0s');
+            $( "#val_dura_k2" ).text(jdata.setdurak2 + '\xa0s');
             $( "#val_pct_state" ).text(jdata.pct_state + ' ' + jdata.pct_state_min_to_wait);
             $( "#val_simulation" ).text(jdata.simulation);
             $( "#val_tmt_state" ).text(jdata.tmt_state);
@@ -165,14 +165,14 @@
         </thead>
         <tbody>
           <tr id="row_k1">
-            <td>Kochtemp. K1</td><td>{{ data.tempk1 }} °C</td>
-            <td>Kochdauer K1</td><td>{{ data.durak1 }} s</td>
+            <td>Kochtemp. K1</td><td>{{ data.tempk1 }}&nbsp;°C</td>
+            <td>Kochdauer K1</td><td>{{ data.durak1 }}&nbsp;s</td>
           </tr>
           {% if data.method == 'K2' %}
           {% for entry in data.list %}
             <tr id="row_k2_{{ loop.index }}">
-              <td>Rasttemp. K2</td><td>{{ entry[0]|safe }} °C</td>
-              <td>Rastdauer K2</td><td>{{ entry[1]|safe }} s</td>
+              <td>Rasttemp. K2</td><td>{{ entry[0]|safe }}&nbsp;°C</td>
+              <td>Rastdauer K2</td><td>{{ entry[1]|safe }}&nbsp;s</td>
             </tr>
           {% else %}
             <em>No entries</em>
@@ -182,7 +182,7 @@
             <td>Methode</td>
             <td>{{ data.method }}</td>
             <td>Hysterese</td>
-            <td>+/- {{'%0.1f' % state.hyst }} K</td>
+            <td>+/-&nbsp;{{'%0.1f' % state.hyst }}&nbsp;K</td>
           </tr>
         </tbody>
       </table>
