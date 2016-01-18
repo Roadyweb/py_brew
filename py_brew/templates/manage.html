@@ -2,6 +2,7 @@
 {% block body %}
 <form action="." method="POST" class="form-horizontal">
   <table class="table table-hover table-condensed">
+    <col width="100">
     <thead>
       <tr>
         <th colspan="2">Verfügbare Rezepte</th>
@@ -10,24 +11,24 @@
     <tbody>
       {% for fname in fnames %}
       <tr>
-          <td class="col-xs-2">
+          <td>
             <div class="btn-group" role="group" aria-label="...">
               <button type="submit" name="s{{ loop.index0 }}" class="btn btn-success" data-toggle="tooltip" title="Auswählen"><span class="glyphicon glyphicon-ok"></span></button>
               <button type="submit" name="d{{ loop.index0 }}" class="btn btn-warning" data-toggle="tooltip" title="Löschen"><span class="glyphicon glyphicon-trash"></span></button>
             </div>
           </td>
-          <td lass="col-xs-10"><p class="form-control-static">{{ fname|replace("../recipes/", "")|replace(".rcp", "")|replace("_", " ") }}</p></td>
+          <td>{{ fname|replace("../recipes/", "")|replace(".rcp", "")|replace("_", " ") }}</td>
       </tr>
     {% else %}
         <em>No entries</em>
     {% endfor %}
     </tbody>
-    <thead>
+    <tfoot>
       <tr>
-        <th><p class="form-control-static">Ausgewähltes Rezept</p></th>
-        <th><p class="form-control-static">{{ selected|replace("../recipes/", "")|replace(".rcp", "")|replace("_", " ") }}</p></th>
+        <th>Gewählt</th>
+        <th>{{ selected|replace("../recipes/", "")|replace(".rcp", "")|replace("_", " ") }}</th>
       </tr>
-    </thead>
+    </tfoot>
   </table>
 </form>
 {% endblock %}
