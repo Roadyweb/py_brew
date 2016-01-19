@@ -11,15 +11,22 @@ Main functions to create the webpages
 from flask import Flask, request, render_template
 import flask_socketio
 import datetime
+import sys
 import time
 
-import config
 import cook
 import datalogger
 import signal
 import wq
 
+if len(sys.argv) == 2 and sys.argv[1] == 'sim':
+    print 'Using config.sim'
+    import config_sim as config
+else:
+    import config
+
 from recipes import Recipes
+
 
 app = Flask(__name__)
 app.jinja_env.add_extension('jinja2.ext.loopcontrols')
