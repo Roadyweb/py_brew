@@ -70,6 +70,7 @@ def stop_all_threads():
 def handler(signum, frame):
     print 'Signal handler called with signal', signum
     stop_all_threads()
+    sys.exit(0)
 
 # Register signal handler that stopps all threads
 # signal.SIGTERM is issued from supervisor
