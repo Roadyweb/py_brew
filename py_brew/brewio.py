@@ -12,6 +12,7 @@ import time
 import config
 import cook
 
+INV_TEMP = 999.0
 
 def tempk1():
     status = cook.status
@@ -35,15 +36,17 @@ def read_sensor(path):
         if re.match(r"([0-9a-fd]{2} ){9}: crc=[0-9a-fd]{2} YES", line):
             line = fd.readline()
             m = re.match(r"([0-9a-fd]{2} ){9}t=([+-]?[0-9]+)", line)
-        if m:
             value = float(m.group(2)) / 1000.0
+        else:
+            print "No RegEx match with %s" % line
+            value = INV_TEMP
         fd.close()
     except (IOError), e:
         print time.strftime("%x %X"), "Error reading", path, ": ", e
         # As an error value use a higher than normal temperature to avoid that
         # the heater is switched on. E.g. with negative values the heater would
         # start to raise the temperature even more.
-        value = 999.0
+        value = INV_TEMP
     return value
 
 def pump1(state):
