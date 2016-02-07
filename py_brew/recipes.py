@@ -8,7 +8,7 @@ import copy
 import os
 import pickle
 
-from helper import str_timestamp_now
+from helper import str_timestamp_now, log
 
 PATH = '../recipes/'
 EXT = '.rcp'
@@ -95,8 +95,10 @@ class Recipes(object):
     def delete(self, idx):
         """ Deletes the file provided as index of the internal arrays """
         fname = self.fnames[idx]
+        log('Deleting %s' % str(os.path.abspath(fname)))
         os.remove(fname)
-        # print 'Successfully removed %s' % fname
+        if os.path.isfile(fname):
+            log('Unable to remove file %s' % str(os.path.abspath(fname)))
         self.__init__()
 
     def select(self, idx):

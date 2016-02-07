@@ -12,6 +12,8 @@ import time
 import config
 import cook
 
+from helper import log
+
 INV_TEMP = 999.0
 
 def tempk1():
@@ -38,11 +40,11 @@ def read_sensor(path):
             m = re.match(r"([0-9a-fd]{2} ){9}t=([+-]?[0-9]+)", line)
             value = float(m.group(2)) / 1000.0
         else:
-            print "No RegEx match with %s" % line
+            log('No RegEx match with %s' % line)
             value = INV_TEMP
         fd.close()
     except (IOError), e:
-        print time.strftime("%x %X"), "Error reading", path, ": ", e
+        log('Error reading %s:%s' % (path, e))
         # As an error value use a higher than normal temperature to avoid that
         # the heater is switched on. E.g. with negative values the heater would
         # start to raise the temperature even more.
@@ -65,7 +67,7 @@ def control(device_name, gpio, state):
     else:
         if not config.SIMULATION:
             set_gpio(gpio, 1)
-    print '%s %d' % (device_name, state)
+    log('%s %d' % (device_name, state))
     cook.status[device_name] = state
 
 def set_gpio(number, state):

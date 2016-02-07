@@ -19,8 +19,10 @@ import datalogger
 import signal
 import wq
 
+from helper import log
+
 if len(sys.argv) == 2 and sys.argv[1] == 'sim':
-    print 'Using config.sim'
+    log('Using config.sim')
     import config_sim as config
 else:
     import config
@@ -35,6 +37,8 @@ socketio = flask_socketio.SocketIO(app)
 
 global wqt_thread
 
+log('************************************************')
+log('Starting threads')
 tpc = cook.TempProcessControl(cook.cook_state_cb, cook.cook_temp_state_cb)
 pct_thread = cook.ProcControlThread(cook.pct_state_cb, cook.pct_get_state_cb, tpc)
 pct_thread.start()
@@ -61,14 +65,14 @@ def stop_all_threads():
     threads = [pct_thread, tmt_thread, wqt_thread, dlt_thread, smt_thread]
     for thread in threads:
         if thread.is_alive():
-            print thread.name + ' is still alive'
+            log(thread.name + ' is still alive')
         thread.exit()
         while thread.is_alive():
             time.sleep(0.1)
 
 
 def handler(signum, frame):
-    print 'Signal handler called with signal', signum
+    log('Signal handler called with signal %d' % signum)
     stop_all_threads()
     sys.exit(0)
 
@@ -93,7 +97,7 @@ def run():
     # if not pct_thread or not pct_thread.is_alive():
     #    raise RuntimeError('ProcControlThread is not running')
     if request.method == 'POST':
-        print request.form
+        log('Run: ' + str(request.form))
         if 'btn_start' in request.form:
             pct_thread.start_cooking(brew_recipe)
             dlt_thread.start_logging()
@@ -111,7 +115,6 @@ def run():
             # Add a day when start_at is in the past
             if now > start_at:
                 start_at += datetime.timedelta(days=1)
-            print now, start_at
             pct_thread.start_cooking(brew_recipe, start_at)
             dlt_thread.start_logging()
         elif 'btn_stop' in request.form:
@@ -138,7 +141,7 @@ def edit():
     global brew_recipe
     last_action = 'Empty'
     if request.method == 'POST':
-        print request.form
+        log('Edit: ' + str(request.form))
         if 'btn_add_row' in request.form:
             brew_recipe['list'].append((0.0,0))
             last_action = 'Zeile hinzu'
@@ -164,6 +167,7 @@ def edit():
 def manage():
     global brew_recipe
     if request.method == 'POST':
+        log('Manage: ' + str(request.form))
         eval_manage_form(request.form)
         brew_recipe = recipes.get_selected_recipe()
 
@@ -229,30 +233,30 @@ def eval_manage_form(form):
 
 @socketio.on('connect')
 def test_connect():
-    print('Server: Someone connected. Emitting ')
+    log('Server: Someone connected. Emitting ')
     # socketio.send('Response to connect')
     # socketio.emit('my response', {'data': 'Connected'})
 
 
 @socketio.on('disconnect')
 def test_disconnect():
-    print('Server: Someone disconnected')
+    log('Server: Someone disconnected')
     # socketio.emit('my response', {'data': 'Connected'})
 
 
 @socketio.on('message')
 def handle_message(message):
-    print('received message: ' + message)
+    log('received message: ' + message)
 
 
 @socketio.on('my event')
 def handle_my_custom_event(json):
-    print('my_event - received json: ' + str(json))
+    log('my_event - received json: ' + str(json))
 
 
 @socketio.on_error()        # Handles the default namespace
 def error_handler(e):
-    print e
+    log(e)
 
 
 if __name__ == '__main__':

@@ -13,7 +13,7 @@ import brewio
 import config
 import wq
 
-from helper import timedelta2sec, timedelta2min
+from helper import timedelta2sec, timedelta2min, log
 
 
 # Global variables for inter thread communication
@@ -151,7 +151,7 @@ class ProcControlThread (threading.Thread):
     def start_cooking(self, recipe, start_at=None):
         """ Starts cookin in the main loop """
         self.recipe = copy.deepcopy(recipe)
-        print start_at
+        log('Start at %s' % str(start_at))
         if start_at is None:
             self.pct_req = 'START'
         else:
@@ -217,7 +217,7 @@ class TempProcessControl(object):
             raise RuntimeError('Unsupported TempProcessControl method %s' % self.method)
 
     def start(self, recipe):
-        print 'TempProcessControl started. Recipe: %s' % recipe
+        log('TempProcessControl started. Recipe: %s' % recipe)
         self.temp_list = recipe['list']
         self.tempk1 = recipe['tempk1']
         self.durak1 = recipe['durak1']

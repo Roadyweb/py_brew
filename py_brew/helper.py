@@ -6,6 +6,7 @@ Created on Apr 18, 2015
 
 import datetime
 import re
+import os
 import sys
 
 from numbers import Number
@@ -29,6 +30,21 @@ def grepline(text, search4str):
         if re.search(search4str, line):
             return line
     return None
+
+def log(text):
+    str2log = str_timestamp_now() + ' ' + str(text) + '\r\n'
+    try:
+        cwd = os.getcwd()
+        fname = '/var/log/py_brew.log'
+        if os.path.isfile(fname):
+            filehandle = open(fname, 'a')
+        else:
+            filehandle = open(fname, 'w')
+        filehandle = open(fname, 'a')
+        filehandle.write(str2log)
+        filehandle.close()
+    except:
+        sys.stdout.write(str2log)
 
 try: # Python 2
     zero_depth_bases = (basestring, Number, xrange, bytearray)

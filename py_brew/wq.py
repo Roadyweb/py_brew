@@ -149,7 +149,6 @@ class WorkQueueThread(threading.Thread):
         self.set_state('Initialized')
 
     def run(self):
-        print 'Starting WorkQueueThread'
         self.set_state('Running')
         while 42:
             sleepduration = config.WQ_UPDATE_INT
@@ -157,7 +156,7 @@ class WorkQueueThread(threading.Thread):
             if len(self.queue) > 0:
                 el = self.queue[0]
                 if el[2] < datetime.datetime.now():
-                    print 'WQT: exec %s. Len %d' % (el[0], len(self.queue))
+                    # print 'WQT: exec %s. Len %d' % (el[0], len(self.queue))
                     func = el[0]
                     args = el[1]
                     func(args)
