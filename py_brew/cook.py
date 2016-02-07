@@ -253,7 +253,6 @@ class TempProcessControl(object):
                 return
             # Yes we have another stage
             self.cur_idx += 1
-            self.tempk1_offset = 0.0
             self.set_temp, self.set_dura = self._get_temp_dura()
             self.state = 'INIT'
 
