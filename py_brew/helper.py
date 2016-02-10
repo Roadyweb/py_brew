@@ -5,9 +5,11 @@ Created on Apr 18, 2015
 '''
 
 import datetime
+import errno
 import re
 import os
 import sys
+import tempfile
 
 from numbers import Number
 from collections import Set, Mapping, deque
@@ -15,21 +17,25 @@ from collections import Set, Mapping, deque
 
 def timedelta2sec(td):
     # total_seconds is not available in Python 2.6
-    #seconds = td.total_seconds()
+    # seconds = td.total_seconds()
     return (td.microseconds + (td.seconds + td.days * 24 * 3600) * 10**6) / 10**6
+
 
 def timedelta2min(td):
     minutes, seconds = divmod(timedelta2sec(td), 60)
     return minutes
 
+
 def str_timestamp_now():
     return datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
 
 def grepline(text, search4str):
     for line in text.splitlines():
         if re.search(search4str, line):
             return line
     return None
+
 
 def log(text):
     str2log = str_timestamp_now() + ' ' + str(text) + '\r\n'
@@ -45,6 +51,19 @@ def log(text):
         filehandle.close()
     except:
         sys.stdout.write(str2log)
+
+
+def isWritable(path):
+    try:
+        testfile = tempfile.TemporaryFile(dir = path)
+        testfile.close()
+    except OSError as e:
+        if e.errno == errno.EACCES:  # 13
+            return False
+        e.filename = path
+        raise
+    return True
+
 
 try: # Python 2
     zero_depth_bases = (basestring, Number, xrange, bytearray)
