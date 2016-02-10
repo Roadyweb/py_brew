@@ -130,6 +130,9 @@
             socket.send('Client: I\'m disconnected!');
             // console.log('Client: I\'m disconnected!');
         });
+        $( window ).unload(function() {
+            socket.disconnect();
+        });
     </script>
 {% endblock %}
 
