@@ -14,21 +14,20 @@ import datetime
 import sys
 import time
 
+import config
 import cook
 import datalogger
 import signal
 import wq
 
 from helper import log
-
-if len(sys.argv) == 2 and sys.argv[1] == 'sim':
-    log('Using config.sim')
-    import config_sim as config
-else:
-    import config
-
 from recipes import Recipes
 
+
+if len(sys.argv) == 2 and sys.argv[1] == 'sim':
+    log('Using simulation settings')
+    config.SIMULATION = True
+    config.LOG_INT = 1.0
 
 app = Flask(__name__)
 app.jinja_env.add_extension('jinja2.ext.loopcontrols')
