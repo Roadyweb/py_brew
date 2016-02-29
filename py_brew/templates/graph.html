@@ -6,7 +6,7 @@
 <script type="text/javascript">
 $(function () {
     var timelabel = "Zeit";
-    var time = [ {% for line in data.list %}{{ line.time }}/60,{% endfor %} ];
+    var time = [ {% for line in data.list %}{{ line.time }},{% endfor %} ];
     var t1_label = "Temperatur K1"
     var t1 = [ {% for line in data.list %}{{ line.tempk1 }},{% endfor %} ];
     var t2_label = "Temperatur K2"
