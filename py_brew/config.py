@@ -30,7 +30,7 @@ LOG_INT = 5.0          # log every x seconds
 SM_INT = 2.0            # send status every x seconds
 
 # Simulation settings
-SIMULATION = True
+SIMULATION = False
 AMBIENT_TEMP = 10.0     # minimum temperature when no heating is applied
 COOLING_FACTOR = 0.001  # cooling in degrees =
                         # (curr temp - AMBIENT_TEMP) / COOLING_FACTOR
