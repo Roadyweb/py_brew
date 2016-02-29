@@ -2,8 +2,7 @@
 
 {% block head %}
 {{ super() }}
-<script type="text/javascript" src="{{ url_for('static', filename='plugins/flot/jquery.flot.js') }}"></script>
-<script type="text/javascript" src="{{ url_for('static', filename='plugins/flot/jquery.flot.selection.js') }}"></script>
-<script type="text/javascript" src="{{ url_for('static', filename='helper.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='plugins/highcharts/js/highcharts.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='plugins/highcharts/js/modules/no-data-to-display.js') }}"></script>
 {% block flot_head %} {% endblock  %}
 {% endblock %}

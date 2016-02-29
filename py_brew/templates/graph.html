@@ -4,7 +4,7 @@
 {{ super() }}
 <meta http-equiv="refresh" content="120" >
 <script type="text/javascript">
-$(function() {
+$(function () {
     var timelabel = "Zeit";
     var time = [ {% for line in data.list %}{{ line.time }}/60,{% endfor %} ];
     var t1_label = "Temperatur K1"
@@ -27,82 +27,83 @@ $(function() {
         sp_t1_set.push([time[i], sp_t1[i]]);
         sp_t2_set.push([time[i], sp_t2[i]]);
     }
-
-    var data = [
-        {color: "#ff9999", lines: { show: true, lineWidth: 10 }, data: sp_t1_set, label: sp_t1_label},
-        {color: "#9999ff", lines: { show: true, lineWidth: 10 }, data: sp_t2_set, label: sp_t2_label},
-        {color: "red",    points: { show: true, radius: 3 }, data: t1_set, label: t1_label},
-        {color: "blue",   points: { show: true, radius: 3 }, data: t2_set, label: t2_label},
-    ];
-    var options = {
-        legend: { position: "se", show: true },
-        series: {
-            lines: { show: true, lineWidth: 1 },
-            shadowSize: 0 
+    $('#container').highcharts({
+        chart: {
+            zoomType: 'x'
         },
-        grid: { hoverable: true },
-        pan: { interactive: true },
-        selection: { mode: "xy" },
-    };
-    var container = $("#placeholder");
-    var plot = $.plot(container, data , options);
-    bindTooltip(container, tooltip);
+        title: {
+            text: 'Temperaturverlauf K1 und K2'
+        },
+        xAxis: {
+            type: 'linear',
+            title: {
+                text: 'Vergangene Zeit in Sekunden'
+            }
+        },
+        yAxis: {
+            title: {
+                text: 'Temperatur in Grad Celsius'
+            }
+        },
+        legend: {
+            enabled: true
+        },
+        lang: {
+            noData: "Daten werden erst nach dem Start des Brauvorgangs aufgezeichnet"
+        },
+        noData: {
+            style: {
+                fontWeight: 'bold',
+                fontSize: '15px',
+                color: '#303030'
+            }
+        },
+        tooltip: {
+            formatter: function () {
+                var s = '<b>Zeitpunkt ' + this.x.toFixed(0) + ' s</b>';
 
-    addXAxis("Zeit [min]")
-    addYAxis("Temperatur [°C]");
+                $.each(this.points, function () {
+                    s += '<br/>' + this.series.name + ' ' +
+                        this.y.toFixed(2) + ' °C';
+                });
 
-    // Create the overview plot
-    var overview = $.plot("#overview", data, {
-      legend: { show: false },
-      series: { lines: { show: true, lineWidth: 1 }, shadowSize: 0 },
-      xaxis: { ticks: 4 },
-      yaxis: { ticks: 3 },
-      grid: { color: "#999" },
-      selection: { mode: "xy" }
-    });
+                return s;
+            },
+            crosshairs: true,
+            shared: true
+        },
+        plotOptions: {
+            area: {}
+        },
 
-    // now connect the two
-    $("#placeholder").bind("plotselected", function (event, ranges) {
-
-      // clamp the zooming to prevent eternal zoom
-      if (ranges.xaxis.to - ranges.xaxis.from < 0.01) {
-        ranges.xaxis.to = ranges.xaxis.from + 0.01;
-      }
-
-      if (ranges.yaxis.to - ranges.yaxis.from < 0.01) {
-        ranges.yaxis.to = ranges.yaxis.from + 0.01;
-      }
-
-      // do the zooming
-      plot = $.plot("#placeholder", data,
-        $.extend(true, {}, options, {
-          xaxis: { min: ranges.xaxis.from, max: ranges.xaxis.to },
-          yaxis: { min: ranges.yaxis.from, max: ranges.yaxis.to }
-        })
-      );
-
-      // don't fire event on the overview to prevent eternal loop
-      overview.setSelection(ranges, true);
-    });
-
-    $("#overview").bind("plotselected", function (event, ranges) {
-      plot.setSelection(ranges);
-    });
-    $("#whole").click(function () {
-      $.plot("#placeholder", data , options);
+        series: [{
+            name: 'Zieltemperatur K1',
+            color: '#FF9999',
+            data: sp_t1_set,
+            lineWidth: 10
+        } , {
+            name: 'Zieltemperatur K2',
+            color: '#9999FF',
+            data: sp_t2_set,
+            lineWidth: 10
+        }, {
+            name: 'Temperatur K1',
+            color: 'red',
+            data: t1_set
+        } , {
+            name: 'Temperatur K2',
+            color: 'blue',
+            data: t2_set
+        }]
     });
 });
 </script>
 {% endblock %}
 {% block body %}
-    <div class="demo-container">
-        <div id="placeholder" class="demo-placeholder" style="float:left; width:600px;"></div>
-        <div id="overview" class="demo-placeholder" style="float:right;width:160px; height:125px;"></div>
-    </div>
+    <div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
     <br/>
     <p>Wähle eine Region im Graph um zu vergrößern. Aktuelle Datengröße ist {{ state.log_size }} Bytes.</p>
     <form action="." method="POST">
-      <button id="whole" name="btn_reset_graph" class="btn btn-default"><span class="glyphicon glyphicon-remove"></span> Graph zurücksetzen</button>
       <button type="submit" name="btn_delete_data" class="btn btn-warning" data-toggle="tooltip" title="Daten werden irreversibel gelöscht"><span class="glyphicon glyphicon-trash"></span> Lösche Daten</button>
     </form>
 {% endblock %}
