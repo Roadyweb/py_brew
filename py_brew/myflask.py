@@ -11,23 +11,26 @@ Main functions to create the webpages
 from flask import Flask, request, render_template
 import flask_socketio
 import datetime
+import signal
 import sys
 import time
 
 import config
-import cook
-import datalogger
-import signal
-import wq
-
 from helper import log
-from recipes import Recipes
 
-
+# Modify some of the config parameters in case of a simulation run. This has to
+# before the import of other files that import config.py as well.
 if len(sys.argv) == 2 and sys.argv[1] == 'sim':
     log('Using simulation settings')
     config.SIMULATION = True
     config.LOG_INT = 1.0
+
+import cook
+import datalogger
+import wq
+
+from recipes import Recipes
+
 
 app = Flask(__name__)
 app.jinja_env.add_extension('jinja2.ext.loopcontrols')
