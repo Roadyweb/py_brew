@@ -114,6 +114,7 @@
               $( "#time_start_at" ).attr('disabled', true); 
               $( "#btn_start" ).attr('disabled', true); 
               $( "#btn_stop" ).removeAttr('disabled'); 
+              $( "#btn_pause" ).removeAttr('disabled'); 
               $( "#btn_t1_up" ).removeAttr('disabled'); 
               $( "#btn_t1_down" ).removeAttr('disabled'); 
             } else {
@@ -122,6 +123,7 @@
               $( "#time_start_at" ).removeAttr('disabled');
               $( "#btn_start" ).removeAttr('disabled'); 
               $( "#btn_stop" ).attr("disabled", true); 
+              $( "#btn_pause" ).attr("disabled", true); 
               $( "#btn_t1_up" ).attr("disabled", true); 
               $( "#btn_t1_down" ).attr("disabled", true); 
             }
@@ -202,6 +204,7 @@
         <br/><br/>
         <button type="submit" id="btn_start" name="btn_start" class="btn btn-default"><span class="glyphicon glyphicon-play"></span> Start</button>
         <button type="submit" id="btn_stop" name="btn_stop" class="btn btn-default"><span class="glyphicon glyphicon-stop"></span> Stop</button>
+        <button type="submit" id="btn_pause" name="btn_pause" class="btn btn-default"><span class="glyphicon glyphicon-pause"></span> Pause</button>
         <button type="submit" id="btn_t1_up" name="btn_t1_up" class="btn btn-default"><span class="glyphicon glyphicon-plus"></span> 0,2 K</button>
         <button type="submit" id="btn_t1_down" name="btn_t1_down" class="btn btn-default"><span class="glyphicon glyphicon-minus"></span> 0,2 K</button>
       </form>
