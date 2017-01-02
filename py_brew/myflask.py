@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 '''
 Created on 10.07.2012
 @author: baumanst
@@ -8,22 +9,38 @@ Main functions to create the webpages
 
 
 from flask import Flask, request, render_template
+import flask_socketio
+import datetime
+import signal
+import sys
 import time
 
 import config
+from helper import log
+
+# Modify some of the config parameters in case of a simulation run. This has to
+# before the import of other files that import config.py as well.
+if len(sys.argv) == 2 and sys.argv[1] == 'sim':
+    log('Using simulation settings')
+    config.SIMULATION = True
+    config.LOG_INT = 1.0
+
 import cook
 import datalogger
-import signal
 import wq
 
 from recipes import Recipes
 
+
 app = Flask(__name__)
 app.jinja_env.add_extension('jinja2.ext.loopcontrols')
 app.secret_key = 'some_secret'
+socketio = flask_socketio.SocketIO(app)
 
 global wqt_thread
 
+log('************************************************')
+log('Starting threads')
 tpc = cook.TempProcessControl(cook.cook_state_cb, cook.cook_temp_state_cb)
 pct_thread = cook.ProcControlThread(cook.pct_state_cb, cook.pct_get_state_cb, tpc)
 pct_thread.start()
@@ -36,27 +53,30 @@ dlt_thread = datalogger.DataLoggerThread(cook.status, cook.dlt_state_cb)
 dlt_thread.start()
 bm = wq.BlubberManager(cook.bm_state_cb)
 wq.bm = bm
+smt_thread = datalogger.SocketMessageThread(cook.status, socketio)
+smt_thread.start()
 
-
-last_action = 'Empty'
+last_action = 'Leer'
+default_str_time = '07:00'
 
 recipes = Recipes()
 brew_recipe = recipes.get_default()
 
 
 def stop_all_threads():
-    threads = [pct_thread, tmt_thread, wqt_thread, dlt_thread]
+    threads = [pct_thread, tmt_thread, wqt_thread, dlt_thread, smt_thread]
     for thread in threads:
         if thread.is_alive():
-            print thread.name + ' is still alive'
+            log(thread.name + ' is still alive')
         thread.exit()
         while thread.is_alive():
             time.sleep(0.1)
 
 
 def handler(signum, frame):
-    print 'Signal handler called with signal', signum
+    log('Signal handler called with signal %d' % signum)
     stop_all_threads()
+    sys.exit(0)
 
 # Register signal handler that stopps all threads
 # signal.SIGTERM is issued from supervisor
@@ -75,47 +95,47 @@ class Error(): pass
 @app.route('/run/', methods=['GET', 'POST'])
 def run():
     global pct_thread
+    global default_str_time
     # if not pct_thread or not pct_thread.is_alive():
     #    raise RuntimeError('ProcControlThread is not running')
     if request.method == 'POST':
-        if request.form['submit'] == 'Start':
+        log('Run: ' + str(request.form))
+        if 'btn_start' in request.form:
             pct_thread.start_cooking(brew_recipe)
             dlt_thread.start_logging()
-        elif request.form['submit'] == 'Stop':
+        elif 'btn_start_at' in request.form:
+            # Calculate datetime object when cooking should start
+            str_time = request.form['start_time']
+            default_str_time = str_time
+            start_at_hour = int(str_time.split(':')[0])
+            start_at_min = int(str_time.split(':')[1])
+            now = datetime.datetime.now()
+            start_at = datetime.datetime.now().replace(hour=start_at_hour,
+                                                       minute=start_at_min,
+                                                       second=0,
+                                                       microsecond=0)
+            # Add a day when start_at is in the past
+            if now > start_at:
+                start_at += datetime.timedelta(days=1)
+            pct_thread.start_cooking(brew_recipe, start_at)
+            dlt_thread.start_logging()
+        elif 'btn_stop' in request.form:
             pct_thread.stop_cooking()
             dlt_thread.stop_logging()
-        elif request.form['submit'] == 'Reset Graph':
-            dlt_thread.reset_data()
-        elif request.form['submit'] == '+ 0.2 deg':
+        elif 'btn_t1_up' in request.form:
             tpc.inc_offset(0.2)
-        elif request.form['submit'] == '- 0.2 deg':
+        elif 'btn_t1_down' in request.form:
             tpc.inc_offset(-0.2)
         else:
             pass # unknown
-    return render_template('run.html', heading='Run', state=cook.status, data=brew_recipe)
-
-
-@app.route('/debug/', methods=['GET', 'POST'])
-def debug():
-    global pct_thread
-    # if not pct_thread or not pct_thread.is_alive():
-    #    raise RuntimeError('ProcControlThread is not running')
-    if request.method == 'POST':
-        if request.form['submit'] == 'Start':
-            pct_thread.start_cooking(brew_recipe)
-            dlt_thread.start_logging()
-        elif request.form['submit'] == 'Stop':
-            pct_thread.stop_cooking()
-            dlt_thread.stop_logging()
-        elif request.form['submit'] == 'Reset Graph':
-            dlt_thread.reset_data()
-        elif request.form['submit'] == '+ 0.2 deg':
-            tpc.inc_offset(0.2)
-        elif request.form['submit'] == '- 0.2 deg':
-            tpc.inc_offset(-0.2)
-        else:
-            pass # unknown
-    return render_template('debug.html', heading='Debug', state=cook.status, data=brew_recipe)
+    # When cooking is started always use the recipe that is currently running
+    if cook.status['pct_state'] == 'Waiting' or \
+       cook.status['pct_state'] == 'Running':
+        cur_recipe = cook.status['recipe']
+    else:
+        cur_recipe = brew_recipe
+    return render_template('run.html', heading='Run', start_at=default_str_time,
+                           state=cook.status, data=cur_recipe)
 
 
 @app.route('/edit/', methods=['GET', 'POST'])
@@ -123,38 +143,59 @@ def edit():
     global brew_recipe
     last_action = 'Empty'
     if request.method == 'POST':
-        if request.form['submit'] == 'Add_Row':
+        log('Edit: ' + str(request.form))
+        if 'btn_add_row' in request.form:
             brew_recipe['list'].append((0.0,0))
-            last_action = 'Add_Row'
-        elif request.form['submit'] == 'Delete_Row':
+            last_action = 'Zeile hinzu'
+        elif 'btn_del_row' in request.form:
             brew_recipe['list'].pop(-1)
-            last_action = 'Delete_Row'
-        elif request.form['submit'] == 'Save':
+            last_action = u'Zeile löschen'
+        elif 'btn_save' in request.form:
             eval_edit_form(request.form, brew_recipe)
             recipes.save(brew_recipe)
-            last_action = 'Save'
-        elif request.form['submit'] == 'Reset':
+            last_action = 'Speichern'
+        elif 'btn_reset' in request.form:
             brew_recipe = recipes.get_default()
-            last_action = 'Reset'
+            last_action = u'Zurücksetzen'
         else:
             pass
-    return render_template('edit.html', heading='Edit', data=brew_recipe, last_action=last_action)
+    return render_template('edit.html',
+                           heading='Edit',
+                           data=brew_recipe,
+                           last_action=last_action)
 
 
 @app.route('/manage/', methods=['GET', 'POST'])
 def manage():
     global brew_recipe
     if request.method == 'POST':
+        log('Manage: ' + str(request.form))
         eval_manage_form(request.form)
         brew_recipe = recipes.get_selected_recipe()
 
     selected = recipes.get_selected_fname()
-    return render_template('manage.html', heading='Manage', fnames=recipes.fnames, selected=selected)
+    return render_template('manage.html',
+                           heading='Manage',
+                           fnames=recipes.fnames,
+                           selected=selected)
 
 
-@app.route('/graph/')
+@app.route('/graph/', methods=['GET', 'POST'])
 def graph():
-    return render_template('graph.html', heading='Graph', data=dlt_thread.get_data())
+    if request.method == 'POST':
+        if 'btn_delete_data' in request.form:
+            dlt_thread.reset_data()
+    return render_template('graph.html',
+                           heading='Graph',
+                           data=dlt_thread.get_data(),
+                           state=cook.status)
+
+
+@app.route('/table/')
+def table():
+    return render_template('table.html',
+                           heading='Table',
+                           data=dlt_thread.get_data())
 
 
 def eval_edit_form(form, brew_recipe):
@@ -192,7 +233,39 @@ def eval_manage_form(form):
             break
 
 
+@socketio.on('connect')
+def test_connect():
+    log('Server: Someone connected. Emitting ')
+    # socketio.send('Response to connect')
+    # socketio.emit('my response', {'data': 'Connected'})
+
+
+@socketio.on('disconnect')
+def test_disconnect():
+    log('Server: Someone disconnected')
+    # socketio.emit('my response', {'data': 'Connected'})
+
+
+@socketio.on('message')
+def handle_message(message):
+    log('received message: ' + message)
+
+
+@socketio.on('my event')
+def handle_my_custom_event(json):
+    log('my_event - received json: ' + str(json))
+
+
+@socketio.on_error()        # Handles the default namespace
+def error_handler(e):
+    log(e)
+
+
 if __name__ == '__main__':
-    app.debug = config.FLASK_DEBUG
-    app.run(host=config.IP_ADDRESS)
+    try:
+        app.debug = config.FLASK_DEBUG
+        socketio.run(app, host=config.IP_ADDRESS)
+    except KeyboardInterrupt:
+        socketio.stop()
+
     stop_all_threads()

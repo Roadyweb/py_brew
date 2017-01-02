@@ -1,60 +1,29 @@
-body, h1, h2, a { font-family: sans-serif; background: #eee; }
-h1, h4		{ color: white; }
-a, h2       	{ color: black; }
-h1, h2          { margin: 0; }
-h1              { border-bottom: 5px solid #eee; }
-h2              { font-size: 1.4em; }
-
-#menu {
-        width: 200px;
-        margin: 10px;
-	float: left;
-        }
-
-#menu li {
-	list-style-type: none;
+body {
+  padding-top: 0px;
+  padding-bottom: 0px;
 }
 
-#menu li a {
-	height: 32px;
-	voice-family: "\"}\"";
-	voice-family: inherit;
-	height: 24px;
+.nav-pills > li.active > a, .nav-pills > li.active > a:hover, .nav-pills > li.active > a:focus {
+    color: black;
+    background-color: #DE0000;
 }
 
-#menu li a:link, #menu li a:visited {
-        color: #708491;
-        display: block;
-        background: url(../static/menu.gif);
-        padding: 8px 0 0 10px;
-	list-style-type: none;
-	text-decoration: none;
+.nav-pills a {
+    color:black;
 }
 
-#menu li a:hover {
-        color: #d00;
-        background: url(../static/menu.gif) 0 -32px;
-        padding: 8px 0 0 10px;
-}				  
-#menu li a:active    {
-        color: #d00;
-        background: url(../static/menu.gif) 0 -32px;
-        padding: 8px 0 0 10px;
-}
+.table-bg-green { background-color: #D1FFD1; }
+.table-bg-red   { background-color: #FFD2D2; }
+.table-bg-blue  { background-color: #D1D1FF; }
 
-.linke-spalte   { width: 60%; float: left; margin: 5% 1% 4% 1%; }
-.rechte-spalte  { width: 36%; float: right; margin: 5% 1% 4% 1%; text-align: left; }
+.title          { width: auto; background-color: #DE0000; text-align: center; border: 3px solid #eee; }
 
-.title          { width: auto; background-color: #de0000; text-align: center; border: 3px solid #eee; }
-
-.footer         { width: auto; background-color: #de0000; clear: both;
-                  text-align: center; }
+.footer         { width: auto; background-color: #DE0000; clear: both; text-align: center; color: #fff; border: 3px solid #eee}
 
 .menu           { background-color: #eee; height: auto; width: 200px; float: left; font-size: 1.2em}
 
-.page           { margin: 0px 3pt 50px 0px ; width: 5em auto; border: 3px solid #de0000;
-                  padding: 0.3em; background: white; position: relative;
-                  overflow: auto; z-index: 0; }
+.page           { margin: 5px 3pt 5px 5px; background: white; 
+                   }
 .entries        { list-style: none; margin: 0; padding: 0; }
 .entries li     { margin: 0.8em 1.2em; }
 .entries li h2  { margin-left: -1em; }
@@ -67,3 +36,78 @@ h2              { font-size: 1.4em; }
 .error          { background: #F0D6D6; padding: 0.3em; margin: 0; }
 .noerror        { background: #99FF66; padding: 0.3em; margin: 0; }
 .unknown        { background: #FF9966; padding: 0.3em; margin: 0; }
+
+.container {
+	margin-left: initial;
+}
+
+.demo-container {
+	box-sizing: border-box;
+	width: 800px;
+	height: 450px;
+	padding: 5px 5px 25px 25px;
+	border: 1px solid #ddd;
+	background: #fff;
+	background: linear-gradient(#f6f6f6 0, #fff 50px);
+	background: -o-linear-gradient(#f6f6f6 0, #fff 50px);
+	background: -ms-linear-gradient(#f6f6f6 0, #fff 50px);
+	background: -moz-linear-gradient(#f6f6f6 0, #fff 50px);
+	background: -webkit-linear-gradient(#f6f6f6 0, #fff 50px);
+	box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+	-o-box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+	-ms-box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+	-moz-box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+	-webkit-box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+}
+
+.demo-placeholder {
+	width: 100%;
+	height: 100%;
+	font-size: 14px;
+	line-height: 14px;
+}
+
+.legend table {
+	border-spacing: 30px;
+}
+
+.axisLabel {
+	position: absolute;
+	text-align: center;
+	font-size: 12px;
+}
+
+.yaxisLabel {
+	top: 50%;
+	left: -20px;
+	transform: rotate(-90deg);
+	-o-transform: rotate(-90deg);
+	-ms-transform: rotate(-90deg);
+	-moz-transform: rotate(-90deg);
+	-webkit-transform:  rotate(-90deg);
+	transform-origin: 0 0;
+	-o-transform-origin: 0 0;
+	-ms-transform-origin: 0 0;
+	-moz-transform-origin: 0 0;
+	-webkit-transform-origin: 0 0;
+}
+
+.yaxis2Label {
+    top: 50%;
+    right: -300px;
+    transform: rotate(-90deg);
+    -o-transform: rotate(-90deg);
+    -ms-transform: rotate(-90deg);
+    -moz-transform: rotate(-90deg);
+    -webkit-transform:  rotate(-90deg);
+    transform-origin: 0 0;
+    -o-transform-origin: 0 0;
+    -ms-transform-origin: 0 0;
+    -moz-transform-origin: 0 0;
+    -webkit-transform-origin: 0 0;
+}
+
+.xaxisLabel {
+    bottom: -20px;
+}
+

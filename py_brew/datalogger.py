@@ -5,12 +5,13 @@ Created on Apr 22, 2015
 '''
 
 import datetime
+import json
 import threading
 import time
 
 import config
 
-from helper import timedelta2sec
+from helper import timedelta2sec, getsize
 
 
 class DataLoggerThread(threading.Thread):
@@ -60,10 +61,19 @@ class DataLoggerThread(threading.Thread):
                 now = datetime.datetime.now()
                 if self.time_start is None:
                     self.time_start = now
-                self.set_state('Logging')
+                self.set_state('Running')
                 delta = timedelta2sec(now - self.time_start)
                 entry = {}
                 entry['time'] = delta
+                # Put together a status string
+                entry['state'] = (
+                    self.status['cook_state'][0] +
+                    str(self.status['cook_state_stage']) + '-' +
+                    self.status['pct_state'][0] + '-' +
+                    self.status['wqt_state'][0] + '-' +
+                    self.status['dlt_state'][0] + '-' +
+                    self.status['tmt_state'][0] + '-' +
+                    self.status['bm_state'][0])
                 entry['tempk1'] = self.status['tempk1']
                 entry['tempk2'] = self.status['tempk2']
                 entry['settempk1'] = self.status['settempk1']
@@ -72,7 +82,8 @@ class DataLoggerThread(threading.Thread):
                 entry['pump2'] = self.status['pump2']
                 entry['heater'] = self.status['heater']
                 self.data['list'].append(entry)
-                # print 'DLT: record length %d.' % (len(self.data['list']))
+                # Write log size back to global status dict
+                self.status['log_size'] = getsize(self.data)
             else:
                 self.set_state('Idle')
             while sleepduration > 0:
@@ -92,6 +103,7 @@ class DataLoggerThread(threading.Thread):
         """ Resets all logged data
         """
         self._reset()
+        self.status['log_size'] = 0
 
     def start_logging(self):
         """ Starts the logging in the main loop """
@@ -101,6 +113,31 @@ class DataLoggerThread(threading.Thread):
     def stop_logging(self):
         """ Stops the logging in the main loop """
         self.log_flag = False
+
+    def exit(self):
+        """ Exit the main loop """
+        self.exit_flag = True
+
+
+class SocketMessageThread(threading.Thread):
+    def __init__(self, status, socketio, log_interval=config.SM_INT):
+        """ Initializes all attributes """
+        threading.Thread.__init__(self, name='SMT')
+        self.status = status
+        self.socketio = socketio
+        self.log_interval = log_interval
+        self.exit_flag = False
+
+    def run(self):
+        while 42:
+            sleepduration = self.log_interval
+            self.socketio.emit('data', json.dumps(self.status),
+                               broadcast=True)
+            while sleepduration > 0:
+                if self.exit_flag:
+                    return
+                time.sleep(config.THREAD_SLEEP_INT)
+                sleepduration -= config.THREAD_SLEEP_INT
 
     def exit(self):
         """ Exit the main loop """

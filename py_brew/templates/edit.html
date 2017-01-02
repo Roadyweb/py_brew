@@ -5,46 +5,75 @@
 {% endblock %}
 
 {% block body %}
-    <form action="." method="POST">
-        <table>
-        <tr> 
-        <td>Rezept: <input type="text" name="name" value={{ data.name|safe }}></td>
-        </tr>
-        <tr></tr>
-        <tr></tr>
-        <tr></tr>
-        <tr></tr>
-        <table>
-        <tr>
-        <td>Kochtemperatur K1: <input type="text" name="tk1" value={{ data.tempk1 }} °C></td>
-        <td>Kochdauer T1: <input type="text" name="dk1" value={{ data.durak1 }} s></td>
-        </tr>
-        <tr></tr>
-        <tr></tr>
-        <tr></tr>
-        <tr></tr>
-        {% for entry in data.list %}
-        <tr>
-        <td>Rasttemperatur K2: <input type="text" name="t{{ loop.index0 }}" value={{ entry[0] }} °C></td>
-        <td>Rastdauer T2: <input type="text" name="d{{ loop.index0 }}" value={{ entry[1] }} s></td>
-        </tr>
-        <tr></tr>
-        <tr></tr>
-        <tr></tr>
-        <tr></tr>
-        {% else %}
-            <em>No entries</em>
-        {% endfor %}
-        </table>
-        Modus: 
-        <input type="radio" name="method" value="K1"{% if data.method == 'K1' %}checked{% endif%}> K1 
-        <input type="radio" name="method" value="K2"{% if data.method == 'K2' %}checked{% endif%}> K2 <br /><br />
-        <input type="submit" name="submit" value="Add_Row">
-        <input type="submit" name="submit" value="Delete_Row">
-        <input type="submit" name="submit" value="Save">
-        <input type="submit" name="submit" value="Reset">
-    </form>
-    {% if last_action %}
-        <p>Letzte Aktion: {{ last_action }}</p>
-    {% endif %}
+<form action="." method="POST" class="form-horizontal">
+  <div class="form-group">
+    <div class="row">
+      <label class="col-xs-4 col-sm-2 control-label">Rezeptname</label>
+      <div class="col-xs-8 col-sm-4">
+        <input type="text" class="form-control" name="name" value={{ data.name|safe }}>
+      </div>
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="row">
+      <label class="col-xs-4 col-sm-2 control-label">Kochtemp. K1</label>
+      <div class="col-xs-8 col-sm-4">
+        <input type="text" class="form-control" name="tk1" value={{ data.tempk1 }}>
+      </div>
+    <label class="col-xs-4 col-sm-2 control-label">Kochdauer T1</label>
+      <div class="col-xs-8 col-sm-4">
+        <input type="text" class="form-control" name="dk1" value={{ data.durak1 }}>
+      </div>
+    </div>
+  </div><!-- form-group -->
+  <div class="form-group">
+    {% for entry in data.list %}
+      <div class="row">
+        <label class="col-xs-4 col-sm-2 control-label">Rasttemp. K2</label>
+        <div class="col-xs-8 col-sm-4">
+          <input type="text" class="form-control" name="t{{ loop.index0 }}" value={{ entry[0] }}>
+        </div>
+        <label class="col-xs-4 col-sm-2 control-label">Rastdauer T2</label>
+        <div class="col-xs-8 col-sm-4">
+          <input type="text" class="form-control" name="d{{ loop.index0 }}" value={{ entry[1] }}>
+        </div>
+      </div>
+    {% else %}
+        <em>No entries</em>
+    {% endfor %}
+  </div><!-- form-group -->
+  <div class="form-group">
+    <div class="row">
+      <label class="col-sm-2 control-label">Modus</label>
+      <div class="col-sm-10">
+        <label class="radio-inline">
+          <input type="radio" name="method" value="K1" {% if data.method == 'K1' %}checked{% endif%}> K1
+        </label>
+        <label class="radio-inline">
+          <input type="radio" name="method" value="K2" {% if data.method == 'K2' %}checked{% endif%}> K2
+        </label>
+      </div>
+    </div>
+  </div><!-- form-group -->
+  <div class="form-group">
+    <div class="row">
+      <div class="col-sm-offset-2 col-sm-10">
+        <button type="submit" name="btn_add_row" class="btn btn-default"><span class="glyphicon glyphicon-plus"></span> Zeile</button>
+        <button type="submit" name="btn_del_row" class="btn btn-default"><span class="glyphicon glyphicon-minus"></span> Zeile</button>
+        <button type="submit" name="btn_save" class="btn btn-default"><span class="glyphicon glyphicon-save"></span> Speichern</button>
+        <button type="submit" name="btn_reset" class="btn btn-warning"><span class="glyphicon glyphicon-remove"></span> Zurücksetzen</button>
+      </div>
+    </div>
+  </div><!-- form-group -->
+  {% if last_action %}
+  <div class="form-group">
+    <div class="row">
+      <label class="col-xs-4 col-sm-2 control-label">Letzte Aktion</label>
+      <div class="col-xs-8 col-sm-10">
+        <p class="form-control-static">{{ last_action }}</p>
+      </div>
+    </div>
+  </div><!-- form-group -->
+  {% endif %}
+</form>
 {% endblock %}

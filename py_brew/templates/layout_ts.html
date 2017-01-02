@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='plugins/tablesorter/css/theme.default.css') }}">
+<script type="text/javascript" src="{{ url_for('static', filename='plugins/tablesorter/js/jquery.tablesorter.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='plugins/tablesorter/js/jquery.tablesorter.widgets.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='plugins/tablesorter/addons/pager/jquery.tablesorter.pager.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='helper.js') }}"></script>
+{% block ts_head %} {% endblock  %}
+{% endblock %}
+
+{% block ts_foot %}
+<div id="pager" class="pager">
+    <form>
+        <img src="{{ url_for('static', filename='plugins/tablesorter/addons/pager/icons/first.png') }}" class="first"/>
+        <img src="{{ url_for('static', filename='plugins/tablesorter/addons/pager/icons/prev.png') }}" class="prev"/>
+        <input type="text" class="pagedisplay"/>
+        <img src="{{ url_for('static', filename='plugins/tablesorter/addons/pager/icons/next.png') }}" class="next"/>
+        <img src="{{ url_for('static', filename='plugins/tablesorter/addons/pager/icons/last.png') }}" class="last"/>
+        <select class="pagesize">
+            <option value="10">10</option>
+            <option selected="selected" value="20">20</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+        </select>
+    </form>
+</div>
+{% endblock  %}

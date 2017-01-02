@@ -1,48 +1,55 @@
-<!doctype html>
-<head>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link href="{{ url_for('static', filename='plugins/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+    <!-- link href="../static/css/bootstrap-theme.min.css" rel="stylesheet"-->
+
+    <!-- Custom styles for this template -->
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+    <!-- link href="theme.css" rel="stylesheet" -->
+    <!-- link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}" -->
+
+    <script type="text/javascript" src="{{ url_for('static', filename='plugins/jquery/jquery-1.11.1.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='plugins/bootstrap/js/bootstrap.min.js') }}"></script>
+    <script type="text/javascript">
+    $(document).ready(function(){
+        $('[data-toggle="tooltip"]').tooltip({
+            placement : 'top'
+        });
+    });
+    </script>
     {% block head %}
     <title>Py Brew</title>
-    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
     {% endblock %}
-</head>
-
-<div class=title>
-
-<img src ="../static/kopfklein.jpg">
-</div>
-
-
-
-<div id="menu">
-
-
-
-<ul>
-<li><a class="active" href="{{ url_for('manage')    }}">Rezepte</a><br />
-<li><a href="{{ url_for('edit')      }}">Eingabe</a><br />
-<li><a href="{{ url_for('run')       }}">Start</a><br />
-<li><a href="{{ url_for('graph')     }}">Graph</a><br />
-<li><a href="{{ url_for('debug')     }}">Debug</a><br />
-</ul>
-
-<br /><br />
-<br /><br />
-</div>
-
-
-
-
-
-
-
-
-<div class=page>
-{% if heading %}
-    <h1>{{ heading }}</h1>
-{% endif %}
-{% block body %}{% endblock %}
-</div>
-
-<div class=footer>
-	 <h4>© Schnipplberger</h4>
-</div>
+  </head>
+  <body>
+    <div class=title>
+      <img src="../static/kopfklein.jpg" class="img-responsive">
+    </div>
+    <div class="container">
+      <ul class="nav nav-pills">
+        <li role="presentation" {% if heading == 'Manage' %}class="active"{% endif%}><a href="{{ url_for('manage') }}"><span class="glyphicon glyphicon-search"></span> Rezepte</a></li>
+        <li role="presentation" {% if heading == 'Edit' %}class="active"{% endif%}><a href="{{ url_for('edit') }}"><span class="glyphicon glyphicon-pencil"></span> Eingabe</a></li>
+        <li role="presentation" {% if heading == 'Run' %}class="active"{% endif%}><a href="{{ url_for('run') }}"><span class="glyphicon glyphicon-cog"></span> Start</a></li>
+        <li role="presentation" {% if heading == 'Graph' %}class="active"{% endif%}><a href="{{ url_for('graph') }}"><span class="glyphicon glyphicon-signal"></span> Graph</a></li>
+        <li role="presentation" {% if heading == 'Table' %}class="active"{% endif%}><a href="{{ url_for('table') }}"><span class="glyphicon glyphicon-th-list"></span> Tabelle</a></li>
+      </ul>
+    </div>
+    <br />
+    <div class="container">
+      {% block body %}
+      {% endblock %}
+    </div>
+    <br />
+    <div class=footer>
+      <h4>© Schnipplberger</h4>
+    </div>
+  </body>
+</html>

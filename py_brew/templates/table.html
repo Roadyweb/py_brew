@@ -1,0 +1,57 @@
+{% extends "layout_ts.html" %}
+
+{% block ts_head %}
+{{ super() }}
+<script type="text/javascript" id="js">
+$(document).ready(function() {
+    // extend the default setting to always include the zebra widget.
+    $.tablesorter.defaults.widgets = ['zebra', 'columns'];
+    // enable debug mode
+    // $.tablesorter.defaults.debug = true;
+    // call the tablesorter plugin
+    $("table").tablesorter({
+        // pass the headers argument and assing a object
+        headers: {
+            // assign the first column (we start counting zero)
+            1: { sorter: false },
+            2: { sorter: false },
+            3: { sorter: false },
+            // 9: { sorter: false },
+            //10: { sorter: false }
+        }
+    }).tablesorterPager({container: $("#pager")});
+});
+</script>
+<meta http-equiv="refresh" content="600" >
+{% endblock %}
+
+{% block body %}
+{% if data %}
+<table class="tablesorter">
+<thead align="left">
+<tr>
+    <th>Zeit</th>
+    <th>P1</th>
+    <th>P2</th>
+    <th>H</th>
+    <th>C-P-W-L-T-B</th>
+    <th>ZT1</th>
+    <th>T1</th>
+    <th>ZT2</th>
+    <th>T2</th>
+</tr>
+</thead>
+<tbody align="left">
+{% for line in data.list %}
+<tr>
+    <td>{{ line.time }}</td><td>{{ line.pump1 }}</td><td>{{ line.pump2  }}</td><td>{{ line.heater }}</td><td>{{ line.state }}</td>
+    <td>{{ line.settempk1 }}</td><td>{{ '%0.1f' % line.tempk1  }}</td><td>{{ line.settempk2 }}</td><td>{{ '%0.1f' % line.tempk2 }}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+{% block ts_foot %} {{ super() }} {% endblock %}
+{% else %}
+    <p>No data available</p>
+{% endif %}
+{% endblock %}

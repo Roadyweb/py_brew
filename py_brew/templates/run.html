@@ -2,80 +2,282 @@
 
 {% block head %}
     {{ super() }}
-    <meta http-equiv="refresh" content="5" >
+    <link rel="stylesheet" media="all" type="text/css" href="{{ url_for('static', filename='plugins/jquery/jquery-ui.css') }}" />
+    <link rel="stylesheet" media="all" type="text/css" href="{{ url_for('static', filename='plugins/timepicker/jquery-ui-timepicker-addon.css') }}" />
+
+    <script type="text/javascript" src="{{ url_for('static', filename='plugins/jquery/jquery-ui.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='plugins/timepicker/jquery-ui-timepicker-addon.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='plugins/timepicker/i18n/jquery-ui-timepicker-addon-i18n.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='plugins/timepicker/jquery-ui-sliderAccess.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/socket.io.min.js') }}"></script>
+    <script type="text/javascript" charset="utf-8">
+        var socket = io.connect('http://' + document.domain + ':' + location.port);
+        socket.on('connect', function() {
+            socket.send('Client: I\'m connected!');
+            // console.log('Client: I\'m connected!');
+        });
+        socket.on('message', function(data) {
+            socket.send('Client: Received a message');
+            // console.log('message ' + String(data));
+        });
+        socket.on('data', function(data) {
+            // socket.emit('my event', {data: 'Client: Received a data message'});
+            // console.log('data ' + typeof(data) + data);
+            var jdata = $.parseJSON(data);
+            console.log('jdata ' + typeof(jdata) + data);
+            $( "#val_ztk1" ).text(jdata.settempk1.toFixed(1) + '\xa0°C');
+            $( "#val_ztk2" ).text(jdata.settempk2.toFixed(1) + '\xa0°C');
+            $( "#val_tk1" ).text(jdata.tempk1.toFixed(1) + '\xa0°C');
+            $( "#val_tk2" ).text(jdata.tempk2.toFixed(1) + '\xa0°C');
+            $( "#val_korr_tk1" ).text(jdata.tempk1_offset.toFixed(1) + '\xa0°C');
+            $( "#val_heater" ).text(jdata.heater);
+            $( "#val_pump1" ).text(jdata.pump1);
+            $( "#val_pump2" ).text(jdata.pump2);
+            $( "#val_dura_k1" ).text(jdata.setdurak1 + '\xa0s');
+            $( "#val_dura_k2" ).text(jdata.setdurak2 + '\xa0s');
+            $( "#val_pct_state" ).text(jdata.pct_state + ' ' + jdata.pct_state_min_to_wait);
+            $( "#val_simulation" ).text(jdata.simulation);
+            $( "#val_tmt_state" ).text(jdata.tmt_state);
+            $( "#val_wqt_state" ).text(jdata.wqt_state);
+            $( "#val_dlt_state" ).text(jdata.dlt_state);
+            $( "#val_bm_state" ).text(jdata.bm_state);
+            $( "#val_cook_state" ).text(jdata.cook_state + ' Stufe ' + jdata.cook_state_stage + ' - ' + jdata.cook_state_extended);
+
+            // Some local variables
+            var running = false;
+            var running_k2 = false;
+            if (jdata.pct_state == 'Running') { running = true };
+            if (jdata.recipe != null && jdata.recipe.method == 'K2' && running) { running_k2 = true };
+            // console.log('Running: ' + String(running))
+            // console.log('Running K2: ' + String(running_k2))
+
+            // Adjust background color for Temp K1
+            if (running && jdata.tempk1 < (jdata.settempk1 - jdata.hyst)) {
+              // console.log('K1 cool');
+              $( "#val_tk1" ).attr('class', 'table-bg-blue')
+            } else if (running && jdata.tempk1 > (jdata.settempk1 + jdata.hyst)) {
+              // console.log('K1 hot');
+              $( "#val_tk1" ).attr('class', 'table-bg-red')
+            } else if (running && (jdata.tempk1 > (jdata.settempk1 - jdata.hyst)) && (jdata.tempk1 < (jdata.settempk1 + jdata.hyst))) {
+              // console.log('K1 right');
+              $( "#val_tk1" ).attr('class', 'table-bg-green')
+            } else {
+              $( "#val_tk1" ).attr('class', '')
+            }
+
+            // Adjust background color for Temp K2
+            if (running_k2 && jdata.tempk2 < (jdata.settempk2 - jdata.hyst)) {
+              // console.log('K2 cool');
+              $( "#val_tk2" ).attr('class', 'table-bg-blue')
+            } else if (running_k2 && jdata.tempk2 > (jdata.settempk2 + jdata.hyst)) {
+              // console.log('K2 hot');
+              $( "#val_tk2" ).attr('class', 'table-bg-red')
+            } else if (running_k2 && (jdata.tempk2 > (jdata.settempk2 - jdata.hyst)) && (jdata.tempk2 < (jdata.settempk2 + jdata.hyst))) {
+              // console.log('K2 right');
+              $( "#val_tk2" ).attr('class', 'table-bg-green')
+            } else {
+              $( "#val_tk2" ).attr('class', '')
+            }
+  
+            // Adjust background color for K1 recipe
+            if (jdata.recipe != null && jdata.recipe.method == 'K1' && jdata.cook_state == 'Init' && jdata.cook_state_stage == 1) {
+              // console.log('Recipe K1 red');
+              $( "#row_k1" ).attr('class', 'table-bg-red');
+            } else if (jdata.recipe != null && jdata.recipe.method == 'K1' && jdata.cook_state == 'Cooking' && jdata.cook_state_stage == 1) {
+              // console.log('Recipe K1 green');
+              $( "#row_k1" ).attr('class', 'table-bg-green');
+            } else {
+              $( "#row_k1" ).attr('class', '')
+            }
+
+            // Adjust background color for K2 recipe
+            if (jdata.recipe != null && jdata.recipe.method == 'K2' && jdata.cook_state == 'Init') {
+              // console.log('Recipe K2 red');
+              $( "#row_k2_" +  jdata.cook_state_stage ).attr('class', 'table-bg-red');
+            } else if (jdata.recipe != null && jdata.recipe.method == 'K2' && jdata.cook_state == 'Cooking') {
+              // console.log('Recipe K2 green');
+              $( "#row_k2_" +  jdata.cook_state_stage ).attr('class', 'table-bg-green');
+            } else {
+              $( "#row_k2_" +  jdata.cook_state_stage ).attr('class', '');
+            }
+            // Remove all background from previous stages
+            var current_stage = parseInt(jdata.cook_state_stage);
+            if (current_stage > 1) {
+              for (current_stage--; current_stage > 0; current_stage--) {
+                $( "#row_k2_" +  String(current_stage) ).attr('class', '');
+              }
+            }
+            // Disable/enable buttons
+            if (running) {
+              // console.log('Running adjusting buttons');
+              $( "#btn_start_at" ).attr('disabled', true); 
+              $( "#time_start_at" ).attr('disabled', true); 
+              $( "#btn_start" ).attr('disabled', true); 
+              $( "#btn_stop" ).removeAttr('disabled'); 
+              $( "#btn_t1_up" ).removeAttr('disabled'); 
+              $( "#btn_t1_down" ).removeAttr('disabled'); 
+            } else {
+              // console.log('Not running adjusting buttons');
+              $( "#btn_start_at" ).removeAttr('disabled');
+              $( "#time_start_at" ).removeAttr('disabled');
+              $( "#btn_start" ).removeAttr('disabled'); 
+              $( "#btn_stop" ).attr("disabled", true); 
+              $( "#btn_t1_up" ).attr("disabled", true); 
+              $( "#btn_t1_down" ).attr("disabled", true); 
+            }
+        });
+        socket.on('disconnect', function() {
+            socket.send('Client: I\'m disconnected!');
+            // console.log('Client: I\'m disconnected!');
+        });
+        $( window ).unload(function() {
+            socket.disconnect();
+        });
+    </script>
 {% endblock %}
 
 {% block body %}
-    {% if data %}
-        <h2>Rezept: {{ data.name }}</h2>
-        <br />
-        Erstellt: {{ data.created }}<br />
-        Letzte Änderung: {{ data.last_saved }}<br />
-
-   <section class="linke-spalte">
-        <h3>Einstellungen:</h3>
-        <table>
-        <tr>
-        <td>Kochtemp. K1: {{ data.tempk1 }} °C</td>
-        <td>Kochdauer K1: {{ data.durak1 }} s</td>
-        </tr>
-        <tr></tr>
-        <tr></tr>
-        <tr></tr>
-        <tr></tr>
-        {% if data.method == 'K2' %}
-            <tr></tr>
-            <tr></tr>
-            <tr></tr>
-            <tr></tr>
-            {% for entry in data.list %}
-                <tr>
-                <td>Rasttemp. K2: {{ entry[0]|safe }} °C</td>
-                <td>Rastdauer K2: {{ entry[1]|safe }} s</td>
-                </tr>
-            {% else %}
-                <em>No entries</em>
-            {% endfor %}
-        {% endif %}
-        </table>
-        <br />
-
-        Methode: {{ data.method }}
-    {% endif %}
-    </section>
-
-
-<section class="rechte-spalte">
-    {% if state %}
-        <h3>Status:</h3>
-        <table>
-        <tr><td align="right">Temp K1: </td><td>{{'%0.1f' % state.tempk1 }} °C</td></tr>
-        <tr><td align="right">Temp K2: </td><td>{{'%0.1f' % state.tempk2 }} °C</td></tr>
-        <tr><td align="right">Temp K1 Offset: </td><td>{{'%0.1f' % state.tempk1_offset }} °C</td></tr>
-        <tr><td align="right">Pumpe 1: </td><td>{{ state.pump1 }}</td></tr>
-        <tr><td align="right">Pumpe 2: </td><td>{{ state.pump2 }}</td></tr>
-        <tr><td align="right">Heizung: </td><td>{{ state.heater }}</td></tr>
-        <tr><td></td></tr>
-        </table>
-    {% else %}
+  <!-- some local variables for jinja-->
+  {% set running = state.pct_state == "Waiting" or state.pct_state == "Running" %}
+  {% set running_k2 = data.method == 'K2' and running %}
+  <div class="row">
+    <div class="col-md-6">
+      <table class="table">
+        <thead>
+          <tr>
+            <th colspan="4">Rezept</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Name</td><td>{{ data.name }}</td>
+          </tr>
+          <tr>
+            <td>Erstellt</td><td>{{ data.created }}</td>
+          </tr>
+          <tr>
+            <td>Letzte Änderung</td><td>{{ data.last_saved }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <table class="table">
+        <thead>
+          <tr>
+            <th colspan="4">Einstellungen</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr id="row_k1">
+            <td>Kochtemp. K1</td><td>{{ data.tempk1 }}&nbsp;°C</td>
+            <td>Kochdauer K1</td><td>{{ data.durak1 }}&nbsp;s</td>
+          </tr>
+          {% if data.method == 'K2' %}
+          {% for entry in data.list %}
+            <tr id="row_k2_{{ loop.index }}">
+              <td>Rasttemp. K2</td><td>{{ entry[0]|safe }}&nbsp;°C</td>
+              <td>Rastdauer K2</td><td>{{ entry[1]|safe }}&nbsp;s</td>
+            </tr>
+          {% else %}
+            <em>No entries</em>
+          {% endfor %}
+          {% endif %}
+          <tr>
+            <td>Methode</td>
+            <td>{{ data.method }}</td>
+            <td>Hysterese</td>
+            <td>+/-&nbsp;{{'%0.1f' % state.hyst }}&nbsp;K</td>
+          </tr>
+        </tbody>
+      </table>
+      <table class="table">
+        <tbody>
+        </tbody>
+      </table>
+      <form action="." method="POST">
+        <button type="submit" id="btn_start_at" name="btn_start_at" class="btn btn-default"><span class="glyphicon glyphicon-time"></span> Starte um</button>
+        <input type="text" name="start_time" id="time_start_at" value="{{ start_at }}">
+        <script type="text/javascript">
+          $('#time_start_at').timepicker();
+        </script>
+        <br/><br/>
+        <button type="submit" id="btn_start" name="btn_start" class="btn btn-default"><span class="glyphicon glyphicon-play"></span> Start</button>
+        <button type="submit" id="btn_stop" name="btn_stop" class="btn btn-default"><span class="glyphicon glyphicon-stop"></span> Stop</button>
+        <button type="submit" id="btn_t1_up" name="btn_t1_up" class="btn btn-default"><span class="glyphicon glyphicon-plus"></span> 0,2 K</button>
+        <button type="submit" id="btn_t1_down" name="btn_t1_down" class="btn btn-default"><span class="glyphicon glyphicon-minus"></span> 0,2 K</button>
+      </form>
+    </div>
+    <div class="col-md-6">
+      <table class="table">
+        <thead>
+          <tr>
+            <th colspan="4">Status</th>
+          </tr>
+        </thead>
+        {% if state %}
+        <tbody>
+          <tr>
+            <td>Zieltemp K1</td><td id="val_ztk1">---</td>
+            <td>Zieltemp K2</td><td id="val_ztk2">---</td>
+          </tr>
+          <tr>
+            <td>Temp K1</td><td id="val_tk1">---</td>
+            <td>Temp K2</td><td id="val_tk2">---</td>
+          </tr>
+          <tr>
+            <td>Korrektur Temp K1</td><td id="val_korr_tk1">---</td>
+            <td>Heizung</td><td id="val_heater">---</td>
+          </tr>
+          <tr>
+            <td>Pumpe 1</td><td id="val_pump1">---</td>
+            <td>Pumpe 2</td><td id="val_pump2">---</td>
+          </tr>
+        </tbody>
+      {% else %}
         <p>No current data available</p>
-    {% endif %}
-    <br />
-</section>
-    <form action="." method="POST">
-        <input type="submit" name="submit" value="Start">
-        <input type="submit" name="submit" value="Stop">
-        <input type="submit" name="submit" value="Reset Graph">
-        <input type="submit" name="submit" value="+ 0.2 deg">
-        <input type="submit" name="submit" value="- 0.2 deg">
-    </form>
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
+      {% endif %}
+      </table>
+      <table class="table">
+        <thead>
+          <tr>
+            <th colspan="4">Debug</th>
+          </tr>
+        </thead>
+        {% if state %}
+        <tbody>
+          <tr>
+            <td>Dauer K1</td><td id="val_dura_k1">---</td>
+            <td>Dauer K2</td><td id="val_dura_k2">---</td>
+          </tr>
+          <tr>
+            <td>ProcControl</td><td id="val_pct_state">---</td>
+            <td>Simulation</td><td id="val_simulation">---</td>
+          </tr>
+          <tr>
+            <td>TempMon</td><td id="val_tmt_state">---</td>
+            <td>WorkQueue</td><td id="val_wqt_state">---</td>
+          </tr>
+          <tr>
+            <td>DataLogger</td><td id="val_dlt_state">---</td>
+            <td>BlubberManager</td><td id="val_bm_state">---</td>
+          </tr>
+          <tr>
+            <td>Cook State</td>
+            <td colspan="3"  id="val_cook_state">---</td>
+          </tr>
+        </tbody>
+      {% else %}
+        <p>No current data available</p>
+      {% endif %}
+      </table>
+    </div>
+  </div>
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
         <ul class=flashes>
         {% for message in messages %}
             <li>{{ message }}</li>
         {% endfor %}
         </ul>
-        {% endif %}
-    {% endwith %}
+    {% endif %}
+  {% endwith %}
 {% endblock %}

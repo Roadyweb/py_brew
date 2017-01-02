@@ -8,7 +8,7 @@ import copy
 import os
 import pickle
 
-from helper import str_timestamp_now
+from helper import str_timestamp_now, log, isWritable
 
 PATH = '../recipes/'
 EXT = '.rcp'
@@ -88,15 +88,22 @@ class Recipes(object):
             recipe['created'] = str_timestamp_now()
         recipe['last_saved'] = str_timestamp_now()
         dir_entry_path = os.path.join(PATH, recipe['name'] + EXT)
-        with open(dir_entry_path, 'wb') as my_file:
-            pickle.dump(recipe, my_file)
+        log('Saving %s' % str(os.path.abspath(dir_entry_path)))
+        if isWritable(PATH):
+            with open(dir_entry_path, 'wb') as my_file:
+                pickle.dump(recipe, my_file)
+        else:
+            log('Error while saving. Cannot write to %s' %
+                str(os.path.abspath(dir_entry_path)))
         self.__init__()
 
     def delete(self, idx):
         """ Deletes the file provided as index of the internal arrays """
         fname = self.fnames[idx]
+        log('Deleting %s' % str(os.path.abspath(fname)))
         os.remove(fname)
-        # print 'Successfully removed %s' % fname
+        if os.path.isfile(fname):
+            log('Unable to remove file %s' % str(os.path.abspath(fname)))
         self.__init__()
 
     def select(self, idx):

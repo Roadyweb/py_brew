@@ -13,7 +13,7 @@ import brewio
 import config
 import wq
 
-from helper import timedelta2sec
+from helper import timedelta2sec, timedelta2min, log
 
 
 # Global variables for inter thread communication
@@ -21,6 +21,7 @@ status = {
                   'tempk1': 10.0,
                   'tempk2': 10.0,
                   'tempk1_offset': 0.0,
+                  'hyst': config.TEMP_HYST,
                   'settempk1': 0.0,
                   'settempk2': 0.0,
                   'setdurak1': 0.0,
@@ -30,18 +31,29 @@ status = {
                   'heater': 0,
                   'dlt_state': 'Not running',
                   'pct_state': 'Not running',
+                  'pct_state_min_to_wait': '',
                   'wqt_state': 'Not running',
                   'tmt_state': 'Not running',
                   'bm_state': 'Unknown',
                   'cook_state': 'Off',
-                  'simulation': config.SIMULATION
+                  'cook_state_stage': '',
+                  'cook_state_extended': '',
+                  'simulation': config.SIMULATION,
+                  'log_size': 0,
+                  'recipe': None
                 }
 
 def dlt_state_cb(state):
     status['dlt_state'] = state
 
-def pct_state_cb(state):
+def pct_state_cb(state, min_to_wait=None, recipe=None):
     status['pct_state'] = state
+    if min_to_wait is not None:
+        status['pct_state_min_to_wait'] = min_to_wait
+    else:
+        status['pct_state_min_to_wait'] = ''
+    if recipe is not None:
+        status['recipe'] = recipe
 
 def pct_get_state_cb():
     return status['pct_state']
@@ -55,8 +67,16 @@ def tmt_state_cb(state):
 def bm_state_cb(state):
     status['bm_state'] = state
 
-def cook_state_cb(state):
+def cook_state_cb(state, stage=None, extended=None):
     status['cook_state'] = state
+    if stage is not None:
+        status['cook_state_stage'] = stage
+    else:
+        status['cook_state_stage'] = ''
+    if extended is not None:
+        status['cook_state_extended'] = extended
+    else:
+        status['cook_state_extended'] = ''
 
 def cook_temp_state_cb(settempk1, setdurak1, settempk2, setdurak2, tempk1_offset):
     status['settempk1'] = settempk1
@@ -83,9 +103,10 @@ class ProcControlThread (threading.Thread):
         threading.Thread.__init__(self, name='PCT')
         self.set_state = state_cb
         self.get_state = get_state_cb
-        self.pct_req = ''   # Could be START, STOP or EXIT
+        self.pct_req = ''   # Could be START, START_AT, STOP or EXIT
         self.recipe = None
         self.tpc = tpc
+        self.start_at = None
         self.set_state('Initialized')
 
     def run(self):
@@ -96,8 +117,10 @@ class ProcControlThread (threading.Thread):
             # print 'PCT: %s - Req: %s' % (self.get_state(), self.pct_req)
 
             # Change thread state
-            if self.pct_req == 'START':
-                self.set_state('Running')
+            if self.pct_req == 'START_AT':
+                self.set_state('Waiting', recipe=self.recipe)
+            elif self.pct_req == 'START':
+                self.set_state('Running', recipe=self.recipe)
                 self.tpc.start(self.recipe)
             elif self.pct_req == 'STOP':
                 self.set_state('Idle')
@@ -108,17 +131,32 @@ class ProcControlThread (threading.Thread):
             self.pct_req = ''
 
             # Start state specific tasks
+            if self.get_state() == 'Waiting':
+                now = datetime.datetime.now()
+                if now > self.start_at:
+                    self.set_state('Running')
+                    self.tpc.start(self.recipe)
+                else:
+                    min_to_wait = str(timedelta2min(self.start_at - now))
+                    self.set_state('Waiting', min_to_wait + ' min')
+
             if self.get_state() == 'Running':
                 if self.tpc.control_temp_interval():
                     self.set_state('Idle')
+
             while sleepduration > 0:
                 time.sleep(config.THREAD_SLEEP_INT)
                 sleepduration -= config.THREAD_SLEEP_INT
 
-    def start_cooking(self, recipe):
+    def start_cooking(self, recipe, start_at=None):
         """ Starts cookin in the main loop """
         self.recipe = copy.deepcopy(recipe)
-        self.pct_req = 'START'
+        log('Start at %s' % str(start_at))
+        if start_at is None:
+            self.pct_req = 'START'
+        else:
+            self.start_at = start_at
+            self.pct_req = 'START_AT'
 
     def stop_cooking(self):
         """ Starts cooking in the main loop """
@@ -179,7 +217,7 @@ class TempProcessControl(object):
             raise RuntimeError('Unsupported TempProcessControl method %s' % self.method)
 
     def start(self, recipe):
-        print 'TempProcessControl started. Recipe: %s' % recipe
+        log('TempProcessControl started. Recipe: %s' % recipe)
         self.temp_list = recipe['list']
         self.tempk1 = recipe['tempk1']
         self.durak1 = recipe['durak1']
@@ -192,16 +230,16 @@ class TempProcessControl(object):
     def control_temp_interval(self):
         ''' returns true when finished '''
         if self.state == 'INIT':
-            self.set_state('Stage %d - Init' % (self.cur_idx + 1))
+            self.set_state('Init', stage=self.cur_idx + 1)
             self.set_temp, self.set_dura = self._get_temp_dura()
             if self.control_temp() == True:
                 self.state = 'WAITING'
                 self.wait_start = datetime.datetime.now()
         elif self.state == 'WAITING':
             td_sec = timedelta2sec(datetime.datetime.now() - self.wait_start)
-            self.set_state('Stage %d - Cooking for %d of of %d seconds' \
-                % (self.cur_idx + 1, td_sec, self.set_dura)
-                )
+            self.set_state('Cooking',
+                           stage=self.cur_idx + 1,
+                           extended= '%d von %d sek'% (td_sec, self.set_dura))
             self.set_temp, self.set_dura = self._get_temp_dura()
             self.control_temp()
             if td_sec < self.set_dura:
@@ -215,7 +253,6 @@ class TempProcessControl(object):
                 return
             # Yes we have another stage
             self.cur_idx += 1
-            self.tempk1_offset = 0.0
             self.set_temp, self.set_dura = self._get_temp_dura()
             self.state = 'INIT'
 

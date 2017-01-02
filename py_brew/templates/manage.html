@@ -1,23 +1,34 @@
 {% extends "layout.html" %}
 {% block body %}
-    <form action="." method="POST">
-        <table>
-        {% for fname in fnames %}
-            <tr>
-            <td> <input type="submit" name="s{{ loop.index0 }}" value="Select">
-                 <input type="submit" name="d{{ loop.index0 }}" value="Delete">
-                 {{ fname }} 
-            </td>
-            </tr>
-        {% else %}
-            <em>No entries</em>
-        {% endfor %}
-        </table>
-    </form>
-    {% if selected %}
-        <p>Ausgewähltes Rezept: {{ selected }}</p>
-    {% endif %}
-    {% if last_action %}
-        <p>Last Action: {{ last_action }}</p>
-    {% endif %}
+<form action="." method="POST" class="form-horizontal">
+  <table class="table table-hover table-condensed">
+    <col width="100">
+    <thead>
+      <tr>
+        <th colspan="2">Verfügbare Rezepte</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for fname in fnames %}
+      <tr>
+          <td>
+            <div class="btn-group" role="group" aria-label="...">
+              <button type="submit" name="s{{ loop.index0 }}" class="btn btn-success" data-toggle="tooltip" title="Auswählen"><span class="glyphicon glyphicon-ok"></span></button>
+              <button type="submit" name="d{{ loop.index0 }}" class="btn btn-warning" data-toggle="tooltip" title="Löschen"><span class="glyphicon glyphicon-trash"></span></button>
+            </div>
+          </td>
+          <td>{{ fname|replace("../recipes/", "")|replace(".rcp", "")|replace("_", " ") }}</td>
+      </tr>
+    {% else %}
+        <em>No entries</em>
+    {% endfor %}
+    </tbody>
+    <tfoot>
+      <tr>
+        <th>Gewählt</th>
+        <th>{{ selected|replace("../recipes/", "")|replace(".rcp", "")|replace("_", " ") }}</th>
+      </tr>
+    </tfoot>
+  </table>
+</form>
 {% endblock %}

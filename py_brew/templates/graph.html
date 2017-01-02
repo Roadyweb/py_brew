@@ -2,27 +2,22 @@
 
 {% block flot_head %}
 {{ super() }}
-<meta http-equiv="refresh" content="5" >
+<meta http-equiv="refresh" content="120" >
 <script type="text/javascript">
-$(function() {
-    // Style for bars
-    var data_points = {
-        show: true,
-        radius: 3,
-    };
-
-    var timelabel = "Time";
+$(function () {
+    var timelabel = "Zeit";
     var time = [ {% for line in data.list %}{{ line.time }},{% endfor %} ];
-    var t1_label = "Temp K1"
+    var t1_label = "Temperatur K1"
     var t1 = [ {% for line in data.list %}{{ line.tempk1 }},{% endfor %} ];
-    var t2_label = "Temp K2"
+    var t2_label = "Temperatur K2"
     var t2 = [ {% for line in data.list %}{{ line.tempk2 }},{% endfor %} ];
-    var sp_t1_label = "Setpoint Temp K1"
+    var sp_t1_label = "Zieltemperatur K1"
     var sp_t1 = [ {% for line in data.list %}{{ line.settempk1 }},{% endfor %} ];
-    var sp_t2_label = "Setpoint Temp K2"
+    var sp_t2_label = "Zieltemperatur K2"
     var sp_t2 = [ {% for line in data.list %}{{ line.settempk2 }},{% endfor %} ];
 
-    // Get the week/year for the tooltip
+    var tooltip = [ time, t1, t2, sp_t1, sp_t2];
+
     var t1_set = [], t2_set = [],
         sp_t1_set = [], sp_t2_set = [];
 
@@ -32,44 +27,83 @@ $(function() {
         sp_t1_set.push([time[i], sp_t1[i]]);
         sp_t2_set.push([time[i], sp_t2[i]]);
     }
-
-    var data = [
-        {color: "red",    points: data_points, data: t1_set,    label: t1_label},
-        {color: "blue",   points: data_points, data: t2_set,    label: t2_label},
-        {color: "green",  points: data_points, data: sp_t1_set, label: sp_t1_label},
-        {color: "yellow", points: data_points, data: sp_t2_set, label: sp_t2_label},
-    ];
-    var options = {
-        legend: { position: "sw", show: true },
-        series: {
-            lines: { show: true, lineWidth: 1 },
-            shadowSize: 0 
+    $('#container').highcharts({
+        chart: {
+            zoomType: 'x'
         },
-        grid: { hoverable: true, clickable: true },
-        xaxis: { min: 0, zoomRange: [-30, 50], panRange: [-30, 50]},
-        yaxis: {
-            zoomRange: [20, 75],
-            panRange: [20, 75]
+        title: {
+            text: 'Temperaturverlauf K1 und K2'
         },
-        zoom: { interactive: true },
-        pan: { interactive: true }
-    };
-    var container = $("#placeholder");
-    var plot = $.plot(container, data , options);
+        xAxis: {
+            type: 'linear',
+            title: {
+                text: 'Vergangene Zeit in Sekunden'
+            }
+        },
+        yAxis: {
+            title: {
+                text: 'Temperatur in Grad Celsius'
+            }
+        },
+        legend: {
+            enabled: true
+        },
+        lang: {
+            noData: "Daten werden erst nach dem Start des Brauvorgangs aufgezeichnet"
+        },
+        noData: {
+            style: {
+                fontWeight: 'bold',
+                fontSize: '15px',
+                color: '#303030'
+            }
+        },
+        tooltip: {
+            formatter: function () {
+                var s = '<b>Zeitpunkt ' + this.x.toFixed(0) + ' s</b>';
 
-    addXAxis("Time [s]")
-    addYAxis("Temperature [°C]");
-    addZoomButton();
-    addArrows();
+                $.each(this.points, function () {
+                    s += '<br/>' + this.series.name + ' ' +
+                        this.y.toFixed(2) + ' °C';
+                });
+
+                return s;
+            },
+            crosshairs: true,
+            shared: true
+        },
+        plotOptions: {
+            area: {}
+        },
+
+        series: [{
+            name: 'Zieltemperatur K1',
+            color: '#FF9999',
+            data: sp_t1_set,
+            lineWidth: 10
+        } , {
+            name: 'Zieltemperatur K2',
+            color: '#9999FF',
+            data: sp_t2_set,
+            lineWidth: 10
+        }, {
+            name: 'Temperatur K1',
+            color: 'red',
+            data: t1_set
+        } , {
+            name: 'Temperatur K2',
+            color: 'blue',
+            data: t2_set
+        }]
+    });
 });
 </script>
 {% endblock %}
 {% block body %}
-    <div id="content">
-    <div class="demo-container">
-        <div id="placeholder" class="demo-placeholder"></div>
-    </div>
-    <p class="message"></p>
-        <p>Zooming, panning and tooltips supported.</p>
-    </div>
+    <div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+    <br/>
+    <p>Wähle eine Region im Graph um zu vergrößern. Aktuelle Datengröße ist {{ state.log_size }} Bytes.</p>
+    <form action="." method="POST">
+      <button type="submit" name="btn_delete_data" class="btn btn-warning" data-toggle="tooltip" title="Daten werden irreversibel gelöscht"><span class="glyphicon glyphicon-trash"></span> Lösche Daten</button>
+    </form>
 {% endblock %}
