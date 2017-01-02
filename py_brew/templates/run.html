@@ -45,8 +45,10 @@
 
             // Some local variables
             var running = false;
+            var suspended = false;
             var running_k2 = false;
             if (jdata.pct_state == 'Running') { running = true };
+            if (jdata.pct_state == 'Suspended') { running = true; suspended = true };
             if (jdata.recipe != null && jdata.recipe.method == 'K2' && running) { running_k2 = true };
             // console.log('Running: ' + String(running))
             // console.log('Running K2: ' + String(running_k2))
@@ -127,6 +129,13 @@
               $( "#btn_t1_up" ).attr("disabled", true); 
               $( "#btn_t1_down" ).attr("disabled", true); 
             }
+            if (suspended) {
+              $( "#btn_pause .glyphicon" ).removeClass('glyphicon-pause').addClass('glyphicon-play');
+              $( "#btn_pause .mylabel" ).text("Fortsetzen");
+            } else {
+              $( "#btn_pause .glyphicon" ).removeClass('glyphicon-play').addClass('glyphicon-pause');
+              $( "#btn_pause .mylabel" ).text("Pause");
+            }
         });
         socket.on('disconnect', function() {
             socket.send('Client: I\'m disconnected!');
@@ -204,7 +213,11 @@
         <br/><br/>
         <button type="submit" id="btn_start" name="btn_start" class="btn btn-default"><span class="glyphicon glyphicon-play"></span> Start</button>
         <button type="submit" id="btn_stop" name="btn_stop" class="btn btn-default"><span class="glyphicon glyphicon-stop"></span> Stop</button>
-        <button type="submit" id="btn_pause" name="btn_pause" class="btn btn-default"><span class="glyphicon glyphicon-pause"></span> Pause</button>
+        <button type="submit" id="btn_pause" name="btn_pause" class="btn btn-default">
+          <span class="glyphicon glyphicon-pause"></span>
+          <!-- We need an extra label class to be able to change the text -->
+          <span class="mylabel">Pause</span>
+        </button>
         <button type="submit" id="btn_t1_up" name="btn_t1_up" class="btn btn-default"><span class="glyphicon glyphicon-plus"></span> 0,2 K</button>
         <button type="submit" id="btn_t1_down" name="btn_t1_down" class="btn btn-default"><span class="glyphicon glyphicon-minus"></span> 0,2 K</button>
       </form>

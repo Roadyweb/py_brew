@@ -125,6 +125,12 @@ class ProcControlThread (threading.Thread):
             elif self.pct_req == 'STOP':
                 self.set_state('Idle')
                 self.tpc.stop()
+            elif self.pct_req == 'SUSPEND':
+                self.set_state('Suspended')
+                #self.tpc.stop()
+            elif self.pct_req == 'RESUME':
+                self.set_state('Running')
+                #self.tpc.stop()
             elif self.pct_req == 'EXIT':
                 self.set_state('Not running')
                 return
@@ -161,6 +167,15 @@ class ProcControlThread (threading.Thread):
     def stop_cooking(self):
         """ Starts cooking in the main loop """
         self.pct_req = 'STOP'
+
+    def suspend_cooking(self):
+        """ Suspends cooking """
+        if self.get_state() == 'Suspended':
+            self.pct_req = 'RESUME'
+        elif self.get_state() == 'Running':
+            self.pct_req = 'SUSPEND'
+        else:
+            raise RuntimeError('ProcControlThread: unsupported state change')
 
     def exit(self):
         """ Exit the main loop """
