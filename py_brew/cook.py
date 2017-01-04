@@ -103,7 +103,8 @@ class ProcControlThread (threading.Thread):
         threading.Thread.__init__(self, name='PCT')
         self.set_state = state_cb
         self.get_state = get_state_cb
-        self.pct_req = ''   # Could be START, START_AT, STOP or EXIT
+        # Can be START, START_AT, STOP, SUSPEND, RESUME or EXIT
+        self.pct_req = ''
         self.recipe = None
         self.tpc = tpc
         self.start_at = None
@@ -263,7 +264,7 @@ class TempProcessControl(object):
         self.tempk1_offset = 0.0
 
     def stop(self):
-        self.set_state('Angehalten')
+        self.set_state('Stopped')
         wq.all_off()
 
     def suspend(self):
@@ -304,7 +305,7 @@ class TempProcessControl(object):
         elif self.state == 'WAITING':
             td_sec = timedelta2sec(datetime.datetime.now() -
                                    self.wait_start - self.suspend_dura)
-            self.set_state('Kochen',
+            self.set_state('Cooking',
                            stage=self.cur_idx + 1,
                            extended='%d von %d sek, %d sek Pause' %
                                     (td_sec, self.set_dura,
@@ -329,11 +330,11 @@ class TempProcessControl(object):
             self._reset_suspend()
 
         elif self.state == 'SUSPENDED':
-            self.set_state('Pausiert', stage=self.cur_idx + 1)
+            self.set_state('Paused', stage=self.cur_idx + 1)
             return
 
         elif self.state == 'FINISHED':
-            self.set_state('Fertig')
+            self.set_state('Finished')
             wq.all_off()
             return True
         else:
