@@ -247,6 +247,9 @@ class TempProcessControl(object):
         self.suspend_start = 0
         self.suspend_dura = datetime.timedelta()
 
+    # *************************************************************
+    # * Following functions change the state of the state machine *
+    # *************************************************************
     def start(self, recipe):
         log('TempProcessControl started. Recipe: %s' % recipe)
         self.temp_list = recipe['list']
@@ -258,6 +261,32 @@ class TempProcessControl(object):
         self.state = 'INIT'
         self.tempk1_offset = 0.0
 
+    def stop(self):
+        self.set_state('Angehalten')
+        wq.all_off()
+
+    def suspend(self):
+        log('Suspend called')
+        self.suspend_state = self.state
+        self.state = 'SUSPENDED'
+        self.suspend_start = datetime.datetime.now()
+        wq.all_off()
+
+    def resume(self):
+        log('Resume called')
+        # Resume with previous state
+        self.state = self.suspend_state
+        self.suspend_dura += datetime.datetime.now() - self.suspend_start
+
+    def inc_offset(self, offset):
+        self.tempk1_offset += offset
+
+    def dec_offset(self, offset):
+        self.tempk1_offset -= offset
+
+    # *****************
+    # * State machine *
+    # *****************
     def control_temp_interval(self):
         ''' returns true when finished '''
         if self.state == 'INIT':
@@ -274,7 +303,7 @@ class TempProcessControl(object):
         elif self.state == 'WAITING':
             td_sec = timedelta2sec(datetime.datetime.now() -
                                    self.wait_start - self.suspend_dura)
-            self.set_state('Cooking',
+            self.set_state('Kochen',
                            stage=self.cur_idx + 1,
                            extended='%d von %d sek, %d sek Pause' %
                                     (td_sec, self.set_dura,
@@ -299,38 +328,15 @@ class TempProcessControl(object):
             self._reset_suspend()
 
         elif self.state == 'SUSPENDED':
-            self.set_state('Suspended', stage=self.cur_idx + 1)
+            self.set_state('Pausiert', stage=self.cur_idx + 1)
             return
 
         elif self.state == 'FINISHED':
-            self.set_state('Finished')
+            self.set_state('Fertig')
             wq.all_off()
             return True
         else:
             raise RuntimeError('TPC: Unknown state %s' % self.state)
-
-    def suspend(self):
-        log('Suspend called')
-        self.suspend_state = self.state
-        self.state = 'SUSPENDED'
-        self.suspend_start = datetime.datetime.now()
-        wq.all_off()
-
-    def resume(self):
-        log('Resume called')
-        # Resume with previous state
-        self.state = self.suspend_state
-        self.suspend_dura += datetime.datetime.now() - self.suspend_start
-
-    def stop(self):
-        self.set_state('Stopped')
-        wq.all_off()
-
-    def inc_offset(self, offset):
-        self.tempk1_offset += offset
-
-    def dec_offset(self, offset):
-        self.tempk1_offset -= offset
 
     def control_temp(self):
         ''' returns True when we have reached the current setpoint'''
