@@ -127,10 +127,10 @@ class ProcControlThread (threading.Thread):
                 self.tpc.stop()
             elif self.pct_req == 'SUSPEND':
                 self.set_state('Suspended')
-                #self.tpc.stop()
+                self.tpc.suspend()
             elif self.pct_req == 'RESUME':
                 self.set_state('Running')
-                #self.tpc.stop()
+                self.tpc.resume()
             elif self.pct_req == 'EXIT':
                 self.set_state('Not running')
                 return
@@ -147,6 +147,10 @@ class ProcControlThread (threading.Thread):
                     self.set_state('Waiting', min_to_wait + ' min')
 
             if self.get_state() == 'Running':
+                if self.tpc.control_temp_interval():
+                    self.set_state('Idle')
+
+            if self.get_state() == 'Suspended':
                 if self.tpc.control_temp_interval():
                     self.set_state('Idle')
 
@@ -168,7 +172,7 @@ class ProcControlThread (threading.Thread):
         """ Starts cooking in the main loop """
         self.pct_req = 'STOP'
 
-    def suspend_cooking(self):
+    def suspend_resume_cooking(self):
         """ Suspends cooking """
         if self.get_state() == 'Suspended':
             self.pct_req = 'RESUME'
@@ -211,6 +215,10 @@ class TempProcessControl(object):
         self.tempk1 = None
         self.durak1 = None
         self.tempk1_offset = 0.0
+        self.suspend_state = None
+        self.suspend_start = None
+        self.suspend_dura = None
+        self._reset_suspend()
 
     def _get_temp_dura(self):
         """ Returns a tuple of the current temp and duration stage """
@@ -231,6 +239,14 @@ class TempProcessControl(object):
         else:
             raise RuntimeError('Unsupported TempProcessControl method %s' % self.method)
 
+    def _reset_suspend(self):
+        ''' After every state change the suspend duration and start has to be
+            reseted. Actually only duration is required
+        '''
+        self.suspend_state = ''
+        self.suspend_start = 0
+        self.suspend_dura = datetime.timedelta()
+
     def start(self, recipe):
         log('TempProcessControl started. Recipe: %s' % recipe)
         self.temp_list = recipe['list']
@@ -245,16 +261,25 @@ class TempProcessControl(object):
     def control_temp_interval(self):
         ''' returns true when finished '''
         if self.state == 'INIT':
-            self.set_state('Init', stage=self.cur_idx + 1)
+            self.set_state(
+                'Init',
+                stage=self.cur_idx + 1,
+                extended='%d sek Pause' % timedelta2sec(self.suspend_dura)
+            )
             self.set_temp, self.set_dura = self._get_temp_dura()
             if self.control_temp() == True:
                 self.state = 'WAITING'
                 self.wait_start = datetime.datetime.now()
+                self._reset_suspend()
         elif self.state == 'WAITING':
-            td_sec = timedelta2sec(datetime.datetime.now() - self.wait_start)
+            td_sec = timedelta2sec(datetime.datetime.now() -
+                                   self.wait_start - self.suspend_dura)
             self.set_state('Cooking',
                            stage=self.cur_idx + 1,
-                           extended= '%d von %d sek'% (td_sec, self.set_dura))
+                           extended='%d von %d sek, %d sek Pause' %
+                                    (td_sec, self.set_dura,
+                                     timedelta2sec(self.suspend_dura))
+            )
             self.set_temp, self.set_dura = self._get_temp_dura()
             self.control_temp()
             if td_sec < self.set_dura:
@@ -265,11 +290,17 @@ class TempProcessControl(object):
             if self.method == 'K1' or len(self.temp_list) <= self.cur_idx + 1:
                 # Nothing more to do
                 self.state = 'FINISHED'
+                self._reset_suspend()
                 return
             # Yes we have another stage
             self.cur_idx += 1
             self.set_temp, self.set_dura = self._get_temp_dura()
             self.state = 'INIT'
+            self._reset_suspend()
+
+        elif self.state == 'SUSPENDED':
+            self.set_state('Suspended', stage=self.cur_idx + 1)
+            return
 
         elif self.state == 'FINISHED':
             self.set_state('Finished')
@@ -277,6 +308,19 @@ class TempProcessControl(object):
             return True
         else:
             raise RuntimeError('TPC: Unknown state %s' % self.state)
+
+    def suspend(self):
+        log('Suspend called')
+        self.suspend_state = self.state
+        self.state = 'SUSPENDED'
+        self.suspend_start = datetime.datetime.now()
+        wq.all_off()
+
+    def resume(self):
+        log('Resume called')
+        # Resume with previous state
+        self.state = self.suspend_state
+        self.suspend_dura += datetime.datetime.now() - self.suspend_start
 
     def stop(self):
         self.set_state('Stopped')

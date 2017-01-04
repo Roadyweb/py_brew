@@ -124,7 +124,7 @@ def run():
             dlt_thread.stop_logging()
         elif 'btn_pause' in request.form:
             log("Pause pushed")
-            pct_thread.suspend_cooking()
+            pct_thread.suspend_resume_cooking()
         elif 'btn_t1_up' in request.form:
             tpc.inc_offset(0.2)
         elif 'btn_t1_down' in request.form:
