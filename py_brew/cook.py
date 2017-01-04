@@ -202,9 +202,10 @@ class TempProcessControl(object):
         self.set_temp_state = temp_state_cb
         self.temp_list = []
         ''' Possible states:
-                INIT:     New setpoint
-                WAITING:  Setpoint reached, waiting for the required time
-                FINISHED: Required time is over, go to next setpoint
+                INIT:      New setpoint
+                WAITING:   Setpoint reached, waiting for the required time
+                FINISHED:  Required time is over, go to next setpoint
+                SUSPENDED: Current stage, either INIT or WAITING is paused
         '''
         self.state = 'INIT'     # current state of the state machine
         self.cur_idx = 0
